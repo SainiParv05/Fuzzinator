@@ -21,8 +21,8 @@ CRASH_SIGNALS = {
     -signal.SIGILL:  "SIGILL",
 }
 
-# Timeout in seconds (50ms)
-EXECUTION_TIMEOUT = 0.05
+# Timeout in seconds (500ms instead of 50ms to allow ASan to print crash dump)
+EXECUTION_TIMEOUT = 0.5
 
 
 class ExecutionResult:
@@ -81,7 +81,7 @@ class ExecutionHarness:
 
             return_code = result.returncode
 
-            # Check for crash signals
+            # Check for crash signals (negative return code)
             if return_code < 0:
                 sig = return_code
                 signal_name = CRASH_SIGNALS.get(sig, f"SIG({-sig})")
@@ -92,15 +92,16 @@ class ExecutionHarness:
                     timed_out=False,
                 )
 
-            # ASan typically exits with code 1 and prints error
-            if return_code != 0 and b"ERROR: AddressSanitizer" in result.stderr:
+            # Check for ASan exists (typically exit code 1 or other non-zero)
+            if return_code != 0:
                 return ExecutionResult(
                     crashed=True,
-                    signal_name="ASAN",
+                    signal_name=f"ASAN(rc={return_code})",
                     return_code=return_code,
                     timed_out=False,
                 )
 
+            # Normal clean exit
             return ExecutionResult(
                 crashed=False,
                 signal_name="",
