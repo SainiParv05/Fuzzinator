@@ -46,25 +46,25 @@ Fuzzinator is a minimal proof-of-concept demonstrating how **reinforcement learn
 
 ## Components
 
-| Component | File | Description |
-|-----------|------|-------------|
-| **PPO Agent** | `agent/ppo_agent.py` | Actor-Critic MLP network with clipped PPO |
-| **Rollout Buffer** | `agent/replay_buffer.py` | Stores transitions, computes GAE advantages |
-| **Reward Engine** | `agent/reward_engine.py` | +10 new edge, +100 crash, -0.1 no progress |
-| **Training Loop** | `agent/train.py` | Main entry point for fuzzing campaigns |
-| **Fuzz Environment** | `environment/fuzz_env.py` | Gymnasium env wrapping the fuzz loop |
-| **Exec Harness** | `environment/execution_harness.py` | Runs targets via subprocess (50ms timeout) |
-| **Coverage Reader** | `environment/coverage_reader.py` | Reads shared memory bitmap, tracks edges |
-| **Crash Vault** | `environment/crash_vault.py` | Saves unique crashing inputs |
-| **Mutator** | `mutator/mutator.py` | 4 strategies: bit_flip, byte_flip, byte_insert, havoc |
+| Component                  | File                                 | Description                                           |
+| -------------------------- | ------------------------------------ | ----------------------------------------------------- |
+| **PPO Agent**        | `agent/ppo_agent.py`               | Actor-Critic MLP network with clipped PPO             |
+| **Rollout Buffer**   | `agent/replay_buffer.py`           | Stores transitions, computes GAE advantages           |
+| **Reward Engine**    | `agent/reward_engine.py`           | +10 new edge, +100 crash, -0.1 no progress            |
+| **Training Loop**    | `agent/train.py`                   | Main entry point for fuzzing campaigns                |
+| **Fuzz Environment** | `environment/fuzz_env.py`          | Gymnasium env wrapping the fuzz loop                  |
+| **Exec Harness**     | `environment/execution_harness.py` | Runs targets via subprocess (50ms timeout)            |
+| **Coverage Reader**  | `environment/coverage_reader.py`   | Reads shared memory bitmap, tracks edges              |
+| **Crash Vault**      | `environment/crash_vault.py`       | Saves unique crashing inputs                          |
+| **Mutator**          | `mutator/mutator.py`               | 4 strategies: bit_flip, byte_flip, byte_insert, havoc |
 
 ## Target Programs
 
-| Target | Vulnerability | Crash Difficulty |
-|--------|--------------|-----------------|
-| `target_buffer_overflow` | Stack buffer overflow via `memcpy` | Easy |
-| `target_format_string` | Format string via `printf(user_input)` | Medium |
-| `target_maze` | Maze requiring specific byte sequence | Hard |
+| Target                     | Vulnerability                            | Crash Difficulty |
+| -------------------------- | ---------------------------------------- | ---------------- |
+| `target_buffer_overflow` | Stack buffer overflow via `memcpy`     | Easy             |
+| `target_format_string`   | Format string via `printf(user_input)` | Medium           |
+| `target_maze`            | Maze requiring specific byte sequence    | Hard             |
 
 ## Installation
 
@@ -167,20 +167,20 @@ python agent/train.py --lr 1e-3
 
 The RL agent receives a 67-dimensional observation vector:
 
-| Index | Description |
-|-------|-------------|
+| Index | Description                             |
+| ----- | --------------------------------------- |
 | 0–63 | Compressed coverage bitmap (64 buckets) |
-| 64 | Last mutation action (normalized) |
-| 65 | Current input length (normalized) |
-| 66 | Step count (normalized) |
+| 64    | Last mutation action (normalized)       |
+| 65    | Current input length (normalized)       |
+| 66    | Step count (normalized)                 |
 
 ## Reward Function
 
-| Event | Reward |
-|-------|--------|
+| Event             | Reward         |
+| ----------------- | -------------- |
 | New coverage edge | +10.0 per edge |
-| Crash detected | +100.0 |
-| No new coverage | -0.1 |
+| Crash detected    | +100.0         |
+| No new coverage   | -0.1           |
 
 ## Project Structure
 
