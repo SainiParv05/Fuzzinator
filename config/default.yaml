@@ -1,0 +1,41 @@
+# Fuzzinator Configuration
+# Default settings for RL-guided fuzzing
+
+# Agent Configuration
+agent:
+  learning_rate: 3.0e-4
+  lstm_hidden: 256
+  ppo_epochs: 4
+  entropy_coeff: 0.01
+  value_loss_coeff: 0.5
+  max_grad_norm: 0.5
+
+# Environment Configuration
+environment:
+  timeout_ms: 500
+  max_input_size: 1024
+  max_steps: 10000
+  target_binary: targets/target_buffer_overflow
+  seed_file: corpus/seed.bin
+
+# Fuzzing Configuration
+fuzzing:
+  new_edge_reward: 10.0
+  crash_reward: 100.0
+  timeout_penalty: -0.1
+  buffer_size: 256
+  checkpoint_interval: 500
+
+# Paths Configuration
+paths:
+  checkpoint_dir: data/checkpoints
+  crash_dir: data/crashes
+  corpus_dir: corpus
+  project_root: .
+
+# Logging Configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null  # Set to filename to log to file, null for console only
+  verbose: false

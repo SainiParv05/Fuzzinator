@@ -2,7 +2,7 @@
 execution_harness.py
 Fuzzinator — Target Execution Harness
 
-Executes target binaries via subprocess.run() with a 50ms timeout.
+Executes target binaries via subprocess.run() with a 500ms timeout.
 Detects crashes by examining return codes and signals.
 """
 
@@ -10,16 +10,24 @@ import subprocess
 import tempfile
 import signal
 import os
+import logging
 
 
-# Signals that indicate a crash
-CRASH_SIGNALS = {
-    -signal.SIGSEGV: "SIGSEGV",
-    -signal.SIGABRT: "SIGABRT",
-    -signal.SIGBUS:  "SIGBUS",
-    -signal.SIGFPE:  "SIGFPE",
-    -signal.SIGILL:  "SIGILL",
-}
+logger = logging.getLogger(__name__)
+
+
+# Signals that indicate a crash (only available on Linux/Unix)
+CRASH_SIGNALS = {}
+if hasattr(signal, 'SIGSEGV'):
+    CRASH_SIGNALS[-signal.SIGSEGV] = "SIGSEGV"
+if hasattr(signal, 'SIGABRT'):
+    CRASH_SIGNALS[-signal.SIGABRT] = "SIGABRT"
+if hasattr(signal, 'SIGBUS'):
+    CRASH_SIGNALS[-signal.SIGBUS] = "SIGBUS"
+if hasattr(signal, 'SIGFPE'):
+    CRASH_SIGNALS[-signal.SIGFPE] = "SIGFPE"
+if hasattr(signal, 'SIGILL'):
+    CRASH_SIGNALS[-signal.SIGILL] = "SIGILL"
 
 # Timeout in seconds (500ms instead of 50ms to allow ASan to print crash dump)
 EXECUTION_TIMEOUT = 0.5
@@ -48,11 +56,23 @@ class ExecutionHarness:
     """Runs target binaries and detects crashes."""
 
     def __init__(self, target_path: str, timeout: float = EXECUTION_TIMEOUT):
+        # Validate and normalize target path
         self.target_path = os.path.abspath(target_path)
-        self.timeout = timeout
 
         if not os.path.isfile(self.target_path):
+            logger.error(f"Target binary not found: {self.target_path}")
             raise FileNotFoundError(f"Target not found: {self.target_path}")
+
+        if not os.access(self.target_path, os.X_OK):
+            logger.error(f"Target binary is not executable: {self.target_path}")
+            raise PermissionError(f"Target is not executable: {self.target_path}")
+
+        if timeout <= 0:
+            logger.error(f"Invalid timeout value: {timeout}")
+            raise ValueError("timeout must be positive")
+
+        self.timeout = timeout
+        logger.debug(f"ExecutionHarness initialized with target: {self.target_path}, timeout: {timeout}s")
 
     def run(self, input_data: bytearray) -> ExecutionResult:
         """
@@ -66,12 +86,19 @@ class ExecutionHarness:
         Returns:
             ExecutionResult with crash/signal information
         """
-        # Write input to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".input") as f:
-            f.write(bytes(input_data))
-            input_path = f.name
+        if not isinstance(input_data, (bytes, bytearray)):
+            logger.error("input_data must be bytes or bytearray")
+            raise ValueError("input_data must be bytes or bytearray")
 
+        # Write input to a temporary file
+        input_path = None
         try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".input") as f:
+                f.write(bytes(input_data))
+                input_path = f.name
+
+            logger.debug(f"Executing target with input: {len(input_data)} bytes")
+
             result = subprocess.run(
                 [self.target_path, input_path],
                 timeout=self.timeout,
@@ -85,6 +112,7 @@ class ExecutionHarness:
             if return_code < 0:
                 sig = return_code
                 signal_name = CRASH_SIGNALS.get(sig, f"SIG({-sig})")
+                logger.info(f"Target crashed with signal: {signal_name}")
                 return ExecutionResult(
                     crashed=True,
                     signal_name=signal_name,
@@ -92,8 +120,9 @@ class ExecutionHarness:
                     timed_out=False,
                 )
 
-            # Check for ASan exists (typically exit code 1 or other non-zero)
+            # Check for ASan exit (typically exit code 1 or other non-zero)
             if return_code != 0:
+                logger.info(f"Target exited with code {return_code} (likely sanitizer detection)")
                 return ExecutionResult(
                     crashed=True,
                     signal_name=f"ASAN(rc={return_code})",
@@ -102,6 +131,7 @@ class ExecutionHarness:
                 )
 
             # Normal clean exit
+            logger.debug(f"Target exited cleanly (rc={return_code})")
             return ExecutionResult(
                 crashed=False,
                 signal_name="",
@@ -110,6 +140,7 @@ class ExecutionHarness:
             )
 
         except subprocess.TimeoutExpired:
+            logger.debug(f"Target execution timed out after {self.timeout}s")
             return ExecutionResult(
                 crashed=False,
                 signal_name="",
@@ -117,9 +148,14 @@ class ExecutionHarness:
                 timed_out=True,
             )
 
+        except Exception as e:
+            logger.error(f"Error executing target: {e}")
+            raise
+
         finally:
             # Clean up temp file
-            try:
-                os.unlink(input_path)
-            except OSError:
-                pass
+            if input_path:
+                try:
+                    os.unlink(input_path)
+                except OSError as e:
+                    logger.warning(f"Failed to clean up temp file {input_path}: {e}")

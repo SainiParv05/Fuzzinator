@@ -16,6 +16,7 @@ Action space: Discrete(4) — selects mutation strategy
 
 import os
 import sys
+import logging
 import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
@@ -28,6 +29,9 @@ from environment.execution_harness import ExecutionHarness
 from environment.coverage_reader import CoverageReader
 from environment.crash_vault import CrashVault
 from agent.reward_engine import RewardEngine
+
+
+logger = logging.getLogger(__name__)
 
 
 # Observation size
@@ -56,6 +60,8 @@ class FuzzEnv(gym.Env):
         self.seed_path = seed_path
         self.max_steps = max_steps
 
+        logger.debug(f"Initializing FuzzEnv: target={target_path}, seed={seed_path}, max_steps={max_steps}")
+
         # Components
         self.harness = ExecutionHarness(target_path)
         self.coverage = CoverageReader()
@@ -72,6 +78,8 @@ class FuzzEnv(gym.Env):
         self.current_input = bytearray()
         self.step_count = 0
         self.last_action = 0
+
+        logger.info("FuzzEnv initialized successfully")
 
     def reset(self, seed=None, options=None):
         """Reset the environment to the initial seed input."""
