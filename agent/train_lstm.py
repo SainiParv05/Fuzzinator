@@ -17,6 +17,7 @@ sys.path.insert(0, PROJECT_ROOT)
 from agent.ppo_agent_lstm import PPOAgentLSTM
 from agent.replay_buffer_lstm import RolloutBufferLSTM
 from agent.reward_engine import RewardEngine
+from agent.runtime_utils import set_random_seed
 from config import load_config
 from config.logging_setup import setup_logging
 from environment.fuzz_env import OBS_SIZE
@@ -50,6 +51,10 @@ def parse_args():
     parser.add_argument("--rollout-size", type=int, default=None)
     parser.add_argument("--lr", type=float, default=None)
     parser.add_argument("--checkpoint-interval", type=int, default=None)
+    parser.add_argument("--random-seed", type=int, default=None)
+    parser.add_argument("--lstm-hidden", type=int, default=None)
+    parser.add_argument("--lstm-layers", type=int, default=None)
+    parser.add_argument("--device", type=str, default=None)
     parser.add_argument("--verbose", action="store_true")
     return parser.parse_args()
 
@@ -67,6 +72,8 @@ def train(args):
     rollout_size = args.rollout_size or config.get("fuzzing.buffer_size")
     lr = args.lr or config.get("agent.learning_rate")
     checkpoint_interval = args.checkpoint_interval or config.get("fuzzing.checkpoint_interval")
+    random_seed = args.random_seed if args.random_seed is not None else config.get("fuzzing.random_seed")
+    device = args.device or config.get("agent.device", "auto")
     timeout_ms = config.get("environment.timeout_ms")
     max_input_size = config.get("environment.max_input_size")
     new_edge_reward = config.get("fuzzing.new_edge_reward")
@@ -76,8 +83,8 @@ def train(args):
     entropy_coef = config.get("agent.entropy_coeff", 0.01)
     value_coef = config.get("agent.value_loss_coeff", 0.5)
     max_grad_norm = config.get("agent.max_grad_norm", 0.5)
-    lstm_hidden = config.get("agent.lstm_hidden", 256)
-    lstm_layers = config.get("agent.lstm_layers", 2)
+    lstm_hidden = args.lstm_hidden or config.get("agent.lstm_hidden", 256)
+    lstm_layers = args.lstm_layers or config.get("agent.lstm_layers", 2)
 
     target = os.path.join(PROJECT_ROOT, target) if not os.path.isabs(target) else target
     seed = os.path.join(PROJECT_ROOT, seed) if not os.path.isabs(seed) else seed
@@ -89,6 +96,8 @@ def train(args):
     logger.info("Total steps: %s", steps)
     logger.info("Rollout size: %s", rollout_size)
     logger.info("Learning rate: %s", lr)
+    logger.info("Random seed: %s", random_seed)
+    logger.info("Device: %s", device)
     logger.info("Timeout: %sms", timeout_ms)
     logger.info("Max input size: %s", max_input_size)
     logger.info("LSTM hidden: %s", lstm_hidden)
@@ -98,9 +107,23 @@ def train(args):
         sys.exit(1)
     if not validate_file_exists(seed, "Seed file", logger):
         sys.exit(1)
+    if random_seed < 0:
+        logger.error("Random seed must be non-negative: %s", random_seed)
+        sys.exit(1)
+    if device not in {"cpu", "cuda", "auto"}:
+        logger.error("Device must be cpu, cuda, or auto: %s", device)
+        sys.exit(1)
+    if lstm_hidden <= 0:
+        logger.error("LSTM hidden size must be positive: %s", lstm_hidden)
+        sys.exit(1)
+    if lstm_layers <= 0:
+        logger.error("LSTM layers must be positive: %s", lstm_layers)
+        sys.exit(1)
 
     os.makedirs(checkpoint_dir, exist_ok=True)
     os.makedirs(crash_dir, exist_ok=True)
+    set_random_seed(random_seed)
+    logger.info("Random generators seeded.")
 
     reward_engine = RewardEngine(
         new_edge_reward=new_edge_reward,
@@ -128,6 +151,7 @@ def train(args):
         ppo_epochs=ppo_epochs,
         lstm_hidden=lstm_hidden,
         lstm_layers=lstm_layers,
+        device=device,
     )
 
     buffer = RolloutBufferLSTM(

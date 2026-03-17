@@ -89,7 +89,8 @@ class PPOAgentLSTM:
                  ppo_epochs: int = 4,
                  batch_size: int = 64,
                  lstm_hidden: int = 256,
-                 lstm_layers: int = 2):
+                 lstm_layers: int = 2,
+                 device: str = "auto"):
         self.gamma = gamma
         self.clip_epsilon = clip_epsilon
         self.entropy_coef = entropy_coef
@@ -97,7 +98,11 @@ class PPOAgentLSTM:
         self.max_grad_norm = max_grad_norm
         self.ppo_epochs = ppo_epochs
         self.batch_size = batch_size
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if device == "auto":
+            resolved_device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            resolved_device = device
+        self.device = torch.device(resolved_device)
 
         self.network = LSTMActorCritic(
             obs_size=obs_size,

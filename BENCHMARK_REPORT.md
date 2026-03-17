@@ -1,33 +1,42 @@
 # PPO vs PPO+LSTM Benchmark Report
 
-Generated on: 2026-03-17 22:21:54
-Steps per target: 60
+Generated on: 2026-03-17 22:44:43
+Steps per target: 30
+Seeds per target: [1337, 2027, 4242]
 
 ## Baseline PPO
 
-| Target | Steps | Time (s) | Exec/s | Edges | Crashes | Updates |
+| Target | Runs | Avg Time (s) | Avg Exec/s | Avg Edges | Avg Crashes | Avg Updates |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `targets/target_buffer_overflow` | 60 | 0.5 | 112.7 | 171 | 0 | 1 |
-| `targets/target_format_string` | 60 | 1.6 | 37.7 | 221 | 16 | 1 |
-| `targets/target_maze` | 60 | 0.5 | 119.3 | 172 | 0 | 1 |
+| `targets/target_maze` | 3 | 0.733 | 81.233 | 129.0 | 0.0 | 1.0 |
 
 ## PPO+LSTM
 
-| Target | Steps | Time (s) | Exec/s | Edges | Crashes | Updates |
+| Target | Runs | Avg Time (s) | Avg Exec/s | Avg Edges | Avg Crashes | Avg Updates |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `targets/target_buffer_overflow` | 60 | 7.6 | 7.9 | 172 | 0 | 1 |
-| `targets/target_format_string` | 60 | 8.0 | 7.5 | 222 | 4 | 1 |
-| `targets/target_maze` | 60 | 7.6 | 7.9 | 196 | 0 | 1 |
+| `targets/target_maze` | 3 | 67.0 | 0.467 | 127.667 | 0.0 | 1.0 |
 
 ## Comparison Summary
 
-- `targets/target_buffer_overflow`: edge delta +1, crash delta +0, exec/s delta -104.8.
-- `targets/target_format_string`: edge delta +1, crash delta -12, exec/s delta -30.2.
-- `targets/target_maze`: edge delta +24, crash delta +0, exec/s delta -111.4.
+- `targets/target_maze`: edge delta -1.3329999999999984, crash delta +0.0, exec/s delta -80.8.
+
+## Per-Seed Results
+
+### `targets/target_maze`
+
+| Model | Seed | Time (s) | Exec/s | Edges | Crashes |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| PPO | 1337 | 1.6 | 18.5 | 133 | 0 |
+| PPO | 2027 | 0.3 | 118.4 | 134 | 0 |
+| PPO | 4242 | 0.3 | 106.8 | 120 | 0 |
+| PPO+LSTM | 1337 | 95.5 | 0.3 | 115 | 0 |
+| PPO+LSTM | 2027 | 55.0 | 0.5 | 141 | 0 |
+| PPO+LSTM | 4242 | 50.5 | 0.6 | 127 | 0 |
+
 
 ## Notes
 
-- These are short smoke benchmarks intended for apples-to-apples comparison on the same targets.
+- These benchmarks now aggregate multiple seeds for each target.
 - Baseline PPO uses `agent/train.py`.
 - PPO+LSTM uses `agent/train_lstm.py`.
-- For stronger statistical confidence, rerun with multiple seeds and longer campaigns.
+- For stronger statistical confidence, rerun with longer campaigns and more seeds.

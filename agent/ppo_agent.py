@@ -65,7 +65,8 @@ class PPOAgent:
                  lr: float = 3e-4, gamma: float = 0.99,
                  clip_epsilon: float = 0.2, entropy_coef: float = 0.01,
                  value_coef: float = 0.5, max_grad_norm: float = 0.5,
-                 ppo_epochs: int = 4, batch_size: int = 64):
+                 ppo_epochs: int = 4, batch_size: int = 64,
+                 device: str = "auto"):
 
         self.gamma = gamma
         self.clip_epsilon = clip_epsilon
@@ -75,8 +76,11 @@ class PPOAgent:
         self.ppo_epochs = ppo_epochs
         self.batch_size = batch_size
 
-        # Device
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        if device == "auto":
+            resolved_device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            resolved_device = device
+        self.device = torch.device(resolved_device)
 
         # Network
         self.network = ActorCritic(obs_size, n_actions).to(self.device)

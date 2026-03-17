@@ -32,6 +32,7 @@ from config import load_config
 from config.logging_setup import setup_logging
 from mutator.mutator import NUM_ACTIONS, STRATEGY_NAMES
 from agent.reward_engine import RewardEngine
+from agent.runtime_utils import set_random_seed
 
 
 def validate_file_exists(filepath: str, description: str, logger: logging.Logger) -> bool:
@@ -94,6 +95,10 @@ def parse_args():
                         help="Learning rate (overrides config)")
     parser.add_argument("--checkpoint-interval", type=int, default=None,
                         help="Save checkpoint every N steps (overrides config)")
+    parser.add_argument("--random-seed", type=int, default=None,
+                        help="Random seed for reproducible training (overrides config)")
+    parser.add_argument("--device", type=str, default=None,
+                        help="Torch device: cpu, cuda, or auto (overrides config)")
     parser.add_argument("--verbose", action="store_true",
                         help="Enable verbose logging")
     return parser.parse_args()
@@ -148,6 +153,8 @@ def train(args):
     rollout_size = args.rollout_size or config.get("fuzzing.buffer_size")
     lr = args.lr or config.get("agent.learning_rate")
     checkpoint_interval = args.checkpoint_interval or config.get("fuzzing.checkpoint_interval")
+    random_seed = args.random_seed if args.random_seed is not None else config.get("fuzzing.random_seed")
+    device = args.device or config.get("agent.device", "auto")
     timeout_ms = config.get("environment.timeout_ms")
     max_input_size = config.get("environment.max_input_size")
     new_edge_reward = config.get("fuzzing.new_edge_reward")
@@ -169,6 +176,8 @@ def train(args):
     logger.info(f"Total steps: {steps}")
     logger.info(f"Rollout size: {rollout_size}")
     logger.info(f"Learning rate: {lr}")
+    logger.info(f"Random seed: {random_seed}")
+    logger.info(f"Device: {device}")
     logger.info(f"Timeout: {timeout_ms}ms")
     logger.info(f"Max input size: {max_input_size}")
     logger.info(f"Checkpoint interval: {checkpoint_interval}")
@@ -205,6 +214,13 @@ def train(args):
         logger.error(f"Invalid max input size: {max_input_size} (must be positive)")
         sys.exit(1)
 
+    if random_seed < 0:
+        logger.error(f"Invalid random seed: {random_seed} (must be non-negative)")
+        sys.exit(1)
+    if device not in {"cpu", "cuda", "auto"}:
+        logger.error(f"Invalid device: {device} (must be cpu, cuda, or auto)")
+        sys.exit(1)
+
     logger.info("Input validation passed.")
     logger.info("")
 
@@ -220,6 +236,9 @@ def train(args):
     }
     logger.debug(f"Checkpoint directory: {checkpoint_dir}")
     logger.debug(f"Crash directory: {crash_dir}")
+
+    set_random_seed(random_seed)
+    logger.info("Random generators seeded.")
 
     logger.info("Initializing fuzzing environment...")
     reward_engine = RewardEngine(
@@ -261,6 +280,7 @@ def train(args):
         value_coef=value_coef,
         max_grad_norm=max_grad_norm,
         ppo_epochs=ppo_epochs,
+        device=device,
     )
 
     logger.info("Initializing rollout buffer...")

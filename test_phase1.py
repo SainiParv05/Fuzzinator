@@ -9,6 +9,7 @@ sys.path.insert(0, os.getcwd())
 from config import load_config
 from config.logging_setup import setup_logging
 from agent.reward_engine import RewardEngine
+from agent.runtime_utils import set_random_seed
 from environment.execution_harness import ExecutionHarness
 
 # Test 1: Config loading
@@ -58,6 +59,19 @@ try:
     print()
 except Exception as e:
     print(f"✗ Path resolution failed: {e}")
+    sys.exit(1)
+
+# Test 3.5: Seed setup
+print("=" * 60)
+print("TEST 3.5: Seed Setup")
+print("=" * 60)
+
+try:
+    set_random_seed(cfg.get("fuzzing.random_seed"))
+    print(f"✓ Random seed configured: {cfg.get('fuzzing.random_seed')}")
+    print()
+except Exception as e:
+    print(f"✗ Seed setup failed: {e}")
     sys.exit(1)
 
 # Test 4: Security function

@@ -37,6 +37,8 @@ class Config:
         agent_cfg = self._config.get("agent", {})
         if agent_cfg.get("learning_rate", 0) <= 0:
             raise ValueError("agent.learning_rate must be positive")
+        if agent_cfg.get("device", "cpu") not in {"cpu", "cuda", "auto"}:
+            raise ValueError("agent.device must be one of: cpu, cuda, auto")
 
         # Validate environment settings
         env_cfg = self._config.get("environment", {})
@@ -57,6 +59,8 @@ class Config:
             raise ValueError("fuzzing.crash_reward must be non-negative")
         if fuzz_cfg.get("timeout_penalty", 1) > 0:
             raise ValueError("fuzzing.timeout_penalty must be zero or negative")
+        if fuzz_cfg.get("random_seed", -1) < 0:
+            raise ValueError("fuzzing.random_seed must be non-negative")
 
     def get(self, key: str, default: Any = None) -> Any:
         """

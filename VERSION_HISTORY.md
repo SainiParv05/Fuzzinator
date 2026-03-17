@@ -29,6 +29,40 @@ Use this format for future work:
 
 ---
 
+## v0.2.1 - 2026-03-17
+
+### What Changed
+- Added explicit random-seed support for reproducible PPO and PPO+LSTM experiments.
+- Added device selection support to baseline training, LSTM training, and benchmark runs.
+- Upgraded benchmark reporting to aggregate across multiple seeds and include per-seed results.
+- Tuned the LSTM defaults based on multi-seed maze benchmarks.
+- Added a dedicated tuning report documenting the tuning decision and remaining bottlenecks.
+
+### Files
+- Added [agent/runtime_utils.py](/home/kali/Fuzzi/Fuzzinator/agent/runtime_utils.py)
+- Added [LSTM_TUNING_REPORT.md](/home/kali/Fuzzi/Fuzzinator/LSTM_TUNING_REPORT.md)
+- Updated [agent/train.py](/home/kali/Fuzzi/Fuzzinator/agent/train.py)
+- Updated [agent/train_lstm.py](/home/kali/Fuzzi/Fuzzinator/agent/train_lstm.py)
+- Updated [agent/ppo_agent.py](/home/kali/Fuzzi/Fuzzinator/agent/ppo_agent.py)
+- Updated [agent/ppo_agent_lstm.py](/home/kali/Fuzzi/Fuzzinator/agent/ppo_agent_lstm.py)
+- Updated [benchmark_models.py](/home/kali/Fuzzi/Fuzzinator/benchmark_models.py)
+- Updated [config/default.yaml](/home/kali/Fuzzi/Fuzzinator/config/default.yaml)
+- Updated [config/__init__.py](/home/kali/Fuzzi/Fuzzinator/config/__init__.py)
+- Updated [test_phase1.py](/home/kali/Fuzzi/Fuzzinator/test_phase1.py)
+- Updated [BENCHMARK_REPORT.md](/home/kali/Fuzzi/Fuzzinator/BENCHMARK_REPORT.md)
+- Updated [BENCHMARK_REPORT_TUNED_128x1.md](/home/kali/Fuzzi/Fuzzinator/BENCHMARK_REPORT_TUNED_128x1.md)
+
+### Result
+- Benchmarks are now reproducible and aggregated across seeds.
+- Tuned default LSTM config is now `device=cpu`, `lstm_hidden=128`, `lstm_layers=1`.
+- Multi-seed maze result:
+- PPO baseline average: `129.0` edges at `81.233` exec/s
+- PPO+LSTM `256x2` average: `127.667` edges at `0.467` exec/s
+- PPO+LSTM `128x1` average: `139.667` edges at `0.467` exec/s
+- Main conclusion: the lighter LSTM is a better default, but the real performance bottleneck is still the input encoding path.
+
+---
+
 ## v0.2.0 - 2026-03-17
 
 ### What Changed
