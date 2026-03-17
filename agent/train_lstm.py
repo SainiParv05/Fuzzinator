@@ -10,6 +10,7 @@ import logging
 import os
 import sys
 import time
+from datetime import datetime
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, PROJECT_ROOT)
@@ -17,6 +18,7 @@ sys.path.insert(0, PROJECT_ROOT)
 from agent.ppo_agent_lstm import PPOAgentLSTM
 from agent.replay_buffer_lstm import RolloutBufferLSTM
 from agent.reward_engine import RewardEngine
+from agent.run_report import write_run_report
 from agent.runtime_utils import set_random_seed
 from config import load_config
 from config.logging_setup import setup_logging
@@ -90,6 +92,7 @@ def train(args):
     seed = os.path.join(PROJECT_ROOT, seed) if not os.path.isabs(seed) else seed
     crash_dir = config.resolve_path("crash_dir")
     checkpoint_dir = config.resolve_path("checkpoint_dir")
+    report_dir = config.resolve_path("report_dir")
 
     logger.info("Target binary: %s", target)
     logger.info("Seed file: %s", seed)
@@ -102,6 +105,7 @@ def train(args):
     logger.info("Max input size: %s", max_input_size)
     logger.info("LSTM hidden: %s", lstm_hidden)
     logger.info("LSTM layers: %s", lstm_layers)
+    logger.info("Report directory: %s", report_dir)
 
     if not validate_binary_executable(target, logger):
         sys.exit(1)
@@ -122,6 +126,11 @@ def train(args):
 
     os.makedirs(checkpoint_dir, exist_ok=True)
     os.makedirs(crash_dir, exist_ok=True)
+    os.makedirs(report_dir, exist_ok=True)
+    existing_crash_files = {
+        filename for filename in os.listdir(crash_dir)
+        if filename.startswith("crash_")
+    }
     set_random_seed(random_seed)
     logger.info("Random generators seeded.")
 
@@ -170,10 +179,14 @@ def train(args):
     obs, _ = env.reset()
     agent.reset_hidden_state()
     start_time = time.time()
+    started_at = datetime.now().isoformat(timespec="seconds")
     total_reward = 0.0
     update_count = 0
     best_total_edges = 0
     best_total_crashes = 0
+    status = "completed"
+    events = []
+    step = 0
 
     try:
         for step in range(1, steps + 1):
@@ -203,10 +216,25 @@ def train(args):
             crash_marker = ""
             if info["crashed"]:
                 crash_marker = f"CRASH ({info['signal']})"
+                events.append({
+                    "step": step,
+                    "type": "crash",
+                    "signal": info["signal"],
+                    "reward": round(reward, 3),
+                    "total_crashes": info["total_crashes"],
+                })
 
             if step % 10 == 0 or info["crashed"] or info["new_edges"] > 0:
                 print(f"{step:>6} | {reward:>+8.1f} | {info['new_edges']:>4} | {info['total_edges']:>6} | "
                       f"{info['total_crashes']:>7} | {action_name:>10} | {crash_marker}")
+                if info["new_edges"] > 0:
+                    events.append({
+                        "step": step,
+                        "type": "coverage_gain",
+                        "new_edges": info["new_edges"],
+                        "total_edges": info["total_edges"],
+                        "action": action_name,
+                    })
 
             if buffer.full or done:
                 if done:
@@ -226,6 +254,14 @@ def train(args):
                           f"pi_loss={metrics['policy_loss']:.4f} | "
                           f"v_loss={metrics['value_loss']:.4f} | "
                           f"entropy={metrics['entropy']:.4f}")
+                events.append({
+                    "step": step,
+                    "type": "ppo_update",
+                    "update": update_count,
+                    "policy_loss": round(metrics["policy_loss"], 4),
+                    "value_loss": round(metrics["value_loss"], 4),
+                    "entropy": round(metrics["entropy"], 4),
+                })
 
             obs = next_obs
             if done:
@@ -236,8 +272,14 @@ def train(args):
                 ckpt_path = os.path.join(checkpoint_dir, f"ppo_lstm_step_{step}.pt")
                 agent.save(ckpt_path)
                 print(f"       | {'[SAVED]':>8} | checkpoint -> {ckpt_path}")
+                events.append({
+                    "step": step,
+                    "type": "checkpoint",
+                    "path": ckpt_path,
+                })
 
     except KeyboardInterrupt:
+        status = "interrupted"
         print("\n[!] Interrupted by user")
 
     elapsed = time.time() - start_time
@@ -257,6 +299,61 @@ def train(args):
     print(f"  Crash dir:       {crash_dir}")
     print(f"  Final checkpoint: {final_path}")
 
+    new_crash_files = sorted(
+        filename for filename in os.listdir(crash_dir)
+        if filename.startswith("crash_") and filename not in existing_crash_files
+    )
+    if new_crash_files:
+        print()
+        print("  Crashes found:")
+        for crash_file in new_crash_files:
+            print(f"    • {crash_file}")
+
+    finished_at = datetime.now().isoformat(timespec="seconds")
+    run_report = {
+        "model": "PPO+LSTM",
+        "status": status,
+        "started_at": started_at,
+        "finished_at": finished_at,
+        "requested_steps": steps,
+        "completed_steps": step,
+        "completion_rule": "Run is done when completed_steps reaches requested_steps or the process is interrupted.",
+        "target_path": target,
+        "seed_path": seed,
+        "target_name": os.path.basename(target),
+        "config": {
+            "rollout_size": rollout_size,
+            "learning_rate": lr,
+            "random_seed": random_seed,
+            "device": device,
+            "timeout_ms": timeout_ms,
+            "max_input_size": max_input_size,
+            "checkpoint_interval": checkpoint_interval,
+            "lstm_hidden": lstm_hidden,
+            "lstm_layers": lstm_layers,
+        },
+        "metrics": {
+            "elapsed_seconds": round(elapsed, 3),
+            "exec_speed": round(step / max(elapsed, 0.1), 3),
+            "total_reward": round(total_reward, 3),
+            "total_edges": best_total_edges,
+            "total_crashes": best_total_crashes,
+            "ppo_updates": update_count,
+        },
+        "events": events[:200],
+        "new_crash_files": new_crash_files,
+        "final_checkpoint": final_path,
+        "crash_dir": crash_dir,
+    }
+    markdown_report_path, json_report_path = write_run_report(report_dir, run_report)
+    run_report["markdown_report_path"] = markdown_report_path
+    run_report["json_report_path"] = json_report_path
+    markdown_report_path, json_report_path = write_run_report(report_dir, run_report)
+    print(f"  Run report (md): {markdown_report_path}")
+    print(f"  Run report (json): {json_report_path}")
+    logger.info("Run report written: %s", markdown_report_path)
+    logger.info("Run report written: %s", json_report_path)
+
     return {
         "steps": step,
         "elapsed": elapsed,
@@ -266,6 +363,8 @@ def train(args):
         "ppo_updates": update_count,
         "checkpoint": final_path,
         "total_reward": total_reward,
+        "report_markdown": markdown_report_path,
+        "report_json": json_report_path,
     }
 
 

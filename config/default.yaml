@@ -33,6 +33,7 @@ fuzzing:
 paths:
   checkpoint_dir: data/checkpoints
   crash_dir: data/crashes
+  report_dir: data/reports
   corpus_dir: corpus
   project_root: .
 

@@ -22,6 +22,7 @@ import sys
 import argparse
 import time
 import logging
+from datetime import datetime
 import numpy as np
 
 # Add project root to path
@@ -32,6 +33,7 @@ from config import load_config
 from config.logging_setup import setup_logging
 from mutator.mutator import NUM_ACTIONS, STRATEGY_NAMES
 from agent.reward_engine import RewardEngine
+from agent.run_report import write_run_report
 from agent.runtime_utils import set_random_seed
 
 
@@ -170,6 +172,7 @@ def train(args):
     seed = os.path.join(PROJECT_ROOT, seed) if not os.path.isabs(seed) else seed
     crash_dir = config.resolve_path("crash_dir")
     checkpoint_dir = config.resolve_path("checkpoint_dir")
+    report_dir = config.resolve_path("report_dir")
 
     logger.info(f"Target binary: {target}")
     logger.info(f"Seed file: {seed}")
@@ -181,6 +184,7 @@ def train(args):
     logger.info(f"Timeout: {timeout_ms}ms")
     logger.info(f"Max input size: {max_input_size}")
     logger.info(f"Checkpoint interval: {checkpoint_interval}")
+    logger.info(f"Report directory: {report_dir}")
     logger.info("")
 
     # ─── Input Validation ────────────────────────────────────
@@ -230,6 +234,7 @@ def train(args):
     logger.info(f"Creating output directories...")
     os.makedirs(checkpoint_dir, exist_ok=True)
     os.makedirs(crash_dir, exist_ok=True)
+    os.makedirs(report_dir, exist_ok=True)
     existing_crash_files = {
         filename for filename in os.listdir(crash_dir)
         if filename.startswith("crash_")
@@ -305,9 +310,13 @@ def train(args):
     total_reward = 0.0
     episode_rewards = []
     start_time = time.time()
+    started_at = datetime.now().isoformat(timespec="seconds")
     update_count = 0
     best_total_edges = 0
     best_total_crashes = 0
+    status = "completed"
+    events = []
+    step = 0
 
     try:
         for step in range(1, steps + 1):
@@ -334,11 +343,26 @@ def train(args):
                 if info["crash_path"]:
                     crash_marker += f" → saved"
                 logger.warning(f"Crash detected: {info['signal']} (step {step})")
+                events.append({
+                    "step": step,
+                    "type": "crash",
+                    "signal": info["signal"],
+                    "reward": round(reward, 3),
+                    "total_crashes": info["total_crashes"],
+                })
 
             if step % 10 == 0 or info["crashed"] or info["new_edges"] > 0:
                 print(f"{step:>6} | {reward:>+8.1f} | {info['new_edges']:>4} | "
                       f"{info['total_edges']:>6} | {info['total_crashes']:>7} | "
                       f"{action_name:>10} | {crash_marker}")
+                if info["new_edges"] > 0:
+                    events.append({
+                        "step": step,
+                        "type": "coverage_gain",
+                        "new_edges": info["new_edges"],
+                        "total_edges": info["total_edges"],
+                        "action": action_name,
+                    })
 
             # PPO Update
             if buffer.full or done:
@@ -357,6 +381,14 @@ def train(args):
                           f"π_loss={metrics['policy_loss']:.4f} | "
                           f"v_loss={metrics['value_loss']:.4f} | "
                           f"entropy={metrics['entropy']:.4f}")
+                events.append({
+                    "step": step,
+                    "type": "ppo_update",
+                    "update": update_count,
+                    "policy_loss": round(metrics["policy_loss"], 4),
+                    "value_loss": round(metrics["value_loss"], 4),
+                    "entropy": round(metrics["entropy"], 4),
+                })
 
             # Checkpoint
             if step % checkpoint_interval == 0:
@@ -364,6 +396,11 @@ def train(args):
                 agent.save(ckpt_path)
                 logger.info(f"Checkpoint saved: {ckpt_path}")
                 print(f"       | {'[SAVED]':>8} | checkpoint → {ckpt_path}")
+                events.append({
+                    "step": step,
+                    "type": "checkpoint",
+                    "path": ckpt_path,
+                })
 
             # Update state
             obs = next_obs
@@ -374,6 +411,7 @@ def train(args):
                 obs, _ = env.reset()
 
     except KeyboardInterrupt:
+        status = "interrupted"
         logger.warning("Training interrupted by user")
         print("\n[!] Interrupted by user")
 
@@ -419,6 +457,49 @@ def train(args):
         for crash_file in new_crash_files:
             print(f"    • {crash_file}")
             logger.info(f"    • {crash_file}")
+
+    finished_at = datetime.now().isoformat(timespec="seconds")
+    run_report = {
+        "model": "PPO",
+        "status": status,
+        "started_at": started_at,
+        "finished_at": finished_at,
+        "requested_steps": steps,
+        "completed_steps": step,
+        "completion_rule": "Run is done when completed_steps reaches requested_steps or the process is interrupted.",
+        "target_path": target,
+        "seed_path": seed,
+        "target_name": os.path.basename(target),
+        "config": {
+            "rollout_size": rollout_size,
+            "learning_rate": lr,
+            "random_seed": random_seed,
+            "device": device,
+            "timeout_ms": timeout_ms,
+            "max_input_size": max_input_size,
+            "checkpoint_interval": checkpoint_interval,
+        },
+        "metrics": {
+            "elapsed_seconds": round(elapsed, 3),
+            "exec_speed": round(step / max(elapsed, 0.1), 3),
+            "total_reward": round(total_reward + sum(episode_rewards), 3),
+            "total_edges": best_total_edges,
+            "total_crashes": best_total_crashes,
+            "ppo_updates": update_count,
+        },
+        "events": events[:200],
+        "new_crash_files": new_crash_files,
+        "final_checkpoint": final_path,
+        "crash_dir": crash_dir,
+    }
+    markdown_report_path, json_report_path = write_run_report(report_dir, run_report)
+    run_report["markdown_report_path"] = markdown_report_path
+    run_report["json_report_path"] = json_report_path
+    markdown_report_path, json_report_path = write_run_report(report_dir, run_report)
+    print(f"  Run report (md): {markdown_report_path}")
+    print(f"  Run report (json): {json_report_path}")
+    logger.info(f"Run report written: {markdown_report_path}")
+    logger.info(f"Run report written: {json_report_path}")
 
 
 if __name__ == "__main__":

@@ -29,6 +29,32 @@ Use this format for future work:
 
 ---
 
+## v0.2.2 - 2026-03-17
+
+### What Changed
+- Added automatic per-run report generation for baseline PPO and PPO+LSTM training runs.
+- Added a shared report writer that saves both markdown and JSON artifacts after each run.
+- Added a dedicated report directory so run outputs are preserved independently from checkpoints and crashes.
+- Made the run completion state explicit in the report with requested steps, completed steps, and completion rule.
+
+### Files
+- Added [agent/run_report.py](/home/kali/Fuzzi/Fuzzinator/agent/run_report.py)
+- Updated [agent/train.py](/home/kali/Fuzzi/Fuzzinator/agent/train.py)
+- Updated [agent/train_lstm.py](/home/kali/Fuzzi/Fuzzinator/agent/train_lstm.py)
+- Updated [config/default.yaml](/home/kali/Fuzzi/Fuzzinator/config/default.yaml)
+
+### Result
+- Every completed run now writes:
+- a markdown report in `data/reports/`
+- a JSON report in `data/reports/`
+- The console now prints the report paths at the end of the run.
+- Run completion is now visible in three places:
+- the final `Fuzzing Campaign Complete!` summary
+- the printed report paths
+- the `status`, `requested_steps`, and `completed_steps` fields inside the report
+
+---
+
 ## v0.2.1 - 2026-03-17
 
 ### What Changed
