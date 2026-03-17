@@ -51,6 +51,12 @@ class Config:
         fuzz_cfg = self._config.get("fuzzing", {})
         if fuzz_cfg.get("buffer_size", 0) <= 0:
             raise ValueError("fuzzing.buffer_size must be positive")
+        if fuzz_cfg.get("new_edge_reward", 0) <= 0:
+            raise ValueError("fuzzing.new_edge_reward must be positive")
+        if fuzz_cfg.get("crash_reward", -1) < 0:
+            raise ValueError("fuzzing.crash_reward must be non-negative")
+        if fuzz_cfg.get("timeout_penalty", 1) > 0:
+            raise ValueError("fuzzing.timeout_penalty must be zero or negative")
 
     def get(self, key: str, default: Any = None) -> Any:
         """
@@ -73,6 +79,24 @@ class Config:
                 return default
 
         return value
+
+    def set(self, key: str, value: Any) -> None:
+        """
+        Set a configuration value using dot notation.
+
+        Args:
+            key: Configuration key (e.g., 'logging.level')
+            value: Value to assign
+        """
+        keys = key.split(".")
+        target = self._config
+
+        for k in keys[:-1]:
+            if k not in target or not isinstance(target[k], dict):
+                target[k] = {}
+            target = target[k]
+
+        target[keys[-1]] = value
 
     def resolve_path(self, path_key: str) -> str:
         """

@@ -3,10 +3,13 @@
 
 import sys
 import os
+import logging
 sys.path.insert(0, os.getcwd())
 
 from config import load_config
 from config.logging_setup import setup_logging
+from agent.reward_engine import RewardEngine
+from environment.execution_harness import ExecutionHarness
 
 # Test 1: Config loading
 print("=" * 60)
@@ -33,6 +36,7 @@ print("=" * 60)
 try:
     logger = setup_logging(cfg, "test_logger")
     logger.info("✓ Logging setup successful")
+    logging.getLogger("environment.fuzz_env").info("Module logger propagation check")
     logger.debug("This is a debug message")
     logger.warning("This is a warning message")
     print()
@@ -78,6 +82,41 @@ try:
     print()
 except Exception as e:
     print(f"✗ Security function test failed: {e}")
+    sys.exit(1)
+
+# Test 5: Reward engine config wiring
+print("=" * 60)
+print("TEST 5: Reward Engine")
+print("=" * 60)
+
+try:
+    reward_engine = RewardEngine(
+        new_edge_reward=cfg.get("fuzzing.new_edge_reward"),
+        crash_reward=cfg.get("fuzzing.crash_reward"),
+        no_progress_penalty=cfg.get("fuzzing.timeout_penalty"),
+    )
+    reward = reward_engine.compute(new_edges=2, crashed=True)
+    print("✓ Reward engine wiring successful")
+    print(f"  Reward for 2 edges + crash: {reward}")
+    print()
+except Exception as e:
+    print(f"✗ Reward engine wiring failed: {e}")
+    sys.exit(1)
+
+# Test 6: Execution harness validation
+print("=" * 60)
+print("TEST 6: Execution Harness Validation")
+print("=" * 60)
+
+try:
+    target_path = os.path.abspath(cfg.get("environment.target_binary"))
+    harness = ExecutionHarness(target_path, timeout=cfg.get("environment.timeout_ms") / 1000.0)
+    print("✓ Execution harness initialized successfully")
+    print(f"  Target: {harness.target_path}")
+    print(f"  Timeout: {harness.timeout}s")
+    print()
+except Exception as e:
+    print(f"✗ Execution harness validation failed: {e}")
     sys.exit(1)
 
 print("=" * 60)

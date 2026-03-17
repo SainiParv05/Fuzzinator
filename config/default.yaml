@@ -5,6 +5,7 @@
 agent:
   learning_rate: 3.0e-4
   lstm_hidden: 256
+  lstm_layers: 2
   ppo_epochs: 4
   entropy_coeff: 0.01
   value_loss_coeff: 0.5

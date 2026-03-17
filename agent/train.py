@@ -30,10 +30,8 @@ sys.path.insert(0, PROJECT_ROOT)
 
 from config import load_config
 from config.logging_setup import setup_logging
-from agent.ppo_agent import PPOAgent
-from agent.replay_buffer import RolloutBuffer
-from environment.fuzz_env import FuzzEnv, OBS_SIZE
 from mutator.mutator import NUM_ACTIONS, STRATEGY_NAMES
+from agent.reward_engine import RewardEngine
 
 
 def validate_file_exists(filepath: str, description: str, logger: logging.Logger) -> bool:
@@ -134,7 +132,7 @@ def train(args):
 
     # Override logging level if verbose
     if args.verbose:
-        config._config["logging"]["level"] = "DEBUG"
+        config.set("logging.level", "DEBUG")
 
     logger = setup_logging(config, "fuzzinator")
     logger.info("=" * 60)
@@ -150,6 +148,15 @@ def train(args):
     rollout_size = args.rollout_size or config.get("fuzzing.buffer_size")
     lr = args.lr or config.get("agent.learning_rate")
     checkpoint_interval = args.checkpoint_interval or config.get("fuzzing.checkpoint_interval")
+    timeout_ms = config.get("environment.timeout_ms")
+    max_input_size = config.get("environment.max_input_size")
+    new_edge_reward = config.get("fuzzing.new_edge_reward")
+    crash_reward = config.get("fuzzing.crash_reward")
+    timeout_penalty = config.get("fuzzing.timeout_penalty")
+    ppo_epochs = config.get("agent.ppo_epochs", 4)
+    entropy_coef = config.get("agent.entropy_coeff", 0.01)
+    value_coef = config.get("agent.value_loss_coeff", 0.5)
+    max_grad_norm = config.get("agent.max_grad_norm", 0.5)
 
     # Resolve paths relative to project root
     target = os.path.join(PROJECT_ROOT, target) if not os.path.isabs(target) else target
@@ -162,6 +169,8 @@ def train(args):
     logger.info(f"Total steps: {steps}")
     logger.info(f"Rollout size: {rollout_size}")
     logger.info(f"Learning rate: {lr}")
+    logger.info(f"Timeout: {timeout_ms}ms")
+    logger.info(f"Max input size: {max_input_size}")
     logger.info(f"Checkpoint interval: {checkpoint_interval}")
     logger.info("")
 
@@ -188,6 +197,14 @@ def train(args):
         logger.error(f"Invalid learning rate: {lr} (must be positive)")
         sys.exit(1)
 
+    if timeout_ms <= 0:
+        logger.error(f"Invalid timeout: {timeout_ms}ms (must be positive)")
+        sys.exit(1)
+
+    if max_input_size <= 0:
+        logger.error(f"Invalid max input size: {max_input_size} (must be positive)")
+        sys.exit(1)
+
     logger.info("Input validation passed.")
     logger.info("")
 
@@ -197,16 +214,41 @@ def train(args):
     logger.info(f"Creating output directories...")
     os.makedirs(checkpoint_dir, exist_ok=True)
     os.makedirs(crash_dir, exist_ok=True)
+    existing_crash_files = {
+        filename for filename in os.listdir(crash_dir)
+        if filename.startswith("crash_")
+    }
     logger.debug(f"Checkpoint directory: {checkpoint_dir}")
     logger.debug(f"Crash directory: {crash_dir}")
 
     logger.info("Initializing fuzzing environment...")
+    reward_engine = RewardEngine(
+        new_edge_reward=new_edge_reward,
+        crash_reward=crash_reward,
+        no_progress_penalty=timeout_penalty,
+    )
+
+    try:
+        from agent.ppo_agent import PPOAgent
+        from agent.replay_buffer import RolloutBuffer
+        from environment.fuzz_env import FuzzEnv, OBS_SIZE
+    except ModuleNotFoundError as e:
+        missing_module = getattr(e, "name", "unknown module")
+        logger.error(
+            "Missing dependency: %s. Install project requirements before running training.",
+            missing_module
+        )
+        sys.exit(1)
+
     # Initialize environment
     env = FuzzEnv(
         target_path=target,
         seed_path=seed,
         crash_dir=crash_dir,
         max_steps=steps,
+        timeout=timeout_ms / 1000.0,
+        max_input_len=max_input_size,
+        reward_engine=reward_engine,
     )
 
     logger.info("Initializing PPO agent...")
@@ -215,6 +257,10 @@ def train(args):
         obs_size=OBS_SIZE,
         n_actions=NUM_ACTIONS,
         lr=lr,
+        entropy_coef=entropy_coef,
+        value_coef=value_coef,
+        max_grad_norm=max_grad_norm,
+        ppo_epochs=ppo_epochs,
     )
 
     logger.info("Initializing rollout buffer...")
@@ -342,14 +388,17 @@ def train(args):
     print(f"  Final checkpoint: {final_path}")
 
     # List crashes
-    if env.crash_vault.total_crashes > 0:
+    new_crash_files = sorted(
+        filename for filename in os.listdir(crash_dir)
+        if filename.startswith("crash_") and filename not in existing_crash_files
+    )
+    if new_crash_files:
         print()
         print("  Crashes found:")
-        logger.info(f"Found {env.crash_vault.total_crashes} unique crashes:")
-        for f in os.listdir(crash_dir):
-            if f.startswith("crash_"):
-                print(f"    • {f}")
-                logger.info(f"    • {f}")
+        logger.info(f"Found {len(new_crash_files)} new unique crashes:")
+        for crash_file in new_crash_files:
+            print(f"    • {crash_file}")
+            logger.info(f"    • {crash_file}")
 
 
 if __name__ == "__main__":

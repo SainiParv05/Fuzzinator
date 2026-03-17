@@ -53,20 +53,27 @@ class FuzzEnv(gym.Env):
 
     def __init__(self, target_path: str, seed_path: str,
                  crash_dir: str = "data/crashes",
-                 max_steps: int = MAX_STEPS):
+                 max_steps: int = MAX_STEPS,
+                 timeout: float = 0.5,
+                 max_input_len: int = MAX_INPUT_LEN,
+                 reward_engine: RewardEngine | None = None):
         super().__init__()
 
         self.target_path = target_path
         self.seed_path = seed_path
         self.max_steps = max_steps
+        self.max_input_len = max_input_len
 
-        logger.debug(f"Initializing FuzzEnv: target={target_path}, seed={seed_path}, max_steps={max_steps}")
+        logger.debug(
+            "Initializing FuzzEnv: target=%s, seed=%s, max_steps=%s, timeout=%ss, max_input_len=%s",
+            target_path, seed_path, max_steps, timeout, max_input_len
+        )
 
         # Components
-        self.harness = ExecutionHarness(target_path)
+        self.harness = ExecutionHarness(target_path, timeout=timeout)
         self.coverage = CoverageReader()
         self.crash_vault = CrashVault(crash_dir)
-        self.reward_engine = RewardEngine()
+        self.reward_engine = reward_engine or RewardEngine()
 
         # Spaces
         self.action_space = spaces.Discrete(NUM_ACTIONS)
@@ -174,7 +181,7 @@ class FuzzEnv(gym.Env):
         obs[64] = self.last_action / max(NUM_ACTIONS - 1, 1)
 
         # Input length (normalized)
-        obs[65] = min(len(self.current_input) / MAX_INPUT_LEN, 1.0)
+        obs[65] = min(len(self.current_input) / max(self.max_input_len, 1), 1.0)
 
         # Step count (normalized)
         obs[66] = min(self.step_count / self.max_steps, 1.0)
