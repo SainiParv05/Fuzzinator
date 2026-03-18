@@ -1417,14 +1417,12 @@
           try {
             const status = await fetchJson(API.status(), { headers: {} });
             if (!active) return;
-            if (status.current_run?.status === 'running') {
-              try {
-                const live = await fetchJson(API.liveStatus(), { headers: {} });
-                if (!live.error) {
-                  status.live_status = live;
-                }
-              } catch (ignored) { }
-            }
+            try {
+              const live = await fetchJson(API.liveStatus(), { headers: {} });
+              if (!live.error) {
+                status.live_status = live;
+              }
+            } catch (ignored) { }
 
             setDashboardState(status);
             setError('');
