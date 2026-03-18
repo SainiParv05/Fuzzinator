@@ -41,7 +41,7 @@ Use this format for future work:
 
 ### Files
 - Added [backend/dashboard_server.py](/home/kali/Fuzzi/Fuzzinator/backend/dashboard_server.py)
-- Updated [frontend/Dashboard.html](/home/kali/Fuzzi/Fuzzinator/frontend/Dashboard.html)
+- Updated [frontend/index.html](/home/kali/Fuzzi/Fuzzinator/frontend/index.html)
 - Updated [instrumentation/build_target.sh](/home/kali/Fuzzi/Fuzzinator/instrumentation/build_target.sh)
 
 ### Result
@@ -49,7 +49,7 @@ Use this format for future work:
 - Verified working flow:
 - `GET /api/status`
 - `POST /api/upload_and_build`
-- static serving of `frontend/Dashboard.html`
+- static serving of `frontend/index.html`
 - Verified instrumentation-backed upload build with `target_dashboard_smoke.c` -> `targets/target_dashboard_smoke`
 - Current limitation observed during validation:
 - baseline PPO smoke runs complete normally

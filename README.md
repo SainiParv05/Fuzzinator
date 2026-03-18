@@ -67,7 +67,7 @@ The project ships with a **real-time web dashboard** that lets you upload target
 | **Mutator**            | `mutator/mutator.py`                   | 4 strategies: bit_flip, byte_flip, byte_insert, havoc    |
 | **Config**             | `config/default.yaml`                  | Central YAML config for agent, environment, and paths    |
 | **Dashboard Server**   | `backend/dashboard_server.py`          | REST API — build, run, and monitor campaigns             |
-| **Dashboard UI**       | `frontend/Dashboard.html`              | React-based real-time dashboard with live charts         |
+| **Dashboard UI**       | `frontend/index.html`              | React-based real-time dashboard with live charts         |
 
 ## Target Programs
 
@@ -133,7 +133,7 @@ python agent/train_lstm.py --target targets/target_buffer_overflow --steps 500
 python backend/dashboard_server.py
 ```
 
-Then open **`http://127.0.0.1:8000/Dashboard.html`** in your browser.
+Then open **`http://127.0.0.1:8000/index.html`** in your browser.
 
 The dashboard provides:
 - **Drag-and-drop** upload of `.c` target files
@@ -312,7 +312,7 @@ fuzzinator/
 ├── backend/                      # Dashboard server
 │   └── dashboard_server.py       # REST API for build, run, status, report
 ├── frontend/                     # Dashboard UI
-│   └── Dashboard.html            # React + Tailwind real-time dashboard
+│   └── index.html            # React + Tailwind real-time dashboard
 ├── instrumentation/              # Build tools
 │   ├── build_target.sh           # Target compilation with coverage
 │   └── shm_init.c                # Shared memory instrumentation

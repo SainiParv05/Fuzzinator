@@ -244,7 +244,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             return
 
         if parsed.path == "/":
-            self.path = "/Dashboard.html"
+            self.path = "/index.html"
         return super().do_GET()
 
     def do_POST(self) -> None:
@@ -310,7 +310,7 @@ def main() -> int:
     port = int(os.environ.get("FUZZINATOR_DASHBOARD_PORT", "8000"))
     server = ThreadingHTTPServer(("127.0.0.1", port), DashboardRequestHandler)
     print(f"Dashboard server running at http://127.0.0.1:{port}")
-    print("Open /Dashboard.html in the browser to use the GUI.")
+    print("Open /index.html in the browser to use the GUI.")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
