@@ -104,12 +104,23 @@
       { time: '11:20:02.100', tag: 'FUZZ', msg: 'Corpus loaded: 42 seeds. Starting fuzzing loop on target_maze...', type: 'info' },
     ];
 
+    // --- API BASE URL CONFIGURATION ---
+    // On localhost, API calls go to the same origin (relative paths).
+    // On hosted domains, the user must provide their backend URL (e.g. ngrok).
+    const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+    const STORED_API_BASE = !isLocalhost ? (localStorage.getItem('fuzzinator_api_base') || '') : '';
+
+    function getApiBase() {
+      if (isLocalhost) return '';
+      return localStorage.getItem('fuzzinator_api_base') || '';
+    }
+
     const API = {
-      status: '/api/status',
-      uploadAndBuild: '/api/upload_and_build',
-      runLstm: '/api/run_lstm',
-      reportLatest: '/api/report/latest',
-      report: (path) => `/api/report?path=${encodeURIComponent(path)}`,
+      status: () => `${getApiBase()}/api/status`,
+      uploadAndBuild: () => `${getApiBase()}/api/upload_and_build`,
+      runLstm: () => `${getApiBase()}/api/run_lstm`,
+      reportLatest: () => `${getApiBase()}/api/report/latest`,
+      report: (path) => `${getApiBase()}/api/report?path=${encodeURIComponent(path)}`,
     };
 
     async function fetchJson(url, options = {}) {
@@ -1134,6 +1145,85 @@
       </div>
     );
 
+    const BackendConfig = ({ onSave }) => {
+      const [url, setUrl] = useState(getApiBase());
+      const [testing, setTesting] = useState(false);
+      const [status, setStatus] = useState(getApiBase() ? 'saved' : 'disconnected');
+
+      const testConnection = async () => {
+        const trimmed = url.replace(/\/+$/, '');
+        setTesting(true);
+        try {
+          await fetchJson(`${trimmed}/api/status`, { headers: {} });
+          localStorage.setItem('fuzzinator_api_base', trimmed);
+          setStatus('connected');
+          if (onSave) onSave(trimmed);
+        } catch {
+          setStatus('error');
+        } finally {
+          setTesting(false);
+        }
+      };
+
+      const disconnect = () => {
+        localStorage.removeItem('fuzzinator_api_base');
+        setUrl('');
+        setStatus('disconnected');
+        if (onSave) onSave('');
+      };
+
+      const statusColors = {
+        disconnected: 'text-slate-500',
+        connected: 'text-emerald-400',
+        error: 'text-rose-400',
+        saved: 'text-amber-400',
+      };
+      const statusLabels = {
+        disconnected: 'Not connected',
+        connected: 'Connected',
+        error: 'Connection failed',
+        saved: 'Saved (untested)',
+      };
+
+      if (isLocalhost) return null;
+
+      return (
+        <GlassCard className="mb-8 p-6">
+          <SectionTitle title="Backend Connection" subtitle="Connect to your local Fuzzinator server" icon={Server} />
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-1">
+              <label className="block text-xs text-slate-400 mb-2">Backend URL (e.g. ngrok)</label>
+              <input
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                placeholder="https://abc123.ngrok-free.app"
+              />
+            </div>
+            <button
+              onClick={testConnection}
+              disabled={!url || testing}
+              className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 disabled:opacity-40 whitespace-nowrap"
+            >
+              {testing ? 'Testing...' : 'Connect'}
+            </button>
+            {getApiBase() && (
+              <button
+                onClick={disconnect}
+                className="px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-400/30 text-rose-300 whitespace-nowrap"
+              >
+                Disconnect
+              </button>
+            )}
+          </div>
+          <div className={`mt-3 text-xs font-mono ${statusColors[status]}`}>
+            ● {statusLabels[status]}
+            {status === 'connected' && <span className="text-slate-500 ml-2">— {getApiBase()}</span>}
+          </div>
+        </GlassCard>
+      );
+    };
+
     function App() {
       const [dashboardState, setDashboardState] = useState({ current_run: { status: 'idle', stdout_tail: [] }, last_build: { status: 'idle' }, latest_report: null, available_reports: [] });
       const [latestReport, setLatestReport] = useState(null);
@@ -1147,7 +1237,7 @@
         let active = true;
         const loadStatus = async () => {
           try {
-            const status = await fetchJson(API.status, { headers: {} });
+            const status = await fetchJson(API.status(), { headers: {} });
             if (!active) return;
             setDashboardState(status);
             if (status.latest_report?.path) {
@@ -1173,7 +1263,7 @@
         setError('');
         try {
           const content = await selectedFile.text();
-          const result = await fetchJson(API.uploadAndBuild, {
+          const result = await fetchJson(API.uploadAndBuild(), {
             method: 'POST',
             body: JSON.stringify({ filename: selectedFile.name, content }),
           });
@@ -1193,7 +1283,7 @@
         setBusy(true);
         setError('');
         try {
-          const result = await fetchJson(API.runLstm, {
+          const result = await fetchJson(API.runLstm(), {
             method: 'POST',
             body: JSON.stringify({ target_binary: targetOverride || targetBinary, steps: Number(steps) }),
           });
@@ -1241,6 +1331,7 @@
           <div className="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)] opacity-80 mix-blend-multiply" />
 
           <div className="max-w-[1600px] mx-auto p-4 md:p-8 relative z-10">
+            {!isLocalhost && <BackendConfig onSave={() => window.location.reload()} />}
             <HeroSection liveStats={liveStats} />
             <ControlCenter
               selectedFile={selectedFile}
