@@ -192,20 +192,27 @@
       report: (path) => `${getApiBase()}/api/report?path=${encodeURIComponent(path)}`,
     };
 
-    async function fetchJson(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true',
-          ...(options.headers || {}),
-        },
-      });
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload.error || `Request failed: ${response.status}`);
+    async function fetchJson(url, options = {}, retries = 2) {
+      for (let i = 0; i <= retries; i++) {
+        try {
+          const response = await fetch(url, {
+            ...options,
+            headers: {
+              'Content-Type': 'application/json',
+              'ngrok-skip-browser-warning': 'true',
+              ...(options.headers || {}),
+            },
+          });
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload.error || `Request failed: ${response.status}`);
+          }
+          return payload;
+        } catch (error) {
+          if (i === retries) throw error;
+          await new Promise(r => setTimeout(r, 1000 * (i + 1))); // Simple backoff
+        }
       }
-      return payload;
     }
 
     // --- UTILITY COMPONENTS ---

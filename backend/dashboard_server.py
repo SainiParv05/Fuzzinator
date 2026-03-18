@@ -265,7 +265,7 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                     return
                 except:
                     pass
-            self.respond_json({"error": "No live status"}, status=HTTPStatus.NOT_FOUND)
+            self.respond_json({"error": "No live status"}, status=HTTPStatus.OK)
             return
 
         if parsed.path == "/":
