@@ -14,7 +14,8 @@
 
   <style>
     body {
-      background-color: #0f172a; /* Lighter, richer dark slate instead of stark black */
+      background-color: #0f172a;
+      /* Lighter, richer dark slate instead of stark black */
       color: #f8fafc;
       margin: 0;
       overflow-x: hidden;
@@ -24,24 +25,59 @@
     /* Animated Glassmorphism Background Blobs */
     .bg-shapes {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: -1;
       overflow: hidden;
       pointer-events: none;
     }
+
     .shape1 {
-      position: absolute; width: 700px; height: 700px; background: rgba(56, 189, 248, 0.15); border-radius: 50%; filter: blur(120px); top: -200px; left: -100px; animation: float 10s infinite ease-in-out alternate;
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      background: rgba(56, 189, 248, 0.15);
+      border-radius: 50%;
+      filter: blur(120px);
+      top: -200px;
+      left: -100px;
+      animation: float 10s infinite ease-in-out alternate;
     }
+
     .shape2 {
-      position: absolute; width: 600px; height: 600px; background: rgba(129, 140, 248, 0.15); border-radius: 50%; filter: blur(120px); bottom: -150px; right: -100px; animation: float 14s infinite ease-in-out alternate-reverse;
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: rgba(129, 140, 248, 0.15);
+      border-radius: 50%;
+      filter: blur(120px);
+      bottom: -150px;
+      right: -100px;
+      animation: float 14s infinite ease-in-out alternate-reverse;
     }
+
     .shape3 {
-      position: absolute; width: 500px; height: 500px; background: rgba(232, 121, 249, 0.12); border-radius: 50%; filter: blur(120px); top: 30%; left: 40%; animation: float 12s infinite ease-in-out alternate;
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(232, 121, 249, 0.12);
+      border-radius: 50%;
+      filter: blur(120px);
+      top: 30%;
+      left: 40%;
+      animation: float 12s infinite ease-in-out alternate;
     }
 
     @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(60px, 40px) scale(1.1); }
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate(60px, 40px) scale(1.1);
+      }
     }
 
     .custom-scrollbar::-webkit-scrollbar {
@@ -148,6 +184,8 @@
 
     const API = {
       status: () => `${getApiBase()}/api/status`,
+      liveStatus: () => `${getApiBase()}/api/live_status`,
+      stopRun: () => `${getApiBase()}/api/stop_run`,
       uploadAndBuild: () => `${getApiBase()}/api/upload_and_build`,
       runLstm: () => `${getApiBase()}/api/run_lstm`,
       reportLatest: () => `${getApiBase()}/api/report/latest`,
@@ -333,7 +371,7 @@
 
     const ControlCenter = ({
       selectedFile, setSelectedFile, targetBinary, setTargetBinary, steps, setSteps,
-      onUploadAndBuild, onCompileAndRun, onRun, busy, buildInfo, currentRun, error,
+      onUploadAndBuild, onCompileAndRun, onRun, onStop, busy, buildInfo, currentRun, error,
     }) => {
       const [isDragOver, setIsDragOver] = useState(false);
 
@@ -380,9 +418,9 @@
             <div className="space-y-4">
               <div className="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-xl p-5 shadow-inner">
                 <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
-                  <Hexagon size={14} className="text-indigo-400"/> Run Settings
+                  <Hexagon size={14} className="text-indigo-400" /> Run Settings
                 </div>
-                
+
                 <label className="block text-xs text-slate-400 mb-1.5 font-medium">Compiled Target</label>
                 <input
                   value={targetBinary}
@@ -390,14 +428,22 @@
                   className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all shadow-inner"
                   placeholder="target_buffer_overflow"
                 />
-                
-                <label className="block text-xs text-slate-400 mt-4 mb-1.5 font-medium">Steps</label>
+
+                <div className="flex items-center justify-between mt-4 mb-1.5">
+                  <label className="text-xs text-slate-400 font-medium">Steps</label>
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-500 group-hover:text-cyan-400 transition-colors">Smart Auto-Stop</span>
+                    <input type="checkbox" checked={steps === -1} onChange={(e) => setSteps(e.target.checked ? -1 : 200)} className="rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500/50" />
+                  </label>
+                </div>
                 <input
                   type="number"
-                  value={steps}
+                  value={steps === -1 ? '' : steps}
+                  disabled={steps === -1}
+                  placeholder={steps === -1 ? 'Auto' : '200'}
                   min="1"
-                  onChange={(e) => setSteps(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all shadow-inner"
+                  onChange={(e) => setSteps(Number(e.target.value))}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all shadow-inner disabled:opacity-50"
                 />
 
                 <div className="mt-5 flex flex-col gap-3">
@@ -421,6 +467,13 @@
                     className="w-full px-4 py-2.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-sm font-semibold hover:bg-emerald-500/30 disabled:opacity-40 transition-colors"
                   >
                     Run PPO + LSTM
+                  </button>
+                  <button
+                    onClick={onStop}
+                    disabled={currentRun.status !== 'running'}
+                    className="w-full px-4 py-2.5 rounded-lg bg-rose-500/20 border border-rose-400/40 text-rose-200 text-sm font-semibold hover:bg-rose-500/30 disabled:opacity-40 transition-colors"
+                  >
+                    Stop Run
                   </button>
                 </div>
               </div>
@@ -506,9 +559,9 @@
             <div className="space-y-4">
               <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 text-xs font-mono shadow-inner">
                 <div className="text-slate-500 font-bold uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">Artifacts</div>
-                <div className="text-slate-300 break-all leading-relaxed"><span className="text-slate-500">Checkpoint:</span><br/>{report.final_checkpoint}</div>
-                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">Markdown:</span><br/>{report.markdown_report_path}</div>
-                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">JSON:</span><br/>{report.json_report_path}</div>
+                <div className="text-slate-300 break-all leading-relaxed"><span className="text-slate-500">Checkpoint:</span><br />{report.final_checkpoint}</div>
+                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">Markdown:</span><br />{report.markdown_report_path}</div>
+                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">JSON:</span><br />{report.json_report_path}</div>
               </div>
 
               <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 text-xs font-mono shadow-inner">
@@ -582,33 +635,20 @@
       );
     };
 
-    const BitmapVisualizer = () => {
-      const [cells, setCells] = useState([]);
+    const BitmapVisualizer = ({ liveBitmap }) => {
+      const [cells, setCells] = useState(Array.from({ length: 512 }, (_, i) => ({ id: i, hits: 0, type: 'normal' })));
 
       useEffect(() => {
-        const initialCells = Array.from({ length: 512 }, (_, i) => {
-          const isBase = Math.random() > 0.8;
-          const isHot = isBase && Math.random() > 0.5;
-          const isCrash = Math.random() > 0.99;
+        if (!liveBitmap || !liveBitmap.length) return;
+        setCells(prev => prev.map((cell, i) => {
+          const hits = liveBitmap[i] || 0;
           return {
-            id: i,
-            hits: isCrash ? 255 : isHot ? Math.floor(Math.random() * 50) + 10 : isBase ? Math.floor(Math.random() * 5) + 1 : 0,
-            type: isCrash ? 'crash' : 'normal'
+            ...cell,
+            hits: Math.min(255, hits),
+            type: hits >= 255 ? 'crash' : 'normal'
           };
-        });
-        setCells(initialCells);
-
-        const interval = setInterval(() => {
-          setCells(prev => {
-            const next = [...prev];
-            const idx = Math.floor(Math.random() * 512);
-            next[idx] = { ...next[idx], hits: Math.min(255, next[idx].hits + Math.floor(Math.random() * 20)) };
-            return next.map(c => ({ ...c, hits: c.hits > 0 && Math.random() > 0.9 ? Math.max(1, c.hits - 1) : c.hits }));
-          });
-        }, 1000);
-
-        return () => clearInterval(interval);
-      }, []);
+        }));
+      }, [liveBitmap]);
 
       const getCellColor = (hits, type) => {
         if (type === 'crash') return 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] z-10 border border-rose-300';
@@ -1009,10 +1049,16 @@
                 {run.steps && ` • ${run.steps} steps`}
               </div>
               {report && (
-                <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-3 flex gap-4">
-                  <span>Edges: <span className="text-slate-200">{report.metrics?.total_edges || 0}</span></span>
-                  <span>Crashes: <span className="text-slate-200">{report.metrics?.total_crashes || 0}</span></span>
-                  <span>Reward: <span className="text-slate-200">{(report.metrics?.total_reward || 0).toFixed(1)}</span></span>
+                <div className="mt-3">
+                  <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 flex gap-4 mb-3">
+                    <span>Edges: <span className="text-slate-200">{report.metrics?.total_edges || 0}</span></span>
+                    <span>Crashes: <span className="text-slate-200">{report.metrics?.total_crashes || 0}</span></span>
+                    <span>Reward: <span className="text-slate-200">{(report.metrics?.total_reward || 0).toFixed(1)}</span></span>
+                  </div>
+                  <div className="text-[13px] leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-slate-300">
+                    <strong className="text-white font-mono uppercase tracking-wide text-xs mb-1 block">Executive Summary</strong>
+                    The AI fuzzer dynamically generated and tested {report.completed_steps} unique inputs against the program, exploring {report.metrics?.total_edges || 0} execution paths. It discovered <strong className={report.metrics?.total_crashes > 0 ? "text-rose-400" : "text-emerald-400"}>{report.metrics?.total_crashes || 0} critical errors</strong> that caused the program to crash. {report.metrics?.total_crashes > 0 ? "Technical details and crash inputs have been saved in the Crash Vault for developer remediation." : "The program withstood all mutated inputs without crashing."}
+                  </div>
                 </div>
               )}
             </div>
@@ -1134,17 +1180,17 @@
 
           let instr = `${op} ${reg1}, ${reg2}`;
           let byteCount = 3;
-          
+
           if (op === 'PUSH' || op === 'POP' || op === 'CALL' || op === 'JZ') {
-             instr = `${op} ${reg1}`;
-             byteCount = 2;
+            instr = `${op} ${reg1}`;
+            byteCount = 2;
           }
           if (op === 'RET') {
             instr = 'RET';
             byteCount = 1;
           }
 
-          const hexDump = Array.from({length: byteCount}, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()).join(' ');
+          const hexDump = Array.from({ length: byteCount }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()).join(' ');
 
           setBinLogs(prev => {
             const next = [...prev, { addr, hexDump, instr }];
@@ -1196,7 +1242,7 @@
                     <div className="w-24 text-slate-500">{log.addr}</div>
                     <div className="w-32 text-cyan-400/80">{log.hexDump}</div>
                     <div className="flex-1 text-slate-300">
-                      <span className="text-emerald-400 font-bold w-12 inline-block">{op}</span> 
+                      <span className="text-emerald-400 font-bold w-12 inline-block">{op}</span>
                       <span className="text-indigo-300">{rest}</span>
                     </div>
                   </motion.div>
@@ -1364,6 +1410,11 @@
           try {
             const status = await fetchJson(API.status(), { headers: {} });
             if (!active) return;
+            try {
+              const live = await fetchJson(API.liveStatus(), { headers: {} });
+              status.live_status = live;
+            } catch (ignored) { }
+
             setDashboardState(status);
             setError('');
             if (status.latest_report?.path) {
@@ -1422,6 +1473,14 @@
         }
       };
 
+      const stopRun = async () => {
+        try {
+          await fetchJson(API.stopRun(), { method: 'POST' });
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+
       const run = dashboardState.current_run || {};
       useEffect(() => {
         if (dashboardState.last_build?.binary_path && !targetBinary) {
@@ -1430,12 +1489,14 @@
       }, [dashboardState.last_build, targetBinary]);
 
       const latestActionEvent = (latestReport?.events || []).slice().reverse().find((event) => event.action);
+      const isRunning = run.status === 'running';
+      const liveStatusObj = dashboardState.live_status || {};
       const liveStats = {
-        steps: latestReport?.completed_steps ?? MOCK_STATS.steps,
-        edges: latestReport?.metrics?.total_edges ?? MOCK_STATS.edges,
-        crashes: latestReport?.metrics?.total_crashes ?? MOCK_STATS.crashes,
+        steps: isRunning && liveStatusObj.step ? liveStatusObj.step : latestReport?.completed_steps ?? MOCK_STATS.steps,
+        edges: isRunning && liveStatusObj.edges !== undefined ? liveStatusObj.edges : latestReport?.metrics?.total_edges ?? MOCK_STATS.edges,
+        crashes: isRunning && liveStatusObj.crashes !== undefined ? liveStatusObj.crashes : latestReport?.metrics?.total_crashes ?? MOCK_STATS.crashes,
         execSec: latestReport?.metrics?.exec_speed ?? MOCK_STATS.execSec,
-        reward: latestReport?.metrics?.total_reward ?? MOCK_STATS.reward,
+        reward: isRunning && liveStatusObj.reward !== undefined ? liveStatusObj.reward : latestReport?.metrics?.total_reward ?? MOCK_STATS.reward,
         target: run.target ? run.target.split('/').pop() : latestReport?.target_name || MOCK_STATS.target,
         mutation: latestActionEvent?.action || MOCK_STATS.mutation,
         modelStatus: latestReport?.model || 'PPO + LSTM',
@@ -1475,6 +1536,7 @@
                 }
               }}
               onRun={runLstm}
+              onStop={stopRun}
               busy={busy}
               buildInfo={dashboardState.last_build}
               currentRun={run}
@@ -1489,7 +1551,7 @@
                 <PipelineVisual />
               </div>
 
-              <BitmapVisualizer />
+              <BitmapVisualizer liveBitmap={dashboardState.live_status?.bitmap} />
               <MutationStrategy report={latestReport} />
 
               <MLInsights report={latestReport} />
