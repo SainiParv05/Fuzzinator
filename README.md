@@ -106,6 +106,31 @@ bash instrumentation/build_target.sh
 python agent/train.py
 ```
 
+### Dashboard GUI
+
+```bash
+# Start the local dashboard server
+./.venv/bin/python backend/dashboard_server.py
+```
+
+Then open `http://127.0.0.1:8000` in your browser.
+
+The dashboard can now:
+- accept a dropped `.c` file
+- save it under `targets/`
+- compile it through `instrumentation/build_target.sh`
+- launch PPO+LSTM
+- show current run status, stdout tail, and the latest generated run report
+
+How to know a dashboard run is done:
+- the `Run State` panel changes from `running` to `completed` or `failed`
+- the latest report panel updates with the new report
+- the backend status API includes `current_run.status`, `report_json`, and `report_markdown`
+
+Current runtime note:
+- baseline PPO finishes normally
+- PPO+LSTM is wired into the dashboard, but it is still slow on CPU and may take a long time even for very short runs
+
 ### Options
 
 ```bash

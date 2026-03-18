@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fuzzinator Command Center</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Babel for in-browser JSX transpilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      background-color: #020205;
+      color: #e2e8f0;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #050810;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Using data-type="module" allows us to use ES module imports alongside Babel JSX transpilation -->
+  <script type="text/babel" data-type="module">
+    import React, { useState, useEffect, useRef } from 'https://esm.sh/react@18.2.0';
+    import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+    import { motion, AnimatePresence } from 'https://esm.sh/framer-motion@10.16.4?deps=react@18.2.0,react-dom@18.2.0';
+    import {
+      LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell
+    } from 'https://esm.sh/recharts@2.12.2?deps=react@18.2.0,react-dom@18.2.0';
+    import * as LucideIcons from 'https://esm.sh/lucide-react@0.359.0?deps=react@18.2.0';
+
+    const {
+      Activity, ShieldAlert, Cpu, Network, Database, Terminal,
+      Zap, Crosshair, ChevronRight, Play, Square, Hexagon,
+      TrendingUp, Fingerprint, Layers, Bug, Lock, Server,
+      GitBranch, GitCommit, SearchCode, Beaker
+    } = LucideIcons;
+
+    // --- MOCK DATA / FALLBACKS ---
+    const MOCK_STATS = {
+      steps: 4284,
+      edges: 84,
+      crashes: 3,
+      execSec: 58.2,
+      reward: 412.5,
+      target: 'target_maze',
+      mutation: 'byte_insert',
+      modelStatus: 'Optimizing Policy'
+    };
+
+    const CHART_DATA_ML = Array.from({ length: 50 }, (_, i) => ({
+      step: i * 100,
+      reward: Math.sin(i / 5) * 50 + i * 8 + Math.random() * 20,
+      policyLoss: Math.max(0, 2.5 - Math.log(i + 1) * 0.5 + Math.random() * 0.2),
+      valueLoss: Math.max(0, 5.0 - Math.log(i + 1) * 1.2 + Math.random() * 0.5),
+      entropy: Math.max(0.1, 1.5 - (i / 50) + Math.random() * 0.1),
+    }));
+
+    const MUTATION_STATS = [
+      { name: 'bit_flip', usage: 45, success: 12, color: '#3b82f6' },
+      { name: 'byte_flip', usage: 30, success: 18, color: '#8b5cf6' },
+      { name: 'byte_insert', usage: 15, success: 25, color: '#ec4899' },
+      { name: 'havoc', usage: 10, success: 45, color: '#10b981' },
+    ];
+
+    const TARGETS = [
+      { name: 'target_buffer_overflow', type: 'Memory Corruption', diff: 'Low', progress: 100, crashes: 12, status: 'Exploited' },
+      { name: 'target_format_string', type: 'Information Leak', diff: 'Medium', progress: 85, crashes: 2, status: 'Active' },
+      { name: 'target_maze', type: 'Complex Logic', diff: 'High', progress: 42, crashes: 0, status: 'Fuzzing' },
+    ];
+
+    const CRASH_VAULT = [
+      { id: '0x8f2a1', type: 'SIGSEGV', target: 'target_buffer_overflow', mutation: 'havoc', time: '10:42:11', desc: 'Invalid memory access at 0x00000000' },
+      { id: '0x3b9c4', type: 'ASAN_HEAP', target: 'target_format_string', mutation: 'byte_insert', time: '11:15:22', desc: 'Heap-buffer-overflow on address 0x6020...' },
+      { id: '0x1a7e9', type: 'TIMEOUT', target: 'target_maze', mutation: 'bit_flip', time: '11:18:05', desc: 'Execution exceeded 5000ms threshold' },
+    ];
+
+    const TERMINAL_LOGS_BASE = [
+      { time: '11:20:01.000', tag: 'SYSTEM', msg: 'Fuzzinator core initialized. Shared memory attached.', type: 'info' },
+      { time: '11:20:01.050', tag: 'AGENT', msg: 'PPO Policy loaded from checkpoints/latest.pt', type: 'info' },
+      { time: '11:20:02.100', tag: 'FUZZ', msg: 'Corpus loaded: 42 seeds. Starting fuzzing loop on target_maze...', type: 'info' },
+    ];
+
+    const API = {
+      status: '/api/status',
+      uploadAndBuild: '/api/upload_and_build',
+      runLstm: '/api/run_lstm',
+      reportLatest: '/api/report/latest',
+      report: (path) => `/api/report?path=${encodeURIComponent(path)}`,
+    };
+
+    async function fetchJson(url, options = {}) {
+      const response = await fetch(url, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options,
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error || `Request failed: ${response.status}`);
+      }
+      return payload;
+    }
+
+    // --- UTILITY COMPONENTS ---
+
+    const GlassCard = ({ children, className = '', hover = true }) => (
+      <div className={`relative bg-[#0a0f18]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-300 ${hover ? 'hover:border-white/20 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]' : ''} ${className}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent" />
+        {children}
+      </div>
+    );
+
+    const GlowingIcon = ({ Icon, color = 'cyan', size = 20 }) => {
+      const colorMap = {
+        cyan: 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]',
+        emerald: 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]',
+        rose: 'text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.8)]',
+        indigo: 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.8)]',
+        amber: 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]',
+      };
+      return <Icon size={size} className={colorMap[color]} />;
+    };
+
+    const SectionTitle = ({ title, subtitle, icon: Icon }) => (
+      <div className="mb-6 flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          {Icon && <Icon size={18} className="text-cyan-500" />}
+          <h2 className="text-lg font-bold tracking-widest text-white uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+            {title}
+          </h2>
+        </div>
+        {subtitle && <p className="text-xs text-slate-400 tracking-wide uppercase">{subtitle}</p>}
+      </div>
+    );
+
+    const CustomTooltip = ({ active, payload, label }) => {
+      if (active && payload && payload.length) {
+        return (
+          <div className="bg-[#0f172a]/90 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl text-xs font-mono">
+            <p className="text-slate-400 mb-2 border-b border-white/10 pb-1">Step: {label}</p>
+            {payload.map((p, i) => (
+              <div key={i} className="flex items-center justify-between gap-4 py-0.5">
+                <span style={{ color: p.color }}>{p.name}:</span>
+                <span className="text-white font-semibold">{Number(p.value).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        );
+      }
+      return null;
+    };
+
+    // --- MAIN SECTIONS ---
+
+    const HeroSection = ({ liveStats }) => (
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#05050a] mb-8 p-10 flex flex-col justify-center min-h-[300px]">
+        {/* Abstract Background Elements */}
+        <div className="absolute inset-0 z-0 opacity-30">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px]" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2Mmg0djRoMnYtNGg0VjJoLTR6bS0yMCAwdjRoMnYtNGg0VjJoLTRWMGgtMnYyaC00djJoNHptMCAzMHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvZz48L3N2Zz4=')] mix-blend-overlay" />
+        </div>
+
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+              className="flex items-center gap-3 mb-4"
+            >
+              <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                <ShieldAlert className="text-cyan-400" size={24} />
+              </div>
+              <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">System Active</span>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 mb-4"
+            >
+              FUZZINATOR
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-lg text-slate-400 font-light max-w-xl border-l-2 border-indigo-500/50 pl-4"
+            >
+              Reinforcement Learning Guided Fuzz Testing. Upload a target, instrument and compile it, run PPO+LSTM, and inspect the resulting report from one place.
+            </motion.p>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col gap-3 font-mono text-xs w-full md:w-auto"
+          >
+            {[
+              { label: 'Live Campaign', value: liveStats.target, icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/20' },
+              { label: 'Agent Mode', value: liveStats.modelStatus, icon: Brain, color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/20' },
+              { label: 'Run Status', value: liveStats.runStatus, icon: Layers, color: 'text-cyan-400', bg: 'bg-cyan-400/10', border: 'border-cyan-400/20' },
+              { label: 'Crash Vault', value: `${liveStats.crashes} Artifacts`, icon: Bug, color: 'text-rose-400', bg: 'bg-rose-400/10', border: 'border-rose-400/20' },
+            ].map((pill, i) => (
+              <div key={i} className={`flex items-center justify-between gap-6 px-4 py-2.5 rounded-lg border ${pill.bg} ${pill.border} backdrop-blur-md`}>
+                <div className="flex items-center gap-3">
+                  <pill.icon size={14} className={pill.color} />
+                  <span className="text-slate-300">{pill.label}</span>
+                </div>
+                <span className={`font-semibold ${pill.color}`}>{pill.value}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    );
+
+    // Fallback icon since Brain isn't in my immediate explicit import list above, creating a small custom SVG wrapper for it
+    const Brain = ({ size, className }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/></svg>
+    );
+
+    const StatsOverview = ({ liveStats }) => {
+      const stats = [
+        { label: 'Total Steps', value: Number(liveStats.steps || 0).toLocaleString(), icon: Zap, color: 'cyan' },
+        { label: 'Coverage Edges', value: liveStats.edges, icon: Network, color: 'indigo' },
+        { label: 'Crashes Found', value: liveStats.crashes, icon: Bug, color: 'rose', alert: Number(liveStats.crashes) > 0 },
+        { label: 'Executions / Sec', value: liveStats.execSec, icon: Activity, color: 'emerald' },
+        { label: 'Current Reward', value: Number(liveStats.reward || 0).toFixed(1), icon: TrendingUp, color: 'amber' },
+        { label: 'Active Mutation', value: liveStats.mutation, icon: GitBranch, color: 'indigo', isText: true },
+      ];
+
+      return (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          {stats.map((stat, i) => (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.1 }}
+              key={i}
+            >
+              <GlassCard className="p-4 flex flex-col justify-between h-full relative group">
+                {stat.alert && (
+                  <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full animate-ping m-3"></span>
+                )}
+                <div className="flex justify-between items-start mb-4">
+                  <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">{stat.label}</span>
+                  <GlowingIcon Icon={stat.icon} color={stat.color} size={16} />
+                </div>
+                <div>
+                  <div className={`text-2xl font-bold font-mono tracking-tight ${stat.isText ? 'text-sm text-indigo-300' : 'text-white'}`}>
+                    {stat.value}
+                  </div>
+                  {stat.trend && (
+                    <div className="text-[10px] text-emerald-400 font-mono mt-1 flex items-center gap-1">
+                      <TrendingUp size={10} /> {stat.trend}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Hover Glow Effect */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-${stat.color}-500 blur-xl z-[-1] rounded-full scale-150`}></div>
+              </GlassCard>
+            </motion.div>
+          ))}
+        </div>
+      );
+    };
+
+    const ControlCenter = ({
+      selectedFile,
+      setSelectedFile,
+      targetBinary,
+      setTargetBinary,
+      steps,
+      setSteps,
+      onUploadAndBuild,
+      onCompileAndRun,
+      onRun,
+      busy,
+      buildInfo,
+      currentRun,
+      error,
+    }) => {
+      const [isDragOver, setIsDragOver] = useState(false);
+
+      const handleFiles = (files) => {
+        const file = files?.[0];
+        if (file) setSelectedFile(file);
+      };
+
+      const onDrop = (event) => {
+        event.preventDefault();
+        setIsDragOver(false);
+        handleFiles(event.dataTransfer.files);
+      };
+
+      return (
+        <GlassCard className="mb-8 p-6">
+          <SectionTitle title="Build & Run Control" subtitle="Upload C target -> compile with instrumentation -> run PPO+LSTM" icon={Beaker} />
+
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2">
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+                onDragLeave={() => setIsDragOver(false)}
+                onDrop={onDrop}
+                className={`rounded-2xl border-2 border-dashed p-8 transition-all ${isDragOver ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 bg-white/[0.02]'}`}
+              >
+                <div className="flex flex-col items-center text-center gap-3">
+                  <UploadIcon />
+                  <div className="text-lg font-semibold text-white">Drop a `.c` target file here</div>
+                  <div className="text-sm text-slate-400">The dashboard will save it under `targets/`, compile it with `instrumentation/shm_init.c`, then you can launch PPO+LSTM.</div>
+                  <label className="mt-2 px-4 py-2 rounded-lg border border-cyan-500/40 text-cyan-300 cursor-pointer hover:bg-cyan-500/10">
+                    Choose File
+                    <input type="file" accept=".c" className="hidden" onChange={(e) => handleFiles(e.target.files)} />
+                  </label>
+                  {selectedFile && (
+                    <div className="text-xs font-mono text-emerald-400">Selected: {selectedFile.name}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+                <div className="text-xs uppercase tracking-widest text-slate-500 mb-2">Run Settings</div>
+                <label className="block text-xs text-slate-400 mb-2">Compiled Target</label>
+                <input
+                  value={targetBinary}
+                  onChange={(e) => setTargetBinary(e.target.value)}
+                  className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                  placeholder="target_buffer_overflow"
+                />
+                <label className="block text-xs text-slate-400 mt-4 mb-2">Steps</label>
+                <input
+                  type="number"
+                  value={steps}
+                  min="1"
+                  onChange={(e) => setSteps(e.target.value)}
+                  className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                />
+
+                <div className="mt-4 flex flex-col gap-3">
+                  <button
+                    onClick={onUploadAndBuild}
+                    disabled={!selectedFile || busy}
+                    className="px-4 py-2 rounded-lg bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 disabled:opacity-40"
+                  >
+                    Compile Uploaded Target
+                  </button>
+                  <button
+                    onClick={onCompileAndRun}
+                    disabled={!selectedFile || busy}
+                    className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 disabled:opacity-40"
+                  >
+                    Compile + Run PPO + LSTM
+                  </button>
+                  <button
+                    onClick={onRun}
+                    disabled={!targetBinary || busy || currentRun.status === 'running'}
+                    className="px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 disabled:opacity-40"
+                  >
+                    Run PPO + LSTM
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
+                <div className="text-slate-500 uppercase tracking-widest mb-2">Build Status</div>
+                <div className="text-white">State: <span className="text-cyan-300">{buildInfo?.status || 'idle'}</span></div>
+                <div className="text-slate-400 mt-1 break-all">Binary: {buildInfo?.binary_path || 'n/a'}</div>
+                <div className="text-white mt-3">Run State: <span className="text-emerald-300">{currentRun.status || 'idle'}</span></div>
+                <div className="text-slate-400 mt-1">Steps: {currentRun.steps || 'n/a'}</div>
+                {error && <div className="text-rose-400 mt-3 break-words">{error}</div>}
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const UploadIcon = () => (
+      <div className="w-14 h-14 rounded-full border border-cyan-500/30 bg-cyan-500/10 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400">
+          <path d="M12 3v12" />
+          <path d="m7 8 5-5 5 5" />
+          <path d="M20 21H4" />
+        </svg>
+      </div>
+    );
+
+    const LatestRunReport = ({ report }) => {
+      if (!report) {
+        return (
+          <GlassCard className="p-6 mb-8">
+            <SectionTitle title="Latest Run Report" subtitle="No completed runs yet" icon={Fingerprint} />
+            <p className="text-slate-400 text-sm">Build a target and run PPO+LSTM to populate this panel.</p>
+          </GlassCard>
+        );
+      }
+
+      const metrics = report.metrics || {};
+      const config = report.config || {};
+      const events = report.events || [];
+
+      return (
+        <GlassCard className="p-6 mb-8">
+          <SectionTitle title="Latest Run Report" subtitle={`${report.model} on ${report.target_name}`} icon={Fingerprint} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  ['Status', report.status],
+                  ['Steps', `${report.completed_steps}/${report.requested_steps}`],
+                  ['Edges', metrics.total_edges ?? 0],
+                  ['Crashes', metrics.total_crashes ?? 0],
+                  ['Reward', metrics.total_reward ?? 0],
+                  ['Exec/s', metrics.exec_speed ?? 0],
+                  ['Seed', config.random_seed ?? 'n/a'],
+                  ['Device', config.device ?? 'n/a'],
+                ].map(([label, value], index) => (
+                  <div key={index} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
+                    <div className="text-[10px] uppercase tracking-widest text-slate-500">{label}</div>
+                    <div className="text-white font-mono mt-1">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
+                <div className="text-xs uppercase tracking-widest text-slate-500 mb-3">Notable Events</div>
+                <div className="space-y-2 max-h-56 overflow-y-auto custom-scrollbar">
+                  {events.length === 0 && <div className="text-slate-500 text-sm">No events captured</div>}
+                  {events.map((event, index) => (
+                    <div key={index} className="text-xs font-mono text-slate-300 border-b border-white/5 pb-2">
+                      {Object.entries(event).map(([key, value]) => `${key}=${value}`).join(', ')}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
+                <div className="text-slate-500 uppercase tracking-widest mb-3">Artifacts</div>
+                <div className="text-slate-300 break-all">Checkpoint: {report.final_checkpoint}</div>
+                <div className="text-slate-300 break-all mt-2">Markdown: {report.markdown_report_path}</div>
+                <div className="text-slate-300 break-all mt-2">JSON: {report.json_report_path}</div>
+              </div>
+
+              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
+                <div className="text-slate-500 uppercase tracking-widest mb-3">Crashes Created In This Run</div>
+                {report.new_crash_files?.length ? report.new_crash_files.map((crash, index) => (
+                  <div key={index} className="text-rose-300 break-all mb-2">{crash}</div>
+                )) : <div className="text-slate-500">None</div>}
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const PipelineVisual = () => {
+      const nodes = [
+        { id: 'corpus', label: 'Seed Corpus', icon: Database, desc: '42 Inputs', active: false },
+        { id: 'agent', label: 'PPO Agent', icon: Brain, desc: 'Policy NN', active: true },
+        { id: 'mutator', label: 'Mutator Engine', icon: GitBranch, desc: 'byte_insert', active: true },
+        { id: 'harness', label: 'Exec Harness', icon: Terminal, desc: 'Subprocess', active: false },
+        { id: 'bitmap', label: 'Coverage Mem', icon: Layers, desc: 'Shared Array', active: false },
+        { id: 'reward', label: 'Reward Eng', icon: Zap, desc: 'r_t = +10.0', active: true },
+        { id: 'vault', label: 'Crash Vault', icon: ShieldAlert, desc: 'Monitoring', active: false },
+      ];
+
+      return (
+        <GlassCard className="mb-8 p-6 overflow-x-auto">
+          <SectionTitle title="Live Fuzzing Pipeline" subtitle="Data Flow & Architecture" icon={Network} />
+          <div className="flex items-center justify-between min-w-[800px] py-4 relative">
+            {/* Animated Connector Line */}
+            <div className="absolute top-1/2 left-10 right-10 h-0.5 bg-slate-800 -z-10 -translate-y-1/2">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-cyan-500/0 via-cyan-400 to-indigo-500/0"
+                animate={{ x: ['-100%', '100%'] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                style={{ width: '50%' }}
+              />
+            </div>
+
+            {nodes.map((node, i) => (
+              <div key={node.id} className="flex flex-col items-center gap-3 relative group">
+                <div className={`
+                  w-14 h-14 rounded-full flex items-center justify-center border-2 
+                  ${node.active 
+                    ? 'bg-[#1a1f35] border-cyan-400/50 shadow-[0_0_20px_rgba(34,211,238,0.2)]' 
+                    : 'bg-[#0a0f18] border-white/10 text-slate-500'}
+                  transition-all duration-300 z-10 relative
+                `}>
+                  {node.active && (
+                    <motion.div 
+                      className="absolute inset-0 rounded-full border border-cyan-400"
+                      animate={{ scale: [1, 1.3], opacity: [0.5, 0] }}
+                      transition={{ repeat: Infinity, duration: 1.5 }}
+                    />
+                  )}
+                  <node.icon size={24} className={node.active ? 'text-cyan-400' : 'text-slate-500'} />
+                </div>
+                
+                <div className="text-center">
+                  <div className="text-xs font-bold text-white whitespace-nowrap">{node.label}</div>
+                  <div className="text-[10px] font-mono text-cyan-500/80 mt-1 px-2 py-0.5 bg-cyan-950/30 rounded border border-cyan-900/50">
+                    {node.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const BitmapVisualizer = () => {
+      // Generate 512 cells (32x16)
+      const [cells, setCells] = useState([]);
+      
+      useEffect(() => {
+        // Initial random generation prioritizing some clusters to look like real coverage
+        const initialCells = Array.from({ length: 512 }, (_, i) => {
+          const isBase = Math.random() > 0.8;
+          const isHot = isBase && Math.random() > 0.5;
+          const isCrash = Math.random() > 0.99;
+          return {
+            id: i,
+            hits: isCrash ? 255 : isHot ? Math.floor(Math.random() * 50) + 10 : isBase ? Math.floor(Math.random() * 5) + 1 : 0,
+            type: isCrash ? 'crash' : 'normal'
+          };
+        });
+        setCells(initialCells);
+
+        // Simulate live updates
+        const interval = setInterval(() => {
+          setCells(prev => {
+            const next = [...prev];
+            // Pick a random hot region to increment
+            const idx = Math.floor(Math.random() * 512);
+            next[idx] = { ...next[idx], hits: Math.min(255, next[idx].hits + Math.floor(Math.random() * 20)) };
+            
+            // Decay slightly to show activity
+            return next.map(c => ({...c, hits: c.hits > 0 && Math.random() > 0.9 ? Math.max(1, c.hits - 1) : c.hits}));
+          });
+        }, 1000);
+
+        return () => clearInterval(interval);
+      }, []);
+
+      const getCellColor = (hits, type) => {
+        if (type === 'crash') return 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] z-10 border border-rose-300';
+        if (hits === 0) return 'bg-[#111827] border border-white/5';
+        if (hits < 5) return 'bg-indigo-900/50 border border-indigo-500/20';
+        if (hits < 20) return 'bg-cyan-800/80 border border-cyan-500/40';
+        if (hits < 50) return 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)] border border-cyan-300';
+        return 'bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)] border border-white z-10';
+      };
+
+      return (
+        <GlassCard className="mb-8 p-6 lg:col-span-2">
+          <div className="flex justify-between items-start mb-6">
+            <SectionTitle title="Shared-Memory Coverage Bitmap" subtitle="Live compressed execution trace (AFL-style Map)" icon={Layers} />
+            <div className="flex gap-2">
+               {['Raw Grid', 'Heatmap'].map((mode, i) => (
+                 <button key={i} className={`text-xs px-3 py-1 rounded-md font-mono border ${i === 0 ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' : 'bg-transparent border-white/10 text-slate-400 hover:bg-white/5'}`}>
+                   {mode}
+                 </button>
+               ))}
+            </div>
+          </div>
+
+          <div className="bg-[#050810] rounded-xl p-4 border border-black inset-shadow-sm">
+            <div className="grid grid-cols-[repeat(32,minmax(0,1fr))] gap-[2px]">
+              <AnimatePresence>
+                {cells.map((cell) => (
+                  <motion.div
+                    key={cell.id}
+                    layout
+                    initial={{ opacity: 0.5 }}
+                    animate={{ opacity: 1 }}
+                    className={`aspect-square rounded-[2px] transition-colors duration-300 group relative ${getCellColor(cell.hits, cell.type)}`}
+                  >
+                    {/* Tooltip on hover */}
+                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900 text-white text-[10px] font-mono p-2 rounded border border-slate-700 pointer-events-none z-50 w-max shadow-xl">
+                      <div className="text-cyan-400 mb-1 border-b border-slate-700 pb-1">Bucket: 0x{cell.id.toString(16).padStart(3, '0')}</div>
+                      <div>Hits: {cell.hits}</div>
+                      {cell.type === 'crash' && <div className="text-rose-400 mt-1 font-bold">CRASH VECTOR</div>}
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between mt-4 text-[10px] font-mono text-slate-400">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-[#111827] border border-white/5 rounded-sm"></div> Unreached</div>
+              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-indigo-900/50 border border-indigo-500/20 rounded-sm"></div> Low (1-4)</div>
+              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-cyan-500 border border-cyan-300 rounded-sm"></div> High (20-49)</div>
+              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-white rounded-sm shadow-[0_0_5px_white]"></div> Saturated (50+)</div>
+              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-rose-500 border border-rose-300 rounded-sm"></div> Crash</div>
+            </div>
+            <div>Map Size: 64KB (Compressed)</div>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const MutationStrategy = () => {
+      return (
+        <GlassCard className="p-6">
+          <SectionTitle title="Mutation Action Space" subtitle="PPO Agent Strategy Selection" icon={Crosshair} />
+          
+          <div className="h-[250px] mt-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={MUTATION_STATS} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#ffffff10" />
+                <XAxis type="number" hide />
+                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'monospace' }} width={90} />
+                <RechartsTooltip cursor={{ fill: '#ffffff05' }} content={<CustomTooltip />} />
+                
+                {/* Background bar for context */}
+                <Bar dataKey="usage" stackId="a" fill="#1e293b" radius={[0, 0, 0, 0]} barSize={24} name="Total Selections" />
+                {/* Success bar overlapping */}
+                <Bar dataKey="success" stackId="b" radius={[0, 4, 4, 0]} barSize={24} name="Rewarding Actions">
+                  {MUTATION_STATS.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {MUTATION_STATS.map(m => (
+              <div key={m.name} className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
+                  <span className="text-slate-300">{m.name}</span>
+                </div>
+                <span className="text-white font-bold">{Math.round((m.success/m.usage)*100)}% SR</span>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const MLInsights = () => {
+      return (
+        <GlassCard className="p-6 lg:col-span-2">
+          <SectionTitle title="PPO Telemetry & Loss Metrics" subtitle="Model Observability" icon={Activity} />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[300px]">
+            {/* Reward & Entropy Chart */}
+            <div className="relative h-full flex flex-col">
+              <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Reward Signal vs Entropy</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={CHART_DATA_ML} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorReward" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
+                  <XAxis dataKey="step" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="left" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <RechartsTooltip content={<CustomTooltip />} />
+                  <Area yAxisId="left" type="monotone" dataKey="reward" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorReward)" name="Cumulative Reward" />
+                  <Line yAxisId="right" type="monotone" dataKey="entropy" stroke="#f59e0b" strokeWidth={2} dot={false} name="Policy Entropy" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Policy & Value Loss Chart */}
+            <div className="relative h-full flex flex-col">
+              <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Actor-Critic Losses</h3>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={CHART_DATA_ML} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
+                  <XAxis dataKey="step" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 'auto']} />
+                  <RechartsTooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="policyLoss" stroke="#3b82f6" strokeWidth={2} dot={false} name="Policy Loss" />
+                  <Line type="monotone" dataKey="valueLoss" stroke="#8b5cf6" strokeWidth={2} dot={false} strokeDasharray="5 5" name="Value Loss" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const TargetAnalysis = () => {
+      return (
+        <GlassCard className="p-6">
+          <SectionTitle title="Vulnerable Targets" subtitle="Campaign Progress" icon={Server} />
+          
+          <div className="flex flex-col gap-4">
+            {TARGETS.map((target, i) => (
+              <div key={i} className="bg-[#0f172a]/50 border border-slate-800 rounded-xl p-4 relative overflow-hidden group hover:border-slate-600 transition-colors">
+                {target.status === 'Exploited' && (
+                  <div className="absolute -right-6 top-4 rotate-45 bg-rose-500/20 text-rose-400 text-[10px] font-bold py-1 px-8 border-y border-rose-500/50 uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.3)]">
+                    Compromised
+                  </div>
+                )}
+                
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h4 className="font-mono text-sm text-white font-bold">{target.name}</h4>
+                    <span className="text-xs text-slate-500">{target.type}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                      Diff: {target.diff}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 mt-4 text-xs font-mono">
+                  <div className="flex-1">
+                    <div className="flex justify-between text-slate-400 mb-1">
+                      <span>Coverage Map</span>
+                      <span className="text-cyan-400">{target.progress}%</span>
+                    </div>
+                    <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }} animate={{ width: `${target.progress}%` }} transition={{ duration: 1, delay: 0.5 }}
+                        className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-center pl-4 border-l border-slate-800">
+                    <span className="text-slate-500 mb-1">Crashes</span>
+                    <span className={`font-bold ${target.crashes > 0 ? 'text-rose-400' : 'text-slate-600'}`}>
+                      {target.crashes}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const CrashVault = ({ report }) => {
+      const crashes = (report?.new_crash_files || []).map((name, index) => ({
+        id: name.replace(/^crash_/, '').replace(/\.bin$/, ''),
+        type: name.split('_')[1] || 'unknown',
+        target: report?.target_name || 'unknown',
+        mutation: 'see report events',
+        time: report?.finished_at || 'n/a',
+      }));
+      return (
+        <GlassCard className="p-6 lg:col-span-2 relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute -right-20 -bottom-20 opacity-5 pointer-events-none text-rose-500">
+            <Bug size={300} />
+          </div>
+
+          <div className="flex justify-between items-center mb-6 relative z-10">
+            <SectionTitle title="Crash Vault" subtitle="Forensic Artifacts & Triage" icon={ShieldAlert} />
+            <button className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-mono border border-slate-600 transition-colors flex items-center gap-2">
+              <Lock size={14} /> Export Vault
+            </button>
+          </div>
+
+          <div className="overflow-x-auto relative z-10">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800 text-xs text-slate-500 font-mono uppercase tracking-wider">
+                  <th className="pb-3 pl-2">Hash ID</th>
+                  <th className="pb-3">Signal</th>
+                  <th className="pb-3">Target Binary</th>
+                  <th className="pb-3">Trigger Mutation</th>
+                  <th className="pb-3">Time</th>
+                  <th className="pb-3">Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm font-mono">
+                {(crashes.length ? crashes : CRASH_VAULT).map((crash, i) => (
+                  <tr key={i} className="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors group">
+                    <td className="py-4 pl-2 font-bold text-slate-300 group-hover:text-cyan-400 transition-colors">{crash.id}</td>
+                    <td className="py-4">
+                      <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded border border-rose-500/20 text-xs">
+                        {crash.type}
+                      </span>
+                    </td>
+                    <td className="py-4 text-slate-400">{crash.target}</td>
+                    <td className="py-4 text-slate-400">{crash.mutation}</td>
+                    <td className="py-4 text-slate-500">{crash.time}</td>
+                    <td className="py-4">
+                      <button className="text-cyan-500 hover:text-cyan-300 transition-colors flex items-center gap-1 text-xs">
+                        Inspect <ChevronRight size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const LiveTerminal = ({ logsOverride }) => {
+      const [logs, setLogs] = useState(logsOverride?.length ? logsOverride : TERMINAL_LOGS_BASE);
+      const scrollRef = useRef(null);
+
+      useEffect(() => {
+        if (logsOverride?.length) {
+          setLogs(logsOverride);
+          return;
+        }
+
+        const actions = ['bit_flip', 'byte_insert', 'havoc', 'byte_flip'];
+        const mockEvents = [
+          () => ({ tag: 'FUZZ', msg: `Action [${actions[Math.floor(Math.random()*actions.length)]}] executed. Reward: +${(Math.random()*5).toFixed(2)}`, type: 'info' }),
+          () => ({ tag: 'AGENT', msg: `PPO update complete. Policy Loss: ${(Math.random()).toFixed(4)}`, type: 'success' }),
+          () => ({ tag: 'MEM', msg: 'New coverage edge discovered! Map density increased.', type: 'warning' }),
+        ];
+
+        const interval = setInterval(() => {
+          const newLog = mockEvents[Math.floor(Math.random() * mockEvents.length)]();
+          const time = new Date().toISOString().substring(11, 23); // HH:MM:SS.mmm
+          
+          setLogs(prev => {
+            const next = [...prev, { time, ...newLog }];
+            return next.length > 50 ? next.slice(next.length - 50) : next;
+          });
+        }, 2500);
+
+        return () => clearInterval(interval);
+      }, [logsOverride]);
+
+      useEffect(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      }, [logs]);
+
+      const getColor = (type) => {
+        switch(type) {
+          case 'info': return 'text-slate-300';
+          case 'success': return 'text-indigo-400';
+          case 'warning': return 'text-cyan-400';
+          case 'error': return 'text-rose-500 font-bold';
+          default: return 'text-slate-400';
+        }
+      };
+
+      const getTagColor = (tag) => {
+        switch(tag) {
+          case 'SYSTEM': return 'bg-slate-700 text-white';
+          case 'AGENT': return 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30';
+          case 'FUZZ': return 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30';
+          case 'MEM': return 'bg-amber-900/50 text-amber-300 border border-amber-500/30';
+          case 'RUN': return 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30';
+          default: return 'bg-slate-800 text-slate-400';
+        }
+      };
+
+      return (
+        <GlassCard className="p-0 flex flex-col h-[400px]">
+          <div className="bg-[#050810] px-4 py-3 border-b border-white/5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Terminal size={16} className="text-slate-400" />
+              <span className="text-sm font-mono text-slate-300 tracking-wider">stdout / stderr</span>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-rose-500/50 border border-rose-500"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-500/50 border border-amber-500"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500"></div>
+            </div>
+          </div>
+          
+          <div 
+            ref={scrollRef}
+            className="flex-1 p-4 bg-[#0a0a0f] overflow-y-auto font-mono text-xs leading-relaxed custom-scrollbar"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            <AnimatePresence initial={false}>
+              {logs.map((log, i) => (
+                <motion.div 
+                  key={i + log.time}
+                  initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
+                  className="mb-1.5 flex gap-3 hover:bg-white/[0.02] px-2 py-0.5 rounded"
+                >
+                  <span className="text-slate-600 shrink-0">[{log.time}]</span>
+                  <span className={`px-1.5 rounded text-[10px] uppercase font-bold tracking-wider shrink-0 w-16 text-center ${getTagColor(log.tag)}`}>
+                    {log.tag}
+                  </span>
+                  <span className={`break-words ${getColor(log.type)}`}>{log.msg}</span>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </GlassCard>
+      );
+    };
+
+    const ArchitectureMap = () => {
+      return (
+        <GlassCard className="p-6">
+          <SectionTitle title="Project Architecture" subtitle="Repository Structure" icon={SearchCode} />
+          
+          <div className="font-mono text-xs text-slate-400 mt-4 leading-relaxed bg-[#050810] p-4 rounded-xl border border-white/5">
+            <div className="text-cyan-400 font-bold mb-2">fuzzinator/</div>
+            
+            <div className="pl-4 border-l border-slate-800 ml-2 relative">
+              <div className="before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-3">
+                <span className="text-indigo-300 flex items-center gap-2"><Brain size={12}/> agent/</span>
+                <div className="pl-6 text-slate-500">train.py / train_lstm.py</div>
+                <div className="pl-6 text-slate-500">ppo_agent.py / ppo_agent_lstm.py</div>
+                <div className="pl-6 text-slate-500">run_report.py</div>
+              </div>
+              
+              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-14">
+                 <span className="text-emerald-300 flex items-center gap-2"><GitBranch size={12}/> mutator/</span>
+                 <div className="pl-6 text-slate-500">mutator.py</div>
+              </div>
+
+              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[104px]">
+                 <span className="text-amber-300 flex items-center gap-2"><Server size={12}/> environment/</span>
+                 <div className="pl-6 text-slate-500">fuzz_env.py / fuzz_env_lstm.py</div>
+                 <div className="pl-6 text-slate-500">execution_harness.py</div>
+                 <div className="pl-6 text-slate-500">coverage_reader.py</div>
+              </div>
+              
+              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[168px]">
+                 <span className="text-rose-300 flex items-center gap-2"><ShieldAlert size={12}/> targets/</span>
+                 <div className="pl-6 text-slate-500">drop .c files here through the dashboard</div>
+                 <div className="pl-6 text-slate-500">compiled binaries are reused by PPO+LSTM</div>
+              </div>
+
+              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[232px]">
+                 <span className="text-cyan-300 flex items-center gap-2"><Cpu size={12}/> backend/</span>
+                 <div className="pl-6 text-slate-500">dashboard_server.py</div>
+                 <div className="pl-6 text-slate-500">upload -> build -> run -> report APIs</div>
+              </div>
+            </div>
+          </div>
+        </GlassCard>
+      );
+    }
+
+    const Footer = () => (
+      <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Nominal</span>
+          <span className="flex items-center gap-1"><Cpu size={14} className="text-slate-400"/> Dashboard API + instrumentation build + PPO+LSTM</span>
+        </div>
+        <div className="flex items-center gap-6">
+          <span>Reports: <span className="text-cyan-400">data/reports/*.json</span></span>
+          <span className="text-slate-600">Fuzzinator Research v0.2.3</span>
+        </div>
+      </div>
+    );
+
+    function App() {
+      const [dashboardState, setDashboardState] = useState({ current_run: { status: 'idle', stdout_tail: [] }, last_build: { status: 'idle' }, latest_report: null, available_reports: [] });
+      const [latestReport, setLatestReport] = useState(null);
+      const [selectedFile, setSelectedFile] = useState(null);
+      const [targetBinary, setTargetBinary] = useState('');
+      const [steps, setSteps] = useState('200');
+      const [busy, setBusy] = useState(false);
+      const [error, setError] = useState('');
+
+      useEffect(() => {
+        let active = true;
+        const loadStatus = async () => {
+          try {
+            const status = await fetchJson(API.status, { headers: {} });
+            if (!active) return;
+            setDashboardState(status);
+            if (status.latest_report?.path) {
+              const report = await fetchJson(API.report(status.latest_report.path), { headers: {} });
+              if (active) setLatestReport(report);
+            }
+            if (!targetBinary && status.last_build?.binary_path) {
+              setTargetBinary(status.last_build.binary_path.split('/').pop());
+            }
+          } catch (err) {
+            if (active) setError(err.message);
+          }
+        };
+
+        loadStatus();
+        const interval = setInterval(loadStatus, 2000);
+        return () => { active = false; clearInterval(interval); };
+      }, [targetBinary]);
+
+      const uploadAndBuild = async () => {
+        if (!selectedFile) return;
+        setBusy(true);
+        setError('');
+        try {
+          const content = await selectedFile.text();
+          const result = await fetchJson(API.uploadAndBuild, {
+            method: 'POST',
+            body: JSON.stringify({ filename: selectedFile.name, content }),
+          });
+          setDashboardState(prev => ({ ...prev, last_build: result.build }));
+          if (result.build?.binary_path) {
+            setTargetBinary(result.build.binary_path.split('/').pop());
+          }
+          return result;
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      const runLstm = async (targetOverride = null) => {
+        setBusy(true);
+        setError('');
+        try {
+          const result = await fetchJson(API.runLstm, {
+            method: 'POST',
+            body: JSON.stringify({ target_binary: targetOverride || targetBinary, steps: Number(steps) }),
+          });
+          setDashboardState(prev => ({ ...prev, current_run: result.run }));
+          return result;
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      const run = dashboardState.current_run || {};
+      useEffect(() => {
+        if (dashboardState.last_build?.binary_path && !targetBinary) {
+          setTargetBinary(dashboardState.last_build.binary_path.split('/').pop());
+        }
+      }, [dashboardState.last_build, targetBinary]);
+
+      const latestActionEvent = (latestReport?.events || []).slice().reverse().find((event) => event.action);
+      const liveStats = {
+        steps: latestReport?.completed_steps ?? MOCK_STATS.steps,
+        edges: latestReport?.metrics?.total_edges ?? MOCK_STATS.edges,
+        crashes: latestReport?.metrics?.total_crashes ?? MOCK_STATS.crashes,
+        execSec: latestReport?.metrics?.exec_speed ?? MOCK_STATS.execSec,
+        reward: latestReport?.metrics?.total_reward ?? MOCK_STATS.reward,
+        target: run.target ? run.target.split('/').pop() : latestReport?.target_name || MOCK_STATS.target,
+        mutation: latestActionEvent?.action || MOCK_STATS.mutation,
+        modelStatus: latestReport?.model || 'PPO + LSTM',
+        runStatus: run.status || latestReport?.status || 'idle',
+      };
+
+      const liveLogs = (run.stdout_tail || []).length
+        ? run.stdout_tail.map((msg, index) => ({
+            time: new Date().toISOString().substring(11, 23),
+            tag: 'RUN',
+            msg,
+            type: msg.includes('ERROR') ? 'error' : msg.includes('Checkpoint') ? 'success' : 'info',
+          }))
+        : TERMINAL_LOGS_BASE;
+
+      return (
+        <div className="min-h-screen relative z-0">
+          {/* Global stylistic background noise/vignette */}
+          <div className="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)] opacity-80 mix-blend-multiply" />
+          
+          <div className="max-w-[1600px] mx-auto p-4 md:p-8 relative z-10">
+            <HeroSection liveStats={liveStats} />
+            <ControlCenter
+              selectedFile={selectedFile}
+              setSelectedFile={setSelectedFile}
+              targetBinary={targetBinary}
+              setTargetBinary={setTargetBinary}
+              steps={steps}
+              setSteps={setSteps}
+              onUploadAndBuild={uploadAndBuild}
+              onCompileAndRun={async () => {
+                const result = await uploadAndBuild();
+                const builtName = result?.build?.binary_path?.split('/').pop();
+                const selectedName = selectedFile?.name?.replace(/\.c$/i, '').replace(/[^a-zA-Z0-9_]/g, '_');
+                const nextTarget = builtName || selectedName;
+                if (nextTarget) {
+                  setTargetBinary(nextTarget);
+                  await runLstm(nextTarget);
+                }
+              }}
+              onRun={runLstm}
+              busy={busy}
+              buildInfo={dashboardState.last_build}
+              currentRun={run}
+              error={error}
+            />
+            <StatsOverview liveStats={liveStats} />
+            <LatestRunReport report={latestReport} />
+            
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              <div className="xl:col-span-3">
+                 <PipelineVisual />
+              </div>
+
+              <BitmapVisualizer />
+              <MutationStrategy />
+              
+              <MLInsights />
+              <TargetAnalysis />
+              
+              <div className="xl:col-span-2">
+                <LiveTerminal logsOverride={liveLogs} />
+              </div>
+              <ArchitectureMap />
+
+              <div className="xl:col-span-3">
+                 <CrashVault report={latestReport} />
+              </div>
+            </div>
+
+            <Footer />
+          </div>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = createRoot(rootElement);
+    root.render(<App />);
+  </script>
+</body>
+</html>

@@ -29,6 +29,37 @@ Use this format for future work:
 
 ---
 
+## v0.2.3 - 2026-03-17
+
+### What Changed
+- Added a local dashboard backend that serves the GUI and exposes APIs for upload, build, run, and report retrieval.
+- Integrated the dashboard with real project data instead of mock-only state for build status, current run status, stdout tail, latest report, and crash artifacts.
+- Added drag-and-drop `.c` upload from the dashboard and wired it to compile through the `instrumentation/` build flow.
+- Connected the dashboard run action to the PPO+LSTM training entrypoint and latest JSON report output.
+- Updated the dashboard architecture panel and footer so they reflect the current repository instead of the earlier concept-only structure.
+- Extended the instrumentation build script so it can compile a single uploaded target by name.
+
+### Files
+- Added [backend/dashboard_server.py](/home/kali/Fuzzi/Fuzzinator/backend/dashboard_server.py)
+- Updated [frontend/Dashboard.html](/home/kali/Fuzzi/Fuzzinator/frontend/Dashboard.html)
+- Updated [instrumentation/build_target.sh](/home/kali/Fuzzi/Fuzzinator/instrumentation/build_target.sh)
+
+### Result
+- You can now start a local GUI server, drop in a `.c` file, compile it into `targets/`, launch PPO+LSTM from the dashboard, and inspect the latest generated run report from the same screen.
+- Verified working flow:
+- `GET /api/status`
+- `POST /api/upload_and_build`
+- static serving of `frontend/Dashboard.html`
+- Verified instrumentation-backed upload build with `target_dashboard_smoke.c` -> `targets/target_dashboard_smoke`
+- Current limitation observed during validation:
+- baseline PPO smoke runs complete normally
+- PPO+LSTM launch starts correctly and exposes live status/logs, but a 1-step CPU smoke run did not complete within 90 seconds in this environment
+- Practical impact:
+- the GUI integration is ready
+- the PPO+LSTM backend remains connected, but its runtime path still needs performance work before it feels responsive in the dashboard
+
+---
+
 ## v0.2.2 - 2026-03-17
 
 ### What Changed

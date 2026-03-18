@@ -6,7 +6,9 @@
 #   -fsanitize-coverage=trace-pc  — basic block tracing via __sanitizer_cov_trace_pc
 #   -fsanitize=address            — AddressSanitizer for crash detection
 #
-# Usage: bash instrumentation/build_target.sh
+# Usage:
+#   bash instrumentation/build_target.sh
+#   bash instrumentation/build_target.sh target_name
 
 set -e
 
@@ -29,8 +31,12 @@ echo ""
 CFLAGS="-fsanitize-coverage=trace-pc -fsanitize=address -g -O0 -fno-omit-frame-pointer"
 SHM_SRC="$INSTR_DIR/shm_init.c"
 
-# Build each target
-TARGETS=("target_buffer_overflow" "target_format_string" "target_maze")
+# Build each target, or a single requested target
+if [ $# -gt 0 ]; then
+    TARGETS=("$1")
+else
+    TARGETS=("target_buffer_overflow" "target_format_string" "target_maze")
+fi
 
 for target in "${TARGETS[@]}"; do
     SRC="$TARGET_DIR/${target}.c"
