@@ -212,7 +212,20 @@ def start_lstm_run(target_binary: str, steps: int = 200) -> dict[str, Any]:
 
 class DashboardRequestHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=str(FRONTEND_DIR), **kwargs)
+        super().__init__(*args, directory=str(PROJECT_ROOT), **kwargs)
+
+    def _send_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def do_OPTIONS(self) -> None:
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self.end_headers()
+
+    def end_headers(self):
+        self._send_cors_headers()
+        super().end_headers()
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
