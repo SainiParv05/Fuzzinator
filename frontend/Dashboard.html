@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fuzzinator Command Center</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Babel for in-browser JSX transpilation -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
@@ -18,21 +19,26 @@
       margin: 0;
       overflow-x: hidden;
     }
+
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
     }
+
     .custom-scrollbar::-webkit-scrollbar-track {
       background: #050810;
     }
+
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #1e293b;
       border-radius: 3px;
     }
+
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #334155;
     }
   </style>
 </head>
+
 <body>
   <div id="root"></div>
 
@@ -190,15 +196,15 @@
               </div>
               <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">System Active</span>
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 mb-4"
             >
               FUZZINATOR
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-slate-400 font-light max-w-xl border-l-2 border-indigo-500/50 pl-4"
             >
@@ -206,7 +212,7 @@
             </motion.p>
           </div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col gap-3 font-mono text-xs w-full md:w-auto"
           >
@@ -231,7 +237,7 @@
 
     // Fallback icon since Brain isn't in my immediate explicit import list above, creating a small custom SVG wrapper for it
     const Brain = ({ size, className }) => (
-      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /><path d="M17.599 6.5a3 3 0 0 0 .399-1.375" /></svg>
     );
 
     const StatsOverview = ({ liveStats }) => {
@@ -269,7 +275,7 @@
                     </div>
                   )}
                 </div>
-                
+
                 {/* Hover Glow Effect */}
                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-${stat.color}-500 blur-xl z-[-1] rounded-full scale-150`}></div>
               </GlassCard>
@@ -369,7 +375,7 @@
                     Compile + Run PPO + LSTM
                   </button>
                   <button
-                    onClick={onRun}
+                    onClick={() => onRun()}
                     disabled={!targetBinary || busy || currentRun.status === 'running'}
                     className="px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 disabled:opacity-40"
                   >
@@ -489,7 +495,7 @@
           <div className="flex items-center justify-between min-w-[800px] py-4 relative">
             {/* Animated Connector Line */}
             <div className="absolute top-1/2 left-10 right-10 h-0.5 bg-slate-800 -z-10 -translate-y-1/2">
-              <motion.div 
+              <motion.div
                 className="h-full bg-gradient-to-r from-cyan-500/0 via-cyan-400 to-indigo-500/0"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
@@ -501,13 +507,13 @@
               <div key={node.id} className="flex flex-col items-center gap-3 relative group">
                 <div className={`
                   w-14 h-14 rounded-full flex items-center justify-center border-2 
-                  ${node.active 
-                    ? 'bg-[#1a1f35] border-cyan-400/50 shadow-[0_0_20px_rgba(34,211,238,0.2)]' 
+                  ${node.active
+                    ? 'bg-[#1a1f35] border-cyan-400/50 shadow-[0_0_20px_rgba(34,211,238,0.2)]'
                     : 'bg-[#0a0f18] border-white/10 text-slate-500'}
                   transition-all duration-300 z-10 relative
                 `}>
                   {node.active && (
-                    <motion.div 
+                    <motion.div
                       className="absolute inset-0 rounded-full border border-cyan-400"
                       animate={{ scale: [1, 1.3], opacity: [0.5, 0] }}
                       transition={{ repeat: Infinity, duration: 1.5 }}
@@ -515,7 +521,7 @@
                   )}
                   <node.icon size={24} className={node.active ? 'text-cyan-400' : 'text-slate-500'} />
                 </div>
-                
+
                 <div className="text-center">
                   <div className="text-xs font-bold text-white whitespace-nowrap">{node.label}</div>
                   <div className="text-[10px] font-mono text-cyan-500/80 mt-1 px-2 py-0.5 bg-cyan-950/30 rounded border border-cyan-900/50">
@@ -532,7 +538,7 @@
     const BitmapVisualizer = () => {
       // Generate 512 cells (32x16)
       const [cells, setCells] = useState([]);
-      
+
       useEffect(() => {
         // Initial random generation prioritizing some clusters to look like real coverage
         const initialCells = Array.from({ length: 512 }, (_, i) => {
@@ -554,9 +560,9 @@
             // Pick a random hot region to increment
             const idx = Math.floor(Math.random() * 512);
             next[idx] = { ...next[idx], hits: Math.min(255, next[idx].hits + Math.floor(Math.random() * 20)) };
-            
+
             // Decay slightly to show activity
-            return next.map(c => ({...c, hits: c.hits > 0 && Math.random() > 0.9 ? Math.max(1, c.hits - 1) : c.hits}));
+            return next.map(c => ({ ...c, hits: c.hits > 0 && Math.random() > 0.9 ? Math.max(1, c.hits - 1) : c.hits }));
           });
         }, 1000);
 
@@ -577,11 +583,11 @@
           <div className="flex justify-between items-start mb-6">
             <SectionTitle title="Shared-Memory Coverage Bitmap" subtitle="Live compressed execution trace (AFL-style Map)" icon={Layers} />
             <div className="flex gap-2">
-               {['Raw Grid', 'Heatmap'].map((mode, i) => (
-                 <button key={i} className={`text-xs px-3 py-1 rounded-md font-mono border ${i === 0 ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' : 'bg-transparent border-white/10 text-slate-400 hover:bg-white/5'}`}>
-                   {mode}
-                 </button>
-               ))}
+              {['Raw Grid', 'Heatmap'].map((mode, i) => (
+                <button key={i} className={`text-xs px-3 py-1 rounded-md font-mono border ${i === 0 ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' : 'bg-transparent border-white/10 text-slate-400 hover:bg-white/5'}`}>
+                  {mode}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -622,39 +628,60 @@
       );
     };
 
-    const MutationStrategy = () => {
+    const MUTATION_COLORS = { bit_flip: '#3b82f6', byte_flip: '#8b5cf6', byte_insert: '#ec4899', havoc: '#10b981' };
+
+    const MutationStrategy = ({ report }) => {
+      const mutationData = React.useMemo(() => {
+        if (!report?.events?.length) return MUTATION_STATS;
+        const counts = {};
+        const successes = {};
+        report.events.forEach(e => {
+          if (e.action) {
+            counts[e.action] = (counts[e.action] || 0) + 1;
+            if (e.type === 'coverage_gain' && e.new_edges > 0) {
+              successes[e.action] = (successes[e.action] || 0) + 1;
+            }
+          }
+        });
+        const names = Object.keys(counts);
+        if (names.length === 0) return MUTATION_STATS;
+        return names.map(name => ({
+          name,
+          usage: counts[name],
+          success: successes[name] || 0,
+          color: MUTATION_COLORS[name] || '#6366f1',
+        }));
+      }, [report]);
+
       return (
         <GlassCard className="p-6">
           <SectionTitle title="Mutation Action Space" subtitle="PPO Agent Strategy Selection" icon={Crosshair} />
-          
+
           <div className="h-[250px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={MUTATION_STATS} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+              <BarChart data={mutationData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#ffffff10" />
                 <XAxis type="number" hide />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'monospace' }} width={90} />
                 <RechartsTooltip cursor={{ fill: '#ffffff05' }} content={<CustomTooltip />} />
-                
-                {/* Background bar for context */}
                 <Bar dataKey="usage" stackId="a" fill="#1e293b" radius={[0, 0, 0, 0]} barSize={24} name="Total Selections" />
-                {/* Success bar overlapping */}
                 <Bar dataKey="success" stackId="b" radius={[0, 4, 4, 0]} barSize={24} name="Rewarding Actions">
-                  {MUTATION_STATS.map((entry, index) => (
+                  {mutationData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          
+
           <div className="mt-4 grid grid-cols-2 gap-2">
-            {MUTATION_STATS.map(m => (
+            {mutationData.map(m => (
               <div key={m.name} className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
                   <span className="text-slate-300">{m.name}</span>
                 </div>
-                <span className="text-white font-bold">{Math.round((m.success/m.usage)*100)}% SR</span>
+                <span className="text-white font-bold">{m.usage > 0 ? Math.round((m.success / m.usage) * 100) : 0}% SR</span>
               </div>
             ))}
           </div>
@@ -662,21 +689,55 @@
       );
     };
 
-    const MLInsights = () => {
+    const MLInsights = ({ report }) => {
+      const chartData = React.useMemo(() => {
+        if (!report?.events?.length) return CHART_DATA_ML;
+        const ppoEvents = report.events.filter(e => e.type === 'ppo_update');
+        const covEvents = report.events.filter(e => e.type === 'coverage_gain');
+        if (ppoEvents.length === 0 && covEvents.length === 0) return CHART_DATA_ML;
+
+        const dataMap = {};
+        let cumulativeReward = 0;
+        covEvents.forEach(e => {
+          cumulativeReward += (e.new_edges || 0) * 10;
+          dataMap[e.step] = { ...(dataMap[e.step] || {}), step: e.step, reward: cumulativeReward };
+        });
+        ppoEvents.forEach(e => {
+          dataMap[e.step] = {
+            ...(dataMap[e.step] || {}),
+            step: e.step,
+            policyLoss: e.policy_loss,
+            valueLoss: e.value_loss,
+            entropy: e.entropy,
+          };
+        });
+
+        const sorted = Object.values(dataMap).sort((a, b) => a.step - b.step);
+        if (sorted.length === 0) return CHART_DATA_ML;
+
+        let lastReward = 0, lastPL = 0, lastVL = 0, lastEnt = 0;
+        return sorted.map(d => {
+          if (d.reward !== undefined) lastReward = d.reward;
+          if (d.policyLoss !== undefined) lastPL = d.policyLoss;
+          if (d.valueLoss !== undefined) lastVL = d.valueLoss;
+          if (d.entropy !== undefined) lastEnt = d.entropy;
+          return { step: d.step, reward: lastReward, policyLoss: lastPL, valueLoss: lastVL, entropy: lastEnt };
+        });
+      }, [report]);
+
       return (
         <GlassCard className="p-6 lg:col-span-2">
-          <SectionTitle title="PPO Telemetry & Loss Metrics" subtitle="Model Observability" icon={Activity} />
-          
+          <SectionTitle title="PPO Telemetry & Loss Metrics" subtitle={report ? `From: ${report.target_name}` : 'Model Observability'} icon={Activity} />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[300px]">
-            {/* Reward & Entropy Chart */}
             <div className="relative h-full flex flex-col">
               <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Reward Signal vs Entropy</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={CHART_DATA_ML} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorReward" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
@@ -690,11 +751,10 @@
               </ResponsiveContainer>
             </div>
 
-            {/* Policy & Value Loss Chart */}
             <div className="relative h-full flex flex-col">
               <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Actor-Critic Losses</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={CHART_DATA_ML} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                <LineChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
                   <XAxis dataKey="step" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 'auto']} />
@@ -709,20 +769,45 @@
       );
     };
 
-    const TargetAnalysis = () => {
+    const TargetAnalysis = ({ availableReports }) => {
+      const targets = React.useMemo(() => {
+        if (!availableReports?.length) return TARGETS;
+        const targetMap = {};
+        availableReports.forEach(r => {
+          const name = r.target_name;
+          if (!targetMap[name] || r.finished_at > targetMap[name].finished_at) {
+            targetMap[name] = r;
+          }
+        });
+        return Object.values(targetMap).map(r => {
+          const crashes = r.metrics?.total_crashes || 0;
+          const edges = r.metrics?.total_edges || 0;
+          const maxEdges = Math.max(edges, 200);
+          const progress = Math.min(100, Math.round((edges / maxEdges) * 100));
+          return {
+            name: r.target_name,
+            type: r.model || 'PPO+LSTM',
+            diff: r.status === 'completed' ? 'Completed' : r.status,
+            progress,
+            crashes,
+            status: crashes > 0 ? 'Exploited' : r.status === 'completed' ? 'Completed' : 'Active',
+          };
+        });
+      }, [availableReports]);
+
       return (
         <GlassCard className="p-6">
           <SectionTitle title="Vulnerable Targets" subtitle="Campaign Progress" icon={Server} />
-          
+
           <div className="flex flex-col gap-4">
-            {TARGETS.map((target, i) => (
+            {targets.map((target, i) => (
               <div key={i} className="bg-[#0f172a]/50 border border-slate-800 rounded-xl p-4 relative overflow-hidden group hover:border-slate-600 transition-colors">
                 {target.status === 'Exploited' && (
                   <div className="absolute -right-6 top-4 rotate-45 bg-rose-500/20 text-rose-400 text-[10px] font-bold py-1 px-8 border-y border-rose-500/50 uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.3)]">
                     Compromised
                   </div>
                 )}
-                
+
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h4 className="font-mono text-sm text-white font-bold">{target.name}</h4>
@@ -730,7 +815,7 @@
                   </div>
                   <div className="text-right">
                     <div className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                      Diff: {target.diff}
+                      {target.diff}
                     </div>
                   </div>
                 </div>
@@ -742,13 +827,13 @@
                       <span className="text-cyan-400">{target.progress}%</span>
                     </div>
                     <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                      <motion.div 
+                      <motion.div
                         initial={{ width: 0 }} animate={{ width: `${target.progress}%` }} transition={{ duration: 1, delay: 0.5 }}
                         className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="flex flex-col items-center pl-4 border-l border-slate-800">
                     <span className="text-slate-500 mb-1">Crashes</span>
                     <span className={`font-bold ${target.crashes > 0 ? 'text-rose-400' : 'text-slate-600'}`}>
@@ -786,40 +871,112 @@
           </div>
 
           <div className="overflow-x-auto relative z-10">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-800 text-xs text-slate-500 font-mono uppercase tracking-wider">
-                  <th className="pb-3 pl-2">Hash ID</th>
-                  <th className="pb-3">Signal</th>
-                  <th className="pb-3">Target Binary</th>
-                  <th className="pb-3">Trigger Mutation</th>
-                  <th className="pb-3">Time</th>
-                  <th className="pb-3">Action</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm font-mono">
-                {(crashes.length ? crashes : CRASH_VAULT).map((crash, i) => (
-                  <tr key={i} className="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-4 pl-2 font-bold text-slate-300 group-hover:text-cyan-400 transition-colors">{crash.id}</td>
-                    <td className="py-4">
-                      <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded border border-rose-500/20 text-xs">
-                        {crash.type}
-                      </span>
-                    </td>
-                    <td className="py-4 text-slate-400">{crash.target}</td>
-                    <td className="py-4 text-slate-400">{crash.mutation}</td>
-                    <td className="py-4 text-slate-500">{crash.time}</td>
-                    <td className="py-4">
-                      <button className="text-cyan-500 hover:text-cyan-300 transition-colors flex items-center gap-1 text-xs">
-                        Inspect <ChevronRight size={14} />
-                      </button>
-                    </td>
+            {crashes.length === 0 ? (
+              <div className="text-center py-12">
+                <ShieldAlert size={48} className="text-slate-700 mx-auto mb-4" />
+                <div className="text-slate-500 font-mono text-sm">No crashes detected yet</div>
+                <div className="text-slate-600 text-xs mt-2">Run a fuzzing campaign to discover vulnerabilities</div>
+              </div>
+            ) : (
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-800 text-xs text-slate-500 font-mono uppercase tracking-wider">
+                    <th className="pb-3 pl-2">Hash ID</th>
+                    <th className="pb-3">Signal</th>
+                    <th className="pb-3">Target Binary</th>
+                    <th className="pb-3">Trigger Mutation</th>
+                    <th className="pb-3">Time</th>
+                    <th className="pb-3">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="text-sm font-mono">
+                  {crashes.map((crash, i) => (
+                    <tr key={i} className="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors group">
+                      <td className="py-4 pl-2 font-bold text-slate-300 group-hover:text-cyan-400 transition-colors">{crash.id}</td>
+                      <td className="py-4">
+                        <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded border border-rose-500/20 text-xs">
+                          {crash.type}
+                        </span>
+                      </td>
+                      <td className="py-4 text-slate-400">{crash.target}</td>
+                      <td className="py-4 text-slate-400">{crash.mutation}</td>
+                      <td className="py-4 text-slate-500">{crash.time}</td>
+                      <td className="py-4">
+                        <button className="text-cyan-500 hover:text-cyan-300 transition-colors flex items-center gap-1 text-xs">
+                          Inspect <ChevronRight size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </GlassCard>
+      );
+    };
+
+    const CompletionBanner = ({ run, report }) => {
+      const [visible, setVisible] = useState(false);
+      const [dismissed, setDismissed] = useState(false);
+      const prevStatusRef = useRef(run.status);
+
+      useEffect(() => {
+        if (prevStatusRef.current === 'running' && (run.status === 'completed' || run.status === 'failed')) {
+          setVisible(true);
+          setDismissed(false);
+          const timer = setTimeout(() => setVisible(false), 15000);
+          return () => clearTimeout(timer);
+        }
+        prevStatusRef.current = run.status;
+      }, [run.status]);
+
+      if (!visible || dismissed) return null;
+
+      const isSuccess = run.status === 'completed';
+      return (
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          className={`mb-6 rounded-2xl border p-6 relative overflow-hidden ${isSuccess
+            ? 'bg-emerald-500/10 border-emerald-500/30'
+            : 'bg-rose-500/10 border-rose-500/30'
+            }`}
+        >
+          <button
+            onClick={() => setDismissed(true)}
+            className="absolute top-4 right-4 text-slate-400 hover:text-white text-sm"
+          >
+            ✕
+          </button>
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${isSuccess ? 'border-emerald-400 bg-emerald-500/20' : 'border-rose-400 bg-rose-500/20'
+              }`}>
+              {isSuccess
+                ? <Zap size={24} className="text-emerald-400" />
+                : <ShieldAlert size={24} className="text-rose-400" />
+              }
+            </div>
+            <div>
+              <div className={`text-lg font-bold ${isSuccess ? 'text-emerald-300' : 'text-rose-300'}`}>
+                Fuzzing Run {isSuccess ? 'Completed Successfully' : 'Failed'}
+              </div>
+              <div className="text-sm text-slate-400 font-mono mt-1">
+                Target: {run.target?.split('/').pop() || 'unknown'}
+                {run.completed_at && ` • Finished at ${run.completed_at}`}
+                {run.steps && ` • ${run.steps} steps`}
+              </div>
+              {report && (
+                <div className="text-xs text-slate-500 mt-2">
+                  Edges: {report.metrics?.total_edges || 0} •
+                  Crashes: {report.metrics?.total_crashes || 0} •
+                  Reward: {(report.metrics?.total_reward || 0).toFixed(1)}
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
       );
     };
 
@@ -835,7 +992,7 @@
 
         const actions = ['bit_flip', 'byte_insert', 'havoc', 'byte_flip'];
         const mockEvents = [
-          () => ({ tag: 'FUZZ', msg: `Action [${actions[Math.floor(Math.random()*actions.length)]}] executed. Reward: +${(Math.random()*5).toFixed(2)}`, type: 'info' }),
+          () => ({ tag: 'FUZZ', msg: `Action [${actions[Math.floor(Math.random() * actions.length)]}] executed. Reward: +${(Math.random() * 5).toFixed(2)}`, type: 'info' }),
           () => ({ tag: 'AGENT', msg: `PPO update complete. Policy Loss: ${(Math.random()).toFixed(4)}`, type: 'success' }),
           () => ({ tag: 'MEM', msg: 'New coverage edge discovered! Map density increased.', type: 'warning' }),
         ];
@@ -843,7 +1000,7 @@
         const interval = setInterval(() => {
           const newLog = mockEvents[Math.floor(Math.random() * mockEvents.length)]();
           const time = new Date().toISOString().substring(11, 23); // HH:MM:SS.mmm
-          
+
           setLogs(prev => {
             const next = [...prev, { time, ...newLog }];
             return next.length > 50 ? next.slice(next.length - 50) : next;
@@ -860,7 +1017,7 @@
       }, [logs]);
 
       const getColor = (type) => {
-        switch(type) {
+        switch (type) {
           case 'info': return 'text-slate-300';
           case 'success': return 'text-indigo-400';
           case 'warning': return 'text-cyan-400';
@@ -870,7 +1027,7 @@
       };
 
       const getTagColor = (tag) => {
-        switch(tag) {
+        switch (tag) {
           case 'SYSTEM': return 'bg-slate-700 text-white';
           case 'AGENT': return 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30';
           case 'FUZZ': return 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30';
@@ -893,15 +1050,15 @@
               <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500"></div>
             </div>
           </div>
-          
-          <div 
+
+          <div
             ref={scrollRef}
             className="flex-1 p-4 bg-[#0a0a0f] overflow-y-auto font-mono text-xs leading-relaxed custom-scrollbar"
             style={{ scrollBehavior: 'smooth' }}
           >
             <AnimatePresence initial={false}>
               {logs.map((log, i) => (
-                <motion.div 
+                <motion.div
                   key={i + log.time}
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                   className="mb-1.5 flex gap-3 hover:bg-white/[0.02] px-2 py-0.5 rounded"
@@ -923,40 +1080,40 @@
       return (
         <GlassCard className="p-6">
           <SectionTitle title="Project Architecture" subtitle="Repository Structure" icon={SearchCode} />
-          
+
           <div className="font-mono text-xs text-slate-400 mt-4 leading-relaxed bg-[#050810] p-4 rounded-xl border border-white/5">
             <div className="text-cyan-400 font-bold mb-2">fuzzinator/</div>
-            
+
             <div className="pl-4 border-l border-slate-800 ml-2 relative">
               <div className="before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-3">
-                <span className="text-indigo-300 flex items-center gap-2"><Brain size={12}/> agent/</span>
+                <span className="text-indigo-300 flex items-center gap-2"><Brain size={12} /> agent/</span>
                 <div className="pl-6 text-slate-500">train.py / train_lstm.py</div>
                 <div className="pl-6 text-slate-500">ppo_agent.py / ppo_agent_lstm.py</div>
                 <div className="pl-6 text-slate-500">run_report.py</div>
               </div>
-              
+
               <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-14">
-                 <span className="text-emerald-300 flex items-center gap-2"><GitBranch size={12}/> mutator/</span>
-                 <div className="pl-6 text-slate-500">mutator.py</div>
+                <span className="text-emerald-300 flex items-center gap-2"><GitBranch size={12} /> mutator/</span>
+                <div className="pl-6 text-slate-500">mutator.py</div>
               </div>
 
               <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[104px]">
-                 <span className="text-amber-300 flex items-center gap-2"><Server size={12}/> environment/</span>
-                 <div className="pl-6 text-slate-500">fuzz_env.py / fuzz_env_lstm.py</div>
-                 <div className="pl-6 text-slate-500">execution_harness.py</div>
-                 <div className="pl-6 text-slate-500">coverage_reader.py</div>
+                <span className="text-amber-300 flex items-center gap-2"><Server size={12} /> environment/</span>
+                <div className="pl-6 text-slate-500">fuzz_env.py / fuzz_env_lstm.py</div>
+                <div className="pl-6 text-slate-500">execution_harness.py</div>
+                <div className="pl-6 text-slate-500">coverage_reader.py</div>
               </div>
-              
+
               <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[168px]">
-                 <span className="text-rose-300 flex items-center gap-2"><ShieldAlert size={12}/> targets/</span>
-                 <div className="pl-6 text-slate-500">drop .c files here through the dashboard</div>
-                 <div className="pl-6 text-slate-500">compiled binaries are reused by PPO+LSTM</div>
+                <span className="text-rose-300 flex items-center gap-2"><ShieldAlert size={12} /> targets/</span>
+                <div className="pl-6 text-slate-500">drop .c files here through the dashboard</div>
+                <div className="pl-6 text-slate-500">compiled binaries are reused by PPO+LSTM</div>
               </div>
 
               <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[232px]">
-                 <span className="text-cyan-300 flex items-center gap-2"><Cpu size={12}/> backend/</span>
-                 <div className="pl-6 text-slate-500">dashboard_server.py</div>
-                 <div className="pl-6 text-slate-500">upload -> build -> run -> report APIs</div>
+                <span className="text-cyan-300 flex items-center gap-2"><Cpu size={12} /> backend/</span>
+                <div className="pl-6 text-slate-500">dashboard_server.py</div>
+                <div className="pl-6 text-slate-500">upload -> build -> run -> report APIs</div>
               </div>
             </div>
           </div>
@@ -968,7 +1125,7 @@
       <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Nominal</span>
-          <span className="flex items-center gap-1"><Cpu size={14} className="text-slate-400"/> Dashboard API + instrumentation build + PPO+LSTM</span>
+          <span className="flex items-center gap-1"><Cpu size={14} className="text-slate-400" /> Dashboard API + instrumentation build + PPO+LSTM</span>
         </div>
         <div className="flex items-center gap-6">
           <span>Reports: <span className="text-cyan-400">data/reports/*.json</span></span>
@@ -1071,18 +1228,18 @@
 
       const liveLogs = (run.stdout_tail || []).length
         ? run.stdout_tail.map((msg, index) => ({
-            time: new Date().toISOString().substring(11, 23),
-            tag: 'RUN',
-            msg,
-            type: msg.includes('ERROR') ? 'error' : msg.includes('Checkpoint') ? 'success' : 'info',
-          }))
+          time: new Date().toISOString().substring(11, 23),
+          tag: 'RUN',
+          msg,
+          type: msg.includes('ERROR') ? 'error' : msg.includes('Checkpoint') ? 'success' : 'info',
+        }))
         : TERMINAL_LOGS_BASE;
 
       return (
         <div className="min-h-screen relative z-0">
           {/* Global stylistic background noise/vignette */}
           <div className="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)] opacity-80 mix-blend-multiply" />
-          
+
           <div className="max-w-[1600px] mx-auto p-4 md:p-8 relative z-10">
             <HeroSection liveStats={liveStats} />
             <ControlCenter
@@ -1110,26 +1267,27 @@
               error={error}
             />
             <StatsOverview liveStats={liveStats} />
+            <CompletionBanner run={run} report={latestReport} />
             <LatestRunReport report={latestReport} />
-            
+
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               <div className="xl:col-span-3">
-                 <PipelineVisual />
+                <PipelineVisual />
               </div>
 
               <BitmapVisualizer />
-              <MutationStrategy />
-              
-              <MLInsights />
-              <TargetAnalysis />
-              
+              <MutationStrategy report={latestReport} />
+
+              <MLInsights report={latestReport} />
+              <TargetAnalysis availableReports={dashboardState.available_reports} />
+
               <div className="xl:col-span-2">
                 <LiveTerminal logsOverride={liveLogs} />
               </div>
               <ArchitectureMap />
 
               <div className="xl:col-span-3">
-                 <CrashVault report={latestReport} />
+                <CrashVault report={latestReport} />
               </div>
             </div>
 
@@ -1144,4 +1302,5 @@
     root.render(<App />);
   </script>
 </body>
+
 </html>

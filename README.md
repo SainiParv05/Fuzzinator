@@ -131,6 +131,38 @@ Current runtime note:
 - baseline PPO finishes normally
 - PPO+LSTM is wired into the dashboard, but it is still slow on CPU and may take a long time even for very short runs
 
+### Dashboard Screenshots
+
+<p align="center">
+  <img src="images/MAIN-DASHBOARD.png" alt="Main Dashboard" width="100%"/>
+  <br><em>Main Dashboard — Hero section with live campaign stats and build controls</em>
+</p>
+
+<p align="center">
+  <img src="images/Stats.png" alt="Stats Overview" width="100%"/>
+  <br><em>Stats Overview — Real-time coverage edges, crashes, exec/sec, reward, and mutation strategy</em>
+</p>
+
+<p align="center">
+  <img src="images/Completion Report.png" alt="Completion Report" width="100%"/>
+  <br><em>Completion Report — Detailed run report with metrics, events, and artifact paths</em>
+</p>
+
+<p align="center">
+  <img src="images/Pipe-line-and-BitMap.png" alt="Pipeline and Bitmap" width="100%"/>
+  <br><em>Live Fuzzing Pipeline & Coverage Bitmap — Data flow visualization and AFL-style shared memory map</em>
+</p>
+
+<p align="center">
+  <img src="images/CRASH-VAULT.png" alt="Crash Vault" width="100%"/>
+  <br><em>Crash Vault — Forensic artifact triage with signal type, target, and trigger mutation</em>
+</p>
+
+<p align="center">
+  <img src="images/Project-Architecture.png" alt="Project Architecture" width="100%"/>
+  <br><em>Project Architecture — Repository structure and component map</em>
+</p>
+
 ### Options
 
 ```bash

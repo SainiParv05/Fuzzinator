@@ -272,10 +272,12 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
 
         if parsed.path == "/api/run_lstm":
             target_binary = body.get("target_binary")
-            steps = int(body.get("steps", 200))
             try:
+                if not isinstance(target_binary, str):
+                    raise TypeError("target_binary must be a string")
+                steps = int(body.get("steps", 200))
                 run_state = start_lstm_run(target_binary, steps=steps)
-            except (RuntimeError, FileNotFoundError, ValueError) as exc:
+            except (RuntimeError, FileNotFoundError, ValueError, TypeError) as exc:
                 self.respond_json({"error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
                 return
 

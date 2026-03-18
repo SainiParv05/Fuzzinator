@@ -1,0 +1,85 @@
+# Run Report: PPO+LSTM
+
+Started: 2026-03-18T10:15:55
+Finished: 2026-03-18T10:16:23
+Status: `completed`
+
+## Completion
+
+- Requested steps: `200`
+- Completed steps: `200`
+- Completion rule: `Run is done when completed_steps reaches requested_steps or the process is interrupted.`
+
+## Target
+
+- Target binary: `/home/kali/Fuzzi/Fuzzinator/targets/target_maze`
+- Seed file: `/home/kali/Fuzzi/Fuzzinator/corpus/seed.bin`
+- Target name: `target_maze`
+
+## Configuration
+
+- rollout_size: `256`
+- learning_rate: `0.0003`
+- random_seed: `1337`
+- device: `cpu`
+- timeout_ms: `500`
+- max_input_size: `1024`
+- checkpoint_interval: `500`
+- lstm_hidden: `128`
+- lstm_layers: `1`
+
+## Final Metrics
+
+- elapsed_seconds: `28.089`
+- exec_speed: `7.12`
+- total_reward: `2063.2`
+- total_edges: `208`
+- total_crashes: `0`
+- ppo_updates: `1`
+
+## Crashes Created In This Run
+
+- None
+
+## Notable Events
+
+- step=1, type=coverage_gain, new_edges=7, total_edges=7, action=bit_flip
+- step=2, type=coverage_gain, new_edges=7, total_edges=14, action=byte_flip
+- step=3, type=coverage_gain, new_edges=6, total_edges=20, action=byte_flip
+- step=4, type=coverage_gain, new_edges=7, total_edges=27, action=byte_flip
+- step=5, type=coverage_gain, new_edges=7, total_edges=34, action=byte_insert
+- step=6, type=coverage_gain, new_edges=7, total_edges=41, action=byte_insert
+- step=8, type=coverage_gain, new_edges=7, total_edges=48, action=byte_insert
+- step=10, type=coverage_gain, new_edges=7, total_edges=55, action=byte_flip
+- step=12, type=coverage_gain, new_edges=6, total_edges=61, action=havoc
+- step=13, type=coverage_gain, new_edges=7, total_edges=68, action=havoc
+- step=14, type=coverage_gain, new_edges=6, total_edges=74, action=bit_flip
+- step=15, type=coverage_gain, new_edges=7, total_edges=81, action=bit_flip
+- step=16, type=coverage_gain, new_edges=6, total_edges=87, action=byte_insert
+- step=17, type=coverage_gain, new_edges=7, total_edges=94, action=bit_flip
+- step=20, type=coverage_gain, new_edges=7, total_edges=101, action=byte_insert
+- step=22, type=coverage_gain, new_edges=6, total_edges=107, action=havoc
+- step=23, type=coverage_gain, new_edges=6, total_edges=113, action=bit_flip
+- step=27, type=coverage_gain, new_edges=7, total_edges=120, action=bit_flip
+- step=28, type=coverage_gain, new_edges=7, total_edges=127, action=bit_flip
+- step=30, type=coverage_gain, new_edges=6, total_edges=133, action=byte_flip
+- step=32, type=coverage_gain, new_edges=6, total_edges=139, action=bit_flip
+- step=34, type=coverage_gain, new_edges=7, total_edges=146, action=havoc
+- step=36, type=coverage_gain, new_edges=6, total_edges=152, action=bit_flip
+- step=42, type=coverage_gain, new_edges=7, total_edges=159, action=bit_flip
+- step=43, type=coverage_gain, new_edges=6, total_edges=165, action=bit_flip
+- step=46, type=coverage_gain, new_edges=6, total_edges=171, action=havoc
+- step=61, type=coverage_gain, new_edges=6, total_edges=177, action=byte_flip
+- step=70, type=coverage_gain, new_edges=6, total_edges=183, action=bit_flip
+- step=83, type=coverage_gain, new_edges=7, total_edges=190, action=byte_flip
+- step=85, type=coverage_gain, new_edges=6, total_edges=196, action=byte_insert
+- step=87, type=coverage_gain, new_edges=6, total_edges=202, action=byte_flip
+- step=110, type=coverage_gain, new_edges=6, total_edges=208, action=havoc
+- step=200, type=ppo_update, update=1, policy_loss=-0.0028, value_loss=41962.5947, entropy=1.3838
+
+## Artifacts
+
+- Final checkpoint: `/home/kali/Fuzzi/Fuzzinator/data/checkpoints/ppo_lstm_final.pt`
+- Crash dir: `/home/kali/Fuzzi/Fuzzinator/data/crashes`
+- Markdown report: `/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T10-15-55_ppo_lstm_target_maze.md`
+- JSON report: `/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T10-15-55_ppo_lstm_target_maze.json`

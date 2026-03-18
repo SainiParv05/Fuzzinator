@@ -1,0 +1,429 @@
+# Run Report: PPO+LSTM
+
+Started: 2026-03-18T10:12:52
+Finished: 2026-03-18T10:14:14
+Status: `completed`
+
+## Completion
+
+- Requested steps: `500`
+- Completed steps: `500`
+- Completion rule: `Run is done when completed_steps reaches requested_steps or the process is interrupted.`
+
+## Target
+
+- Target binary: `/home/kali/Fuzzi/Fuzzinator/targets/target_buffer_overflow`
+- Seed file: `/home/kali/Fuzzi/Fuzzinator/corpus/seed.bin`
+- Target name: `target_buffer_overflow`
+
+## Configuration
+
+- rollout_size: `256`
+- learning_rate: `0.0003`
+- random_seed: `1337`
+- device: `cpu`
+- timeout_ms: `500`
+- max_input_size: `1024`
+- checkpoint_interval: `500`
+- lstm_hidden: `128`
+- lstm_layers: `1`
+
+## Final Metrics
+
+- elapsed_seconds: `82.447`
+- exec_speed: `6.065`
+- total_reward: `20476.4`
+- total_edges: `272`
+- total_crashes: `178`
+- ppo_updates: `2`
+
+## Crashes Created In This Run
+
+- `crash_SIGABRT_006cee217a6ddb18.bin`
+- `crash_SIGABRT_02333444fb87ca83.bin`
+- `crash_SIGABRT_0275ca60ae0e1e92.bin`
+- `crash_SIGABRT_040db49d4b769dbc.bin`
+- `crash_SIGABRT_046cf3f94c8ddb7a.bin`
+- `crash_SIGABRT_06d82bb95e9a1125.bin`
+- `crash_SIGABRT_0a51a227fa8d4e54.bin`
+- `crash_SIGABRT_0d7d7eeae8501f3a.bin`
+- `crash_SIGABRT_0da0ee7d5521dbdd.bin`
+- `crash_SIGABRT_0de80f1c21920143.bin`
+- `crash_SIGABRT_0e20e993417ae7b2.bin`
+- `crash_SIGABRT_0e8d46a69b5ad150.bin`
+- `crash_SIGABRT_143b5ebff4274035.bin`
+- `crash_SIGABRT_1461446aae2d2976.bin`
+- `crash_SIGABRT_19f6bbc4319c8917.bin`
+- `crash_SIGABRT_1c20647713d9963d.bin`
+- `crash_SIGABRT_22561b9314dfc7eb.bin`
+- `crash_SIGABRT_22ab127f35452d71.bin`
+- `crash_SIGABRT_26264b917c345abd.bin`
+- `crash_SIGABRT_265af35b12627411.bin`
+- `crash_SIGABRT_28717e563ab185d6.bin`
+- `crash_SIGABRT_2a1e1efaf506a2f0.bin`
+- `crash_SIGABRT_2bd5851aa388a191.bin`
+- `crash_SIGABRT_2bec0043c7c951fa.bin`
+- `crash_SIGABRT_36c4f9db85c36c25.bin`
+- `crash_SIGABRT_3769a77273ea050e.bin`
+- `crash_SIGABRT_377ffde6fcee4ed6.bin`
+- `crash_SIGABRT_3c0d5abb533294a0.bin`
+- `crash_SIGABRT_3c5e6ed5ab12f66e.bin`
+- `crash_SIGABRT_3f8e40985fffb714.bin`
+- `crash_SIGABRT_4184dc5cd3bc3337.bin`
+- `crash_SIGABRT_41ff2cb4c1e7b3f8.bin`
+- `crash_SIGABRT_431a56e9d3614d77.bin`
+- `crash_SIGABRT_478ade3fe6124074.bin`
+- `crash_SIGABRT_49bcbe15eed83ec2.bin`
+- `crash_SIGABRT_4aff629a1b39f7d5.bin`
+- `crash_SIGABRT_4b20f932372c7669.bin`
+- `crash_SIGABRT_4bed3d6ec34495e7.bin`
+- `crash_SIGABRT_4c8371def44fe065.bin`
+- `crash_SIGABRT_4cce073115db7279.bin`
+- `crash_SIGABRT_4fa8850d43bc31cf.bin`
+- `crash_SIGABRT_53ceddb0abd6cad0.bin`
+- `crash_SIGABRT_56604c26279cec7b.bin`
+- `crash_SIGABRT_587847e824fb01f4.bin`
+- `crash_SIGABRT_58d8eb5b8c7676ec.bin`
+- `crash_SIGABRT_5a10ac5aad668c08.bin`
+- `crash_SIGABRT_5a272620c77f472b.bin`
+- `crash_SIGABRT_5d82fb0c8b9403f9.bin`
+- `crash_SIGABRT_5e90d4199b1d756a.bin`
+- `crash_SIGABRT_5f30514387f650d7.bin`
+- `crash_SIGABRT_5fadf6a3fed27a85.bin`
+- `crash_SIGABRT_613d23efb6cc4a89.bin`
+- `crash_SIGABRT_617dedf5a42d6f09.bin`
+- `crash_SIGABRT_64006b15157269f6.bin`
+- `crash_SIGABRT_64a9a8e341d2048a.bin`
+- `crash_SIGABRT_67660e8d01f33da7.bin`
+- `crash_SIGABRT_67db66e45e824ecc.bin`
+- `crash_SIGABRT_68392a25d81b9d69.bin`
+- `crash_SIGABRT_686ed92cb71cc02c.bin`
+- `crash_SIGABRT_6b0fd2f77a333edc.bin`
+- `crash_SIGABRT_6ce16bd20a82bcf0.bin`
+- `crash_SIGABRT_6f58b1915c4871e0.bin`
+- `crash_SIGABRT_6fe72659036bfb5e.bin`
+- `crash_SIGABRT_710b1d6b692db7e8.bin`
+- `crash_SIGABRT_72ac17c39f997bba.bin`
+- `crash_SIGABRT_7338715cb514ba63.bin`
+- `crash_SIGABRT_73633c3521ba397d.bin`
+- `crash_SIGABRT_73d18ebdc0196111.bin`
+- `crash_SIGABRT_73e3c1102a7f38bf.bin`
+- `crash_SIGABRT_75ebd6ca2dc99b80.bin`
+- `crash_SIGABRT_783e1ae8b3212b16.bin`
+- `crash_SIGABRT_7b9ae4e8c95aaa90.bin`
+- `crash_SIGABRT_7c07fad859ed8ace.bin`
+- `crash_SIGABRT_7c694efd31eaa42b.bin`
+- `crash_SIGABRT_7d3b94777225ef3e.bin`
+- `crash_SIGABRT_7ed68e52e610bbbe.bin`
+- `crash_SIGABRT_7f8c69582ecb11bc.bin`
+- `crash_SIGABRT_7fa9d7bb8a2d9bde.bin`
+- `crash_SIGABRT_823679d1bffdf8d6.bin`
+- `crash_SIGABRT_82b0abcaed7f0728.bin`
+- `crash_SIGABRT_83aa21923f29c2be.bin`
+- `crash_SIGABRT_85a58ab170b5f6b4.bin`
+- `crash_SIGABRT_8a9a3248accf2925.bin`
+- `crash_SIGABRT_901a9a471bf53650.bin`
+- `crash_SIGABRT_942f3969136d1b51.bin`
+- `crash_SIGABRT_97daaae5da2193f1.bin`
+- `crash_SIGABRT_9832d88f6cb9a257.bin`
+- `crash_SIGABRT_9a6174a815e2ab38.bin`
+- `crash_SIGABRT_9cc22a9c97f2079f.bin`
+- `crash_SIGABRT_9de4661d88964d9c.bin`
+- `crash_SIGABRT_9e0dae2fc3b25e58.bin`
+- `crash_SIGABRT_9f938c6c96b4a793.bin`
+- `crash_SIGABRT_a1958e9299816340.bin`
+- `crash_SIGABRT_a30f40b2e46f66b6.bin`
+- `crash_SIGABRT_a52f995500dc6be8.bin`
+- `crash_SIGABRT_a54aaabdfc8e955d.bin`
+- `crash_SIGABRT_a62de13120938f9a.bin`
+- `crash_SIGABRT_a67a2532a82b9632.bin`
+- `crash_SIGABRT_a813a196f48e7ac3.bin`
+- `crash_SIGABRT_a84b305cdb5adcfc.bin`
+- `crash_SIGABRT_a89ec0f7dceb7766.bin`
+- `crash_SIGABRT_a970d570990a9578.bin`
+- `crash_SIGABRT_ac4ad46e1c8d0353.bin`
+- `crash_SIGABRT_aff69645b9c11e23.bin`
+- `crash_SIGABRT_b12ea582ee0596ac.bin`
+- `crash_SIGABRT_b27b5a491629cdd2.bin`
+- `crash_SIGABRT_b4af2a73ace0558a.bin`
+- `crash_SIGABRT_b555b63a62f66295.bin`
+- `crash_SIGABRT_b5e34acb7af253dc.bin`
+- `crash_SIGABRT_b62dc738331c6bac.bin`
+- `crash_SIGABRT_b65d1ccb80f732a2.bin`
+- `crash_SIGABRT_b6b614c0547c6cac.bin`
+- `crash_SIGABRT_b6d3413a881c4050.bin`
+- `crash_SIGABRT_b919847e31c1d4b1.bin`
+- `crash_SIGABRT_bac8a5810fb482c1.bin`
+- `crash_SIGABRT_bc03ad0a67c64a7d.bin`
+- `crash_SIGABRT_bd651f88daca3dac.bin`
+- `crash_SIGABRT_be37cb9663463467.bin`
+- `crash_SIGABRT_bf5d53a8129d2e1f.bin`
+- `crash_SIGABRT_bfdc1a5e051f18a9.bin`
+- `crash_SIGABRT_c0304cc8c5f3d4f3.bin`
+- `crash_SIGABRT_c08a9dea5399b863.bin`
+- `crash_SIGABRT_c36fd282d1ad50bf.bin`
+- `crash_SIGABRT_c8492b339810f685.bin`
+- `crash_SIGABRT_c9aaaf3d694ed610.bin`
+- `crash_SIGABRT_c9c1c7889b39e386.bin`
+- `crash_SIGABRT_cb1aaa3b301ca9ce.bin`
+- `crash_SIGABRT_cc003879621baefe.bin`
+- `crash_SIGABRT_cc150d20dcbbdc46.bin`
+- `crash_SIGABRT_cce29e09bc39c12f.bin`
+- `crash_SIGABRT_ce8c919477d29272.bin`
+- `crash_SIGABRT_cefd6810b8b0d3f9.bin`
+- `crash_SIGABRT_cfe36b7993285d5a.bin`
+- `crash_SIGABRT_d022f9c9a9cdb9af.bin`
+- `crash_SIGABRT_d036d4523883f0d1.bin`
+- `crash_SIGABRT_d079213ac7367513.bin`
+- `crash_SIGABRT_d1af67892be30768.bin`
+- `crash_SIGABRT_d26f0ecc61d24fc8.bin`
+- `crash_SIGABRT_d2ccf50a59ec875d.bin`
+- `crash_SIGABRT_d2f2e6aa38b321e3.bin`
+- `crash_SIGABRT_d4837224a5d2736c.bin`
+- `crash_SIGABRT_d5a583de397ca385.bin`
+- `crash_SIGABRT_d5e87fe73271575b.bin`
+- `crash_SIGABRT_d8f7e99ffa66294e.bin`
+- `crash_SIGABRT_da1e158db5d49ee3.bin`
+- `crash_SIGABRT_da5b4a68cc081d38.bin`
+- `crash_SIGABRT_dc4190d924848622.bin`
+- `crash_SIGABRT_dc5df5ebb19f806c.bin`
+- `crash_SIGABRT_de08a3e75aa3a824.bin`
+- `crash_SIGABRT_df3d91f7441c3a84.bin`
+- `crash_SIGABRT_df4f757e8a0372aa.bin`
+- `crash_SIGABRT_df79a673f8f2d8ad.bin`
+- `crash_SIGABRT_e0506f96bcb61f19.bin`
+- `crash_SIGABRT_e0dbef4b2d366005.bin`
+- `crash_SIGABRT_e1163723ec9b2b92.bin`
+- `crash_SIGABRT_e165080fc311c644.bin`
+- `crash_SIGABRT_e3bc8981dfb6bad6.bin`
+- `crash_SIGABRT_e3c3492580e069c7.bin`
+- `crash_SIGABRT_e5952ce09fa00d28.bin`
+- `crash_SIGABRT_e6424abe2c6326c2.bin`
+- `crash_SIGABRT_e9408d2fb5c7bd30.bin`
+- `crash_SIGABRT_eee40b97da640d6e.bin`
+- `crash_SIGABRT_f2083180d00e381a.bin`
+- `crash_SIGABRT_f459de867fcf3cf1.bin`
+- `crash_SIGABRT_f49fc4190a443f88.bin`
+- `crash_SIGABRT_f4e8c6dd4a87c5d7.bin`
+- `crash_SIGABRT_f70f080526620fe5.bin`
+- `crash_SIGABRT_f7987abf52366985.bin`
+- `crash_SIGABRT_f83e95d1152e5d57.bin`
+- `crash_SIGABRT_f899869c5be10c4e.bin`
+- `crash_SIGABRT_f8dfa954ab452769.bin`
+- `crash_SIGABRT_fa5d417918afb337.bin`
+- `crash_SIGABRT_fbb5c957079db63c.bin`
+- `crash_SIGABRT_fbf74dbcb3c3b618.bin`
+- `crash_SIGABRT_fd603778a996c038.bin`
+- `crash_SIGABRT_fe2d086e8c6e5c66.bin`
+- `crash_SIGABRT_fe55fe037fa63559.bin`
+- `crash_SIGABRT_ff9b03996ff31e2d.bin`
+
+## Notable Events
+
+- step=1, type=coverage_gain, new_edges=7, total_edges=7, action=bit_flip
+- step=2, type=coverage_gain, new_edges=7, total_edges=14, action=byte_flip
+- step=3, type=coverage_gain, new_edges=7, total_edges=21, action=byte_flip
+- step=4, type=coverage_gain, new_edges=7, total_edges=28, action=byte_flip
+- step=5, type=coverage_gain, new_edges=7, total_edges=35, action=byte_insert
+- step=6, type=coverage_gain, new_edges=7, total_edges=42, action=byte_insert
+- step=8, type=coverage_gain, new_edges=7, total_edges=49, action=byte_insert
+- step=9, type=coverage_gain, new_edges=7, total_edges=56, action=byte_insert
+- step=10, type=coverage_gain, new_edges=7, total_edges=63, action=byte_flip
+- step=11, type=coverage_gain, new_edges=7, total_edges=70, action=havoc
+- step=12, type=coverage_gain, new_edges=7, total_edges=77, action=havoc
+- step=13, type=coverage_gain, new_edges=7, total_edges=84, action=havoc
+- step=14, type=coverage_gain, new_edges=7, total_edges=91, action=bit_flip
+- step=15, type=coverage_gain, new_edges=7, total_edges=98, action=bit_flip
+- step=17, type=coverage_gain, new_edges=7, total_edges=105, action=bit_flip
+- step=18, type=coverage_gain, new_edges=7, total_edges=112, action=bit_flip
+- step=19, type=coverage_gain, new_edges=6, total_edges=118, action=byte_flip
+- step=20, type=coverage_gain, new_edges=6, total_edges=124, action=byte_insert
+- step=22, type=coverage_gain, new_edges=6, total_edges=130, action=havoc
+- step=26, type=coverage_gain, new_edges=6, total_edges=136, action=bit_flip
+- step=28, type=coverage_gain, new_edges=6, total_edges=142, action=bit_flip
+- step=29, type=coverage_gain, new_edges=6, total_edges=148, action=byte_flip
+- step=30, type=coverage_gain, new_edges=6, total_edges=154, action=byte_flip
+- step=32, type=coverage_gain, new_edges=6, total_edges=160, action=bit_flip
+- step=36, type=coverage_gain, new_edges=6, total_edges=166, action=bit_flip
+- step=45, type=coverage_gain, new_edges=6, total_edges=172, action=havoc
+- step=47, type=coverage_gain, new_edges=6, total_edges=178, action=byte_insert
+- step=49, type=coverage_gain, new_edges=6, total_edges=184, action=byte_flip
+- step=56, type=coverage_gain, new_edges=6, total_edges=190, action=bit_flip
+- step=59, type=coverage_gain, new_edges=6, total_edges=196, action=byte_insert
+- step=60, type=coverage_gain, new_edges=6, total_edges=202, action=byte_insert
+- step=64, type=coverage_gain, new_edges=6, total_edges=208, action=bit_flip
+- step=88, type=coverage_gain, new_edges=2, total_edges=210, action=havoc
+- step=89, type=crash, signal=SIGABRT, reward=99.9, total_crashes=1
+- step=90, type=coverage_gain, new_edges=2, total_edges=212, action=byte_flip
+- step=91, type=coverage_gain, new_edges=2, total_edges=214, action=bit_flip
+- step=92, type=coverage_gain, new_edges=2, total_edges=216, action=byte_flip
+- step=93, type=coverage_gain, new_edges=2, total_edges=218, action=bit_flip
+- step=94, type=crash, signal=SIGABRT, reward=99.9, total_crashes=2
+- step=95, type=coverage_gain, new_edges=2, total_edges=220, action=byte_flip
+- step=96, type=crash, signal=SIGABRT, reward=99.9, total_crashes=3
+- step=97, type=coverage_gain, new_edges=2, total_edges=222, action=byte_flip
+- step=98, type=crash, signal=SIGABRT, reward=99.9, total_crashes=4
+- step=99, type=coverage_gain, new_edges=2, total_edges=224, action=bit_flip
+- step=100, type=coverage_gain, new_edges=2, total_edges=226, action=bit_flip
+- step=101, type=crash, signal=SIGABRT, reward=99.9, total_crashes=5
+- step=102, type=coverage_gain, new_edges=2, total_edges=228, action=bit_flip
+- step=103, type=crash, signal=SIGABRT, reward=99.9, total_crashes=6
+- step=104, type=crash, signal=SIGABRT, reward=99.9, total_crashes=7
+- step=105, type=crash, signal=SIGABRT, reward=99.9, total_crashes=8
+- step=106, type=coverage_gain, new_edges=2, total_edges=230, action=byte_flip
+- step=107, type=coverage_gain, new_edges=2, total_edges=232, action=byte_flip
+- step=108, type=coverage_gain, new_edges=2, total_edges=234, action=bit_flip
+- step=109, type=coverage_gain, new_edges=2, total_edges=236, action=byte_flip
+- step=110, type=crash, signal=SIGABRT, reward=99.9, total_crashes=9
+- step=113, type=crash, signal=SIGABRT, reward=99.9, total_crashes=10
+- step=118, type=crash, signal=SIGABRT, reward=99.9, total_crashes=11
+- step=120, type=coverage_gain, new_edges=2, total_edges=238, action=bit_flip
+- step=121, type=crash, signal=SIGABRT, reward=99.9, total_crashes=12
+- step=122, type=crash, signal=SIGABRT, reward=99.9, total_crashes=13
+- step=123, type=coverage_gain, new_edges=2, total_edges=240, action=bit_flip
+- step=126, type=crash, signal=SIGABRT, reward=99.9, total_crashes=14
+- step=128, type=crash, signal=SIGABRT, reward=99.9, total_crashes=15
+- step=132, type=coverage_gain, new_edges=2, total_edges=242, action=byte_flip
+- step=133, type=crash, signal=SIGABRT, reward=99.9, total_crashes=16
+- step=135, type=crash, signal=SIGABRT, reward=99.9, total_crashes=17
+- step=136, type=crash, signal=SIGABRT, reward=99.9, total_crashes=18
+- step=137, type=crash, signal=SIGABRT, reward=99.9, total_crashes=19
+- step=138, type=coverage_gain, new_edges=2, total_edges=244, action=bit_flip
+- step=139, type=coverage_gain, new_edges=2, total_edges=246, action=byte_flip
+- step=140, type=coverage_gain, new_edges=2, total_edges=248, action=havoc
+- step=141, type=crash, signal=SIGABRT, reward=99.9, total_crashes=20
+- step=142, type=crash, signal=SIGABRT, reward=99.9, total_crashes=21
+- step=143, type=crash, signal=SIGABRT, reward=99.9, total_crashes=22
+- step=150, type=coverage_gain, new_edges=2, total_edges=250, action=byte_flip
+- step=153, type=crash, signal=SIGABRT, reward=99.9, total_crashes=23
+- step=154, type=crash, signal=SIGABRT, reward=99.9, total_crashes=24
+- step=155, type=crash, signal=SIGABRT, reward=99.9, total_crashes=25
+- step=157, type=crash, signal=SIGABRT, reward=99.9, total_crashes=26
+- step=159, type=crash, signal=SIGABRT, reward=99.9, total_crashes=27
+- step=160, type=crash, signal=SIGABRT, reward=99.9, total_crashes=28
+- step=161, type=crash, signal=SIGABRT, reward=99.9, total_crashes=29
+- step=162, type=crash, signal=SIGABRT, reward=99.9, total_crashes=30
+- step=163, type=crash, signal=SIGABRT, reward=99.9, total_crashes=31
+- step=164, type=coverage_gain, new_edges=2, total_edges=252, action=bit_flip
+- step=167, type=crash, signal=SIGABRT, reward=99.9, total_crashes=32
+- step=170, type=crash, signal=SIGABRT, reward=99.9, total_crashes=33
+- step=171, type=crash, signal=SIGABRT, reward=99.9, total_crashes=34
+- step=172, type=crash, signal=SIGABRT, reward=99.9, total_crashes=35
+- step=174, type=coverage_gain, new_edges=2, total_edges=254, action=byte_flip
+- step=175, type=crash, signal=SIGABRT, reward=99.9, total_crashes=36
+- step=176, type=crash, signal=SIGABRT, reward=99.9, total_crashes=37
+- step=180, type=crash, signal=SIGABRT, reward=99.9, total_crashes=38
+- step=181, type=crash, signal=SIGABRT, reward=99.9, total_crashes=39
+- step=182, type=crash, signal=SIGABRT, reward=99.9, total_crashes=40
+- step=184, type=coverage_gain, new_edges=2, total_edges=256, action=bit_flip
+- step=185, type=crash, signal=SIGABRT, reward=99.9, total_crashes=41
+- step=186, type=coverage_gain, new_edges=2, total_edges=258, action=byte_flip
+- step=187, type=crash, signal=SIGABRT, reward=99.9, total_crashes=42
+- step=190, type=coverage_gain, new_edges=2, total_edges=260, action=byte_flip
+- step=191, type=coverage_gain, new_edges=2, total_edges=262, action=havoc
+- step=192, type=crash, signal=SIGABRT, reward=99.9, total_crashes=43
+- step=195, type=coverage_gain, new_edges=2, total_edges=264, action=bit_flip
+- step=196, type=crash, signal=SIGABRT, reward=99.9, total_crashes=44
+- step=197, type=crash, signal=SIGABRT, reward=99.9, total_crashes=45
+- step=198, type=crash, signal=SIGABRT, reward=99.9, total_crashes=46
+- step=202, type=crash, signal=SIGABRT, reward=99.9, total_crashes=47
+- step=204, type=crash, signal=SIGABRT, reward=99.9, total_crashes=48
+- step=205, type=crash, signal=SIGABRT, reward=99.9, total_crashes=49
+- step=211, type=crash, signal=SIGABRT, reward=99.9, total_crashes=50
+- step=212, type=crash, signal=SIGABRT, reward=99.9, total_crashes=51
+- step=217, type=crash, signal=SIGABRT, reward=99.9, total_crashes=52
+- step=219, type=crash, signal=SIGABRT, reward=99.9, total_crashes=53
+- step=220, type=crash, signal=SIGABRT, reward=99.9, total_crashes=54
+- step=221, type=crash, signal=SIGABRT, reward=99.9, total_crashes=55
+- step=222, type=crash, signal=SIGABRT, reward=99.9, total_crashes=56
+- step=223, type=crash, signal=SIGABRT, reward=99.9, total_crashes=57
+- step=224, type=crash, signal=SIGABRT, reward=99.9, total_crashes=58
+- step=225, type=coverage_gain, new_edges=2, total_edges=266, action=bit_flip
+- step=226, type=crash, signal=SIGABRT, reward=99.9, total_crashes=59
+- step=229, type=crash, signal=SIGABRT, reward=99.9, total_crashes=60
+- step=232, type=crash, signal=SIGABRT, reward=99.9, total_crashes=61
+- step=234, type=crash, signal=SIGABRT, reward=99.9, total_crashes=62
+- step=235, type=crash, signal=SIGABRT, reward=99.9, total_crashes=63
+- step=236, type=crash, signal=SIGABRT, reward=99.9, total_crashes=64
+- step=239, type=crash, signal=SIGABRT, reward=99.9, total_crashes=65
+- step=242, type=crash, signal=SIGABRT, reward=99.9, total_crashes=66
+- step=243, type=coverage_gain, new_edges=2, total_edges=268, action=bit_flip
+- step=245, type=crash, signal=SIGABRT, reward=99.9, total_crashes=67
+- step=246, type=crash, signal=SIGABRT, reward=99.9, total_crashes=68
+- step=248, type=crash, signal=SIGABRT, reward=99.9, total_crashes=69
+- step=249, type=crash, signal=SIGABRT, reward=99.9, total_crashes=70
+- step=251, type=crash, signal=SIGABRT, reward=99.9, total_crashes=71
+- step=254, type=crash, signal=SIGABRT, reward=99.9, total_crashes=72
+- step=255, type=crash, signal=SIGABRT, reward=99.9, total_crashes=73
+- step=256, type=crash, signal=SIGABRT, reward=99.9, total_crashes=74
+- step=256, type=ppo_update, update=1, policy_loss=-0.0103, value_loss=420936.2383, entropy=1.3823
+- step=257, type=crash, signal=SIGABRT, reward=99.9, total_crashes=75
+- step=261, type=crash, signal=SIGABRT, reward=99.9, total_crashes=76
+- step=263, type=crash, signal=SIGABRT, reward=99.9, total_crashes=77
+- step=265, type=crash, signal=SIGABRT, reward=99.9, total_crashes=78
+- step=266, type=crash, signal=SIGABRT, reward=99.9, total_crashes=79
+- step=268, type=crash, signal=SIGABRT, reward=99.9, total_crashes=80
+- step=269, type=crash, signal=SIGABRT, reward=99.9, total_crashes=81
+- step=270, type=crash, signal=SIGABRT, reward=99.9, total_crashes=82
+- step=271, type=crash, signal=SIGABRT, reward=99.9, total_crashes=83
+- step=272, type=crash, signal=SIGABRT, reward=99.9, total_crashes=84
+- step=273, type=crash, signal=SIGABRT, reward=99.9, total_crashes=85
+- step=276, type=coverage_gain, new_edges=2, total_edges=270, action=bit_flip
+- step=277, type=crash, signal=SIGABRT, reward=99.9, total_crashes=86
+- step=280, type=crash, signal=SIGABRT, reward=99.9, total_crashes=87
+- step=281, type=crash, signal=SIGABRT, reward=99.9, total_crashes=88
+- step=283, type=crash, signal=SIGABRT, reward=99.9, total_crashes=89
+- step=289, type=crash, signal=SIGABRT, reward=99.9, total_crashes=90
+- step=290, type=crash, signal=SIGABRT, reward=99.9, total_crashes=91
+- step=293, type=crash, signal=SIGABRT, reward=99.9, total_crashes=92
+- step=294, type=coverage_gain, new_edges=2, total_edges=272, action=byte_flip
+- step=296, type=crash, signal=SIGABRT, reward=99.9, total_crashes=93
+- step=300, type=crash, signal=SIGABRT, reward=99.9, total_crashes=94
+- step=303, type=crash, signal=SIGABRT, reward=99.9, total_crashes=95
+- step=304, type=crash, signal=SIGABRT, reward=99.9, total_crashes=96
+- step=310, type=crash, signal=SIGABRT, reward=99.9, total_crashes=97
+- step=314, type=crash, signal=SIGABRT, reward=99.9, total_crashes=98
+- step=318, type=crash, signal=SIGABRT, reward=99.9, total_crashes=99
+- step=321, type=crash, signal=SIGABRT, reward=99.9, total_crashes=100
+- step=322, type=crash, signal=SIGABRT, reward=99.9, total_crashes=101
+- step=325, type=crash, signal=SIGABRT, reward=99.9, total_crashes=102
+- step=326, type=crash, signal=SIGABRT, reward=99.9, total_crashes=103
+- step=327, type=crash, signal=SIGABRT, reward=99.9, total_crashes=104
+- step=329, type=crash, signal=SIGABRT, reward=99.9, total_crashes=105
+- step=333, type=crash, signal=SIGABRT, reward=99.9, total_crashes=106
+- step=334, type=crash, signal=SIGABRT, reward=99.9, total_crashes=107
+- step=336, type=crash, signal=SIGABRT, reward=99.9, total_crashes=108
+- step=338, type=crash, signal=SIGABRT, reward=99.9, total_crashes=109
+- step=341, type=crash, signal=SIGABRT, reward=99.9, total_crashes=110
+- step=344, type=crash, signal=SIGABRT, reward=99.9, total_crashes=111
+- step=345, type=crash, signal=SIGABRT, reward=99.9, total_crashes=112
+- step=349, type=crash, signal=SIGABRT, reward=99.9, total_crashes=113
+- step=350, type=crash, signal=SIGABRT, reward=99.9, total_crashes=114
+- step=351, type=crash, signal=SIGABRT, reward=99.9, total_crashes=115
+- step=355, type=crash, signal=SIGABRT, reward=99.9, total_crashes=116
+- step=360, type=crash, signal=SIGABRT, reward=99.9, total_crashes=117
+- step=362, type=crash, signal=SIGABRT, reward=99.9, total_crashes=118
+- step=370, type=crash, signal=SIGABRT, reward=99.9, total_crashes=119
+- step=371, type=crash, signal=SIGABRT, reward=99.9, total_crashes=120
+- step=372, type=crash, signal=SIGABRT, reward=99.9, total_crashes=121
+- step=377, type=crash, signal=SIGABRT, reward=99.9, total_crashes=122
+- step=378, type=crash, signal=SIGABRT, reward=99.9, total_crashes=123
+- step=380, type=crash, signal=SIGABRT, reward=99.9, total_crashes=124
+- step=381, type=crash, signal=SIGABRT, reward=99.9, total_crashes=125
+- step=382, type=crash, signal=SIGABRT, reward=99.9, total_crashes=126
+- step=384, type=crash, signal=SIGABRT, reward=99.9, total_crashes=127
+- step=385, type=crash, signal=SIGABRT, reward=99.9, total_crashes=128
+- step=392, type=crash, signal=SIGABRT, reward=99.9, total_crashes=129
+- step=394, type=crash, signal=SIGABRT, reward=99.9, total_crashes=130
+- step=395, type=crash, signal=SIGABRT, reward=99.9, total_crashes=131
+- step=396, type=crash, signal=SIGABRT, reward=99.9, total_crashes=132
+- step=400, type=crash, signal=SIGABRT, reward=99.9, total_crashes=133
+- step=403, type=crash, signal=SIGABRT, reward=99.9, total_crashes=134
+- step=404, type=crash, signal=SIGABRT, reward=99.9, total_crashes=135
+
+## Artifacts
+
+- Final checkpoint: `/home/kali/Fuzzi/Fuzzinator/data/checkpoints/ppo_lstm_final.pt`
+- Crash dir: `/home/kali/Fuzzi/Fuzzinator/data/crashes`
+- Markdown report: `/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T10-12-52_ppo_lstm_target_buffer_overflow.md`
+- JSON report: `/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T10-12-52_ppo_lstm_target_buffer_overflow.json`
