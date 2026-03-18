@@ -14,32 +14,65 @@
 
   <style>
     body {
-      background-color: #020205;
-      color: #e2e8f0;
+      background-color: #0f172a; /* Lighter, richer dark slate instead of stark black */
+      color: #f8fafc;
       margin: 0;
       overflow-x: hidden;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Animated Glassmorphism Background Blobs */
+    .bg-shapes {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .shape1 {
+      position: absolute; width: 700px; height: 700px; background: rgba(56, 189, 248, 0.15); border-radius: 50%; filter: blur(120px); top: -200px; left: -100px; animation: float 10s infinite ease-in-out alternate;
+    }
+    .shape2 {
+      position: absolute; width: 600px; height: 600px; background: rgba(129, 140, 248, 0.15); border-radius: 50%; filter: blur(120px); bottom: -150px; right: -100px; animation: float 14s infinite ease-in-out alternate-reverse;
+    }
+    .shape3 {
+      position: absolute; width: 500px; height: 500px; background: rgba(232, 121, 249, 0.12); border-radius: 50%; filter: blur(120px); top: 30%; left: 40%; animation: float 12s infinite ease-in-out alternate;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(60px, 40px) scale(1.1); }
     }
 
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-track {
-      background: #050810;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 4px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 3px;
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 4px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: #334155;
+      background: rgba(148, 163, 184, 0.5);
     }
   </style>
 </head>
 
 <body>
+  <!-- Ambient Background -->
+  <div class="bg-shapes">
+    <div class="shape1"></div>
+    <div class="shape2"></div>
+    <div class="shape3"></div>
+  </div>
+
   <div id="root"></div>
 
   <!-- Using data-type="module" allows us to use ES module imports alongside Babel JSX transpilation -->
@@ -56,7 +89,7 @@
       Activity, ShieldAlert, Cpu, Network, Database, Terminal,
       Zap, Crosshair, ChevronRight, Play, Square, Hexagon,
       TrendingUp, Fingerprint, Layers, Bug, Lock, Server,
-      GitBranch, GitCommit, SearchCode, Beaker
+      GitBranch, GitCommit, SearchCode, Beaker, Binary
     } = LucideIcons;
 
     // --- MOCK DATA / FALLBACKS ---
@@ -105,8 +138,6 @@
     ];
 
     // --- API BASE URL CONFIGURATION ---
-    // On localhost, API calls go to the same origin (relative paths).
-    // On hosted domains, the user must provide their backend URL (e.g. ngrok).
     const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
     const STORED_API_BASE = !isLocalhost ? (localStorage.getItem('fuzzinator_api_base') || '') : '';
 
@@ -141,21 +172,23 @@
 
     // --- UTILITY COMPONENTS ---
 
+    // Enhanced Glassmorphism Card
     const GlassCard = ({ children, className = '', hover = true }) => (
-      <div className={`relative bg-[#0a0f18]/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl overflow-hidden transition-all duration-300 ${hover ? 'hover:border-white/20 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)]' : ''} ${className}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.15] to-transparent" />
-        {children}
+      <div className={`relative bg-slate-800/30 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.2)] transition-all duration-300 ${hover ? 'hover:bg-slate-800/40 hover:border-white/20 hover:shadow-[0_8px_32px_rgba(34,211,238,0.15)]' : ''} ${className}`}>
+        {/* Subtle top glare */}
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.2] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent pointer-events-none" />
+        <div className="relative z-10 h-full">{children}</div>
       </div>
     );
 
     const GlowingIcon = ({ Icon, color = 'cyan', size = 20 }) => {
       const colorMap = {
-        cyan: 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]',
-        emerald: 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]',
-        rose: 'text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.8)]',
-        indigo: 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.8)]',
-        amber: 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]',
+        cyan: 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]',
+        emerald: 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.6)]',
+        rose: 'text-rose-400 drop-shadow-[0_0_8px_rgba(251,113,133,0.6)]',
+        indigo: 'text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]',
+        amber: 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]',
       };
       return <Icon size={size} className={colorMap[color]} />;
     };
@@ -163,8 +196,8 @@
     const SectionTitle = ({ title, subtitle, icon: Icon }) => (
       <div className="mb-6 flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          {Icon && <Icon size={18} className="text-cyan-500" />}
-          <h2 className="text-lg font-bold tracking-widest text-white uppercase bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+          {Icon && <Icon size={18} className="text-cyan-400" />}
+          <h2 className="text-lg font-bold tracking-widest text-slate-100 uppercase drop-shadow-sm">
             {title}
           </h2>
         </div>
@@ -175,7 +208,7 @@
     const CustomTooltip = ({ active, payload, label }) => {
       if (active && payload && payload.length) {
         return (
-          <div className="bg-[#0f172a]/90 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl text-xs font-mono">
+          <div className="bg-slate-900/90 backdrop-blur-md border border-white/10 p-3 rounded-lg shadow-xl text-xs font-mono">
             <p className="text-slate-400 mb-2 border-b border-white/10 pb-1">Step: {label}</p>
             {payload.map((p, i) => (
               <div key={i} className="flex items-center justify-between gap-4 py-0.5">
@@ -192,12 +225,12 @@
     // --- MAIN SECTIONS ---
 
     const HeroSection = ({ liveStats }) => (
-      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#05050a] mb-8 p-10 flex flex-col justify-center min-h-[300px]">
-        {/* Abstract Background Elements */}
-        <div className="absolute inset-0 z-0 opacity-30">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px]" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHptMC0zMFYwaC0ydjRoLTR2Mmg0djRoMnYtNGg0VjJoLTR6bS0yMCAwdjRoMnYtNGg0VjJoLTRWMGgtMnYyaC00djJoNHptMCAzMHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyIvPjwvZz48L3N2Zz4=')] mix-blend-overlay" />
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-2xl shadow-2xl mb-8 p-10 flex flex-col justify-center min-h-[300px]">
+        {/* Abstract Background Elements inside Hero */}
+        <div className="absolute inset-0 z-0 opacity-40">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHzmMC0zMFYwaC0ydjRoLTR2Mmg0djRoMnYtNGg0VjJoLTR6bS0yMCAwdjRoMnYtNGg0VjJoLTRWMGgtMnYyaC00djJoNHptMCAzMHYtNGgtMnY0aC00djJoNHY0aDJ2LTRoNHYtMmgtNHoiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNCIvPjwvZz48L3N2Zz4=')] mix-blend-overlay" />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
@@ -206,22 +239,22 @@
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
               className="flex items-center gap-3 mb-4"
             >
-              <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
-                <ShieldAlert className="text-cyan-400" size={24} />
+              <div className="p-2 bg-cyan-500/20 rounded-lg border border-cyan-400/30 backdrop-blur-md">
+                <ShieldAlert className="text-cyan-300" size={24} />
               </div>
-              <span className="text-cyan-400 font-mono text-sm tracking-widest uppercase">System Active</span>
+              <span className="text-cyan-300 font-mono text-sm tracking-widest uppercase font-semibold">System Active</span>
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-500 mb-4"
+              className="text-5xl md:text-7xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-slate-400 mb-4 drop-shadow-sm"
             >
               FUZZINATOR
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg text-slate-400 font-light max-w-xl border-l-2 border-indigo-500/50 pl-4"
+              className="text-lg text-slate-300 font-light max-w-xl border-l-2 border-indigo-400/60 pl-4"
             >
               Reinforcement Learning Guided Fuzz Testing. Upload a target, instrument and compile it, run PPO+LSTM, and inspect the resulting report from one place.
             </motion.p>
@@ -232,15 +265,15 @@
             className="flex flex-col gap-3 font-mono text-xs w-full md:w-auto"
           >
             {[
-              { label: 'Live Campaign', value: liveStats.target, icon: Activity, color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/20' },
-              { label: 'Agent Mode', value: liveStats.modelStatus, icon: Brain, color: 'text-indigo-400', bg: 'bg-indigo-400/10', border: 'border-indigo-400/20' },
-              { label: 'Run Status', value: liveStats.runStatus, icon: Layers, color: 'text-cyan-400', bg: 'bg-cyan-400/10', border: 'border-cyan-400/20' },
-              { label: 'Crash Vault', value: `${liveStats.crashes} Artifacts`, icon: Bug, color: 'text-rose-400', bg: 'bg-rose-400/10', border: 'border-rose-400/20' },
+              { label: 'Live Campaign', value: liveStats.target, icon: Activity, color: 'text-emerald-300', bg: 'bg-emerald-500/20', border: 'border-emerald-400/30' },
+              { label: 'Agent Mode', value: liveStats.modelStatus, icon: Brain, color: 'text-indigo-300', bg: 'bg-indigo-500/20', border: 'border-indigo-400/30' },
+              { label: 'Run Status', value: liveStats.runStatus, icon: Layers, color: 'text-cyan-300', bg: 'bg-cyan-500/20', border: 'border-cyan-400/30' },
+              { label: 'Crash Vault', value: `${liveStats.crashes} Artifacts`, icon: Bug, color: 'text-rose-300', bg: 'bg-rose-500/20', border: 'border-rose-400/30' },
             ].map((pill, i) => (
-              <div key={i} className={`flex items-center justify-between gap-6 px-4 py-2.5 rounded-lg border ${pill.bg} ${pill.border} backdrop-blur-md`}>
+              <div key={i} className={`flex items-center justify-between gap-6 px-4 py-2.5 rounded-xl border ${pill.bg} ${pill.border} backdrop-blur-xl shadow-lg`}>
                 <div className="flex items-center gap-3">
                   <pill.icon size={14} className={pill.color} />
-                  <span className="text-slate-300">{pill.label}</span>
+                  <span className="text-slate-200">{pill.label}</span>
                 </div>
                 <span className={`font-semibold ${pill.color}`}>{pill.value}</span>
               </div>
@@ -250,7 +283,6 @@
       </div>
     );
 
-    // Fallback icon since Brain isn't in my immediate explicit import list above, creating a small custom SVG wrapper for it
     const Brain = ({ size, className }) => (
       <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z" /><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4" /><path d="M17.599 6.5a3 3 0 0 0 .399-1.375" /></svg>
     );
@@ -274,14 +306,14 @@
             >
               <GlassCard className="p-4 flex flex-col justify-between h-full relative group">
                 {stat.alert && (
-                  <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full animate-ping m-3"></span>
+                  <span className="absolute top-0 right-0 w-2 h-2 bg-rose-400 rounded-full animate-ping m-3"></span>
                 )}
                 <div className="flex justify-between items-start mb-4">
-                  <span className="text-xs text-slate-400 font-medium uppercase tracking-wider">{stat.label}</span>
+                  <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">{stat.label}</span>
                   <GlowingIcon Icon={stat.icon} color={stat.color} size={16} />
                 </div>
                 <div>
-                  <div className={`text-2xl font-bold font-mono tracking-tight ${stat.isText ? 'text-sm text-indigo-300' : 'text-white'}`}>
+                  <div className={`text-2xl font-bold font-mono tracking-tight drop-shadow-sm ${stat.isText ? 'text-sm text-indigo-300' : 'text-slate-100'}`}>
                     {stat.value}
                   </div>
                   {stat.trend && (
@@ -290,9 +322,8 @@
                     </div>
                   )}
                 </div>
-
-                {/* Hover Glow Effect */}
-                <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-${stat.color}-500 blur-xl z-[-1] rounded-full scale-150`}></div>
+                {/* Subtle Hover Glow Effect mapped to color */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-[0.05] transition-opacity duration-500 bg-${stat.color}-400 z-[-1]`}></div>
               </GlassCard>
             </motion.div>
           ))}
@@ -301,19 +332,8 @@
     };
 
     const ControlCenter = ({
-      selectedFile,
-      setSelectedFile,
-      targetBinary,
-      setTargetBinary,
-      steps,
-      setSteps,
-      onUploadAndBuild,
-      onCompileAndRun,
-      onRun,
-      busy,
-      buildInfo,
-      currentRun,
-      error,
+      selectedFile, setSelectedFile, targetBinary, setTargetBinary, steps, setSteps,
+      onUploadAndBuild, onCompileAndRun, onRun, busy, buildInfo, currentRun, error,
     }) => {
       const [isDragOver, setIsDragOver] = useState(false);
 
@@ -338,74 +358,80 @@
                 onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
                 onDragLeave={() => setIsDragOver(false)}
                 onDrop={onDrop}
-                className={`rounded-2xl border-2 border-dashed p-8 transition-all ${isDragOver ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/10 bg-white/[0.02]'}`}
+                className={`rounded-2xl border-2 border-dashed p-8 transition-all duration-300 ${isDragOver ? 'border-cyan-400 bg-cyan-500/20 shadow-[0_0_20px_rgba(34,211,238,0.2)]' : 'border-slate-600 bg-slate-800/20 hover:bg-slate-800/40 hover:border-slate-500'}`}
               >
                 <div className="flex flex-col items-center text-center gap-3">
                   <UploadIcon />
-                  <div className="text-lg font-semibold text-white">Drop a `.c` target file here</div>
-                  <div className="text-sm text-slate-400">The dashboard will save it under `targets/`, compile it with `instrumentation/shm_init.c`, then you can launch PPO+LSTM.</div>
-                  <label className="mt-2 px-4 py-2 rounded-lg border border-cyan-500/40 text-cyan-300 cursor-pointer hover:bg-cyan-500/10">
+                  <div className="text-lg font-semibold text-slate-100">Drop a `.c` target file here</div>
+                  <div className="text-sm text-slate-400 max-w-md">The dashboard will save it under <code className="text-indigo-300 bg-indigo-500/10 px-1 rounded">targets/</code>, compile it with instrumentation, then launch PPO+LSTM.</div>
+                  <label className="mt-4 px-5 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-400/40 text-cyan-300 font-semibold cursor-pointer hover:bg-cyan-500/20 transition-colors backdrop-blur-md">
                     Choose File
                     <input type="file" accept=".c" className="hidden" onChange={(e) => handleFiles(e.target.files)} />
                   </label>
                   {selectedFile && (
-                    <div className="text-xs font-mono text-emerald-400">Selected: {selectedFile.name}</div>
+                    <div className="mt-2 text-xs font-mono text-emerald-300 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
+                      Selected: {selectedFile.name}
+                    </div>
                   )}
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-                <div className="text-xs uppercase tracking-widest text-slate-500 mb-2">Run Settings</div>
-                <label className="block text-xs text-slate-400 mb-2">Compiled Target</label>
+              <div className="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-xl p-5 shadow-inner">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                  <Hexagon size={14} className="text-indigo-400"/> Run Settings
+                </div>
+                
+                <label className="block text-xs text-slate-400 mb-1.5 font-medium">Compiled Target</label>
                 <input
                   value={targetBinary}
                   onChange={(e) => setTargetBinary(e.target.value)}
-                  className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all shadow-inner"
                   placeholder="target_buffer_overflow"
                 />
-                <label className="block text-xs text-slate-400 mt-4 mb-2">Steps</label>
+                
+                <label className="block text-xs text-slate-400 mt-4 mb-1.5 font-medium">Steps</label>
                 <input
                   type="number"
                   value={steps}
                   min="1"
                   onChange={(e) => setSteps(e.target.value)}
-                  className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 transition-all shadow-inner"
                 />
 
-                <div className="mt-4 flex flex-col gap-3">
+                <div className="mt-5 flex flex-col gap-3">
                   <button
                     onClick={onUploadAndBuild}
                     disabled={!selectedFile || busy}
-                    className="px-4 py-2 rounded-lg bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 disabled:opacity-40"
+                    className="w-full px-4 py-2.5 rounded-lg bg-indigo-500/20 border border-indigo-400/40 text-indigo-200 text-sm font-semibold hover:bg-indigo-500/30 disabled:opacity-40 transition-colors"
                   >
                     Compile Uploaded Target
                   </button>
                   <button
                     onClick={onCompileAndRun}
                     disabled={!selectedFile || busy}
-                    className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 disabled:opacity-40"
+                    className="w-full px-4 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-sm font-semibold hover:bg-cyan-500/30 disabled:opacity-40 transition-colors"
                   >
                     Compile + Run PPO + LSTM
                   </button>
                   <button
                     onClick={() => onRun()}
                     disabled={!targetBinary || busy || currentRun.status === 'running'}
-                    className="px-4 py-2 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 disabled:opacity-40"
+                    className="w-full px-4 py-2.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-sm font-semibold hover:bg-emerald-500/30 disabled:opacity-40 transition-colors"
                   >
                     Run PPO + LSTM
                   </button>
                 </div>
               </div>
 
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
-                <div className="text-slate-500 uppercase tracking-widest mb-2">Build Status</div>
-                <div className="text-white">State: <span className="text-cyan-300">{buildInfo?.status || 'idle'}</span></div>
-                <div className="text-slate-400 mt-1 break-all">Binary: {buildInfo?.binary_path || 'n/a'}</div>
-                <div className="text-white mt-3">Run State: <span className="text-emerald-300">{currentRun.status || 'idle'}</span></div>
-                <div className="text-slate-400 mt-1">Steps: {currentRun.steps || 'n/a'}</div>
-                {error && <div className="text-rose-400 mt-3 break-words">{error}</div>}
+              <div className="bg-slate-900/60 backdrop-blur-md border border-slate-700/50 rounded-xl p-4 text-xs font-mono shadow-inner">
+                <div className="text-slate-400 font-bold uppercase tracking-widest mb-2 border-b border-slate-800 pb-2">Build Status</div>
+                <div className="text-slate-300 mt-2">State: <span className="text-cyan-400 font-semibold">{buildInfo?.status || 'idle'}</span></div>
+                <div className="text-slate-500 mt-1 break-all">Binary: {buildInfo?.binary_path || 'n/a'}</div>
+                <div className="text-slate-300 mt-3">Run State: <span className="text-emerald-400 font-semibold">{currentRun.status || 'idle'}</span></div>
+                <div className="text-slate-500 mt-1">Steps: {currentRun.steps || 'n/a'}</div>
+                {error && <div className="text-rose-400 mt-3 break-words bg-rose-500/10 p-2 rounded border border-rose-500/20">{error}</div>}
               </div>
             </div>
           </div>
@@ -414,8 +440,8 @@
     };
 
     const UploadIcon = () => (
-      <div className="w-14 h-14 rounded-full border border-cyan-500/30 bg-cyan-500/10 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-400">
+      <div className="w-16 h-16 rounded-full border border-cyan-400/40 bg-cyan-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-cyan-300">
           <path d="M12 3v12" />
           <path d="m7 8 5-5 5 5" />
           <path d="M20 21H4" />
@@ -453,20 +479,24 @@
                   ['Seed', config.random_seed ?? 'n/a'],
                   ['Device', config.device ?? 'n/a'],
                 ].map(([label, value], index) => (
-                  <div key={index} className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
-                    <div className="text-[10px] uppercase tracking-widest text-slate-500">{label}</div>
-                    <div className="text-white font-mono mt-1">{value}</div>
+                  <div key={index} className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-3 shadow-inner">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{label}</div>
+                    <div className="text-slate-200 font-mono mt-1 font-semibold">{value}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4">
-                <div className="text-xs uppercase tracking-widest text-slate-500 mb-3">Notable Events</div>
-                <div className="space-y-2 max-h-56 overflow-y-auto custom-scrollbar">
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 shadow-inner">
+                <div className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3 border-b border-slate-800 pb-2">Notable Events</div>
+                <div className="space-y-2 max-h-56 overflow-y-auto custom-scrollbar pr-2">
                   {events.length === 0 && <div className="text-slate-500 text-sm">No events captured</div>}
                   {events.map((event, index) => (
-                    <div key={index} className="text-xs font-mono text-slate-300 border-b border-white/5 pb-2">
-                      {Object.entries(event).map(([key, value]) => `${key}=${value}`).join(', ')}
+                    <div key={index} className="text-[11px] font-mono text-slate-300 border-b border-white/5 pb-2">
+                      {Object.entries(event).map(([key, value]) => (
+                        <span key={key} className="mr-3">
+                          <span className="text-slate-500">{key}=</span><span className={key === 'type' ? 'text-indigo-300' : 'text-cyan-300'}>{value}</span>
+                        </span>
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -474,18 +504,20 @@
             </div>
 
             <div className="space-y-4">
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
-                <div className="text-slate-500 uppercase tracking-widest mb-3">Artifacts</div>
-                <div className="text-slate-300 break-all">Checkpoint: {report.final_checkpoint}</div>
-                <div className="text-slate-300 break-all mt-2">Markdown: {report.markdown_report_path}</div>
-                <div className="text-slate-300 break-all mt-2">JSON: {report.json_report_path}</div>
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 text-xs font-mono shadow-inner">
+                <div className="text-slate-500 font-bold uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">Artifacts</div>
+                <div className="text-slate-300 break-all leading-relaxed"><span className="text-slate-500">Checkpoint:</span><br/>{report.final_checkpoint}</div>
+                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">Markdown:</span><br/>{report.markdown_report_path}</div>
+                <div className="text-slate-300 break-all mt-3 leading-relaxed"><span className="text-slate-500">JSON:</span><br/>{report.json_report_path}</div>
               </div>
 
-              <div className="bg-white/[0.03] border border-white/10 rounded-xl p-4 text-xs font-mono">
-                <div className="text-slate-500 uppercase tracking-widest mb-3">Crashes Created In This Run</div>
+              <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-4 text-xs font-mono shadow-inner">
+                <div className="text-slate-500 font-bold uppercase tracking-widest mb-3 border-b border-slate-800 pb-2">Crashes Created</div>
                 {report.new_crash_files?.length ? report.new_crash_files.map((crash, index) => (
-                  <div key={index} className="text-rose-300 break-all mb-2">{crash}</div>
-                )) : <div className="text-slate-500">None</div>}
+                  <div key={index} className="text-rose-400 break-all mb-2 flex items-start gap-2">
+                    <Bug size={14} className="shrink-0 mt-0.5" /> {crash}
+                  </div>
+                )) : <div className="text-slate-500 italic">None in this run</div>}
               </div>
             </div>
           </div>
@@ -509,9 +541,9 @@
           <SectionTitle title="Live Fuzzing Pipeline" subtitle="Data Flow & Architecture" icon={Network} />
           <div className="flex items-center justify-between min-w-[800px] py-4 relative">
             {/* Animated Connector Line */}
-            <div className="absolute top-1/2 left-10 right-10 h-0.5 bg-slate-800 -z-10 -translate-y-1/2">
+            <div className="absolute top-[40%] left-10 right-10 h-[3px] bg-slate-800/80 -z-10 -translate-y-1/2 rounded-full">
               <motion.div
-                className="h-full bg-gradient-to-r from-cyan-500/0 via-cyan-400 to-indigo-500/0"
+                className="h-full bg-gradient-to-r from-cyan-500/0 via-cyan-400 to-indigo-500/0 rounded-full"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                 style={{ width: '50%' }}
@@ -521,25 +553,25 @@
             {nodes.map((node, i) => (
               <div key={node.id} className="flex flex-col items-center gap-3 relative group">
                 <div className={`
-                  w-14 h-14 rounded-full flex items-center justify-center border-2 
+                  w-14 h-14 rounded-full flex items-center justify-center border-2 backdrop-blur-md
                   ${node.active
-                    ? 'bg-[#1a1f35] border-cyan-400/50 shadow-[0_0_20px_rgba(34,211,238,0.2)]'
-                    : 'bg-[#0a0f18] border-white/10 text-slate-500'}
+                    ? 'bg-slate-900 border-cyan-400/60 shadow-[0_0_20px_rgba(34,211,238,0.3)]'
+                    : 'bg-slate-800/80 border-slate-600/50 text-slate-400'}
                   transition-all duration-300 z-10 relative
                 `}>
                   {node.active && (
                     <motion.div
-                      className="absolute inset-0 rounded-full border border-cyan-400"
-                      animate={{ scale: [1, 1.3], opacity: [0.5, 0] }}
+                      className="absolute inset-0 rounded-full border-2 border-cyan-400"
+                      animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
                       transition={{ repeat: Infinity, duration: 1.5 }}
                     />
                   )}
-                  <node.icon size={24} className={node.active ? 'text-cyan-400' : 'text-slate-500'} />
+                  <node.icon size={24} className={node.active ? 'text-cyan-300' : 'text-slate-400'} />
                 </div>
 
                 <div className="text-center">
-                  <div className="text-xs font-bold text-white whitespace-nowrap">{node.label}</div>
-                  <div className="text-[10px] font-mono text-cyan-500/80 mt-1 px-2 py-0.5 bg-cyan-950/30 rounded border border-cyan-900/50">
+                  <div className="text-xs font-bold text-slate-200 whitespace-nowrap">{node.label}</div>
+                  <div className="text-[10px] font-mono text-cyan-300 mt-1 px-2 py-0.5 bg-cyan-900/40 rounded border border-cyan-500/30">
                     {node.desc}
                   </div>
                 </div>
@@ -551,11 +583,9 @@
     };
 
     const BitmapVisualizer = () => {
-      // Generate 512 cells (32x16)
       const [cells, setCells] = useState([]);
 
       useEffect(() => {
-        // Initial random generation prioritizing some clusters to look like real coverage
         const initialCells = Array.from({ length: 512 }, (_, i) => {
           const isBase = Math.random() > 0.8;
           const isHot = isBase && Math.random() > 0.5;
@@ -568,15 +598,11 @@
         });
         setCells(initialCells);
 
-        // Simulate live updates
         const interval = setInterval(() => {
           setCells(prev => {
             const next = [...prev];
-            // Pick a random hot region to increment
             const idx = Math.floor(Math.random() * 512);
             next[idx] = { ...next[idx], hits: Math.min(255, next[idx].hits + Math.floor(Math.random() * 20)) };
-
-            // Decay slightly to show activity
             return next.map(c => ({ ...c, hits: c.hits > 0 && Math.random() > 0.9 ? Math.max(1, c.hits - 1) : c.hits }));
           });
         }, 1000);
@@ -586,27 +612,27 @@
 
       const getCellColor = (hits, type) => {
         if (type === 'crash') return 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] z-10 border border-rose-300';
-        if (hits === 0) return 'bg-[#111827] border border-white/5';
-        if (hits < 5) return 'bg-indigo-900/50 border border-indigo-500/20';
-        if (hits < 20) return 'bg-cyan-800/80 border border-cyan-500/40';
-        if (hits < 50) return 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.5)] border border-cyan-300';
-        return 'bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)] border border-white z-10';
+        if (hits === 0) return 'bg-slate-800/80 border border-slate-700/50';
+        if (hits < 5) return 'bg-indigo-600/60 border border-indigo-400/30';
+        if (hits < 20) return 'bg-cyan-600/80 border border-cyan-400/50';
+        if (hits < 50) return 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)] border border-cyan-200';
+        return 'bg-white shadow-[0_0_12px_rgba(255,255,255,0.9)] border border-white z-10';
       };
 
       return (
         <GlassCard className="mb-8 p-6 lg:col-span-2">
           <div className="flex justify-between items-start mb-6">
-            <SectionTitle title="Shared-Memory Coverage Bitmap" subtitle="Live compressed execution trace (AFL-style Map)" icon={Layers} />
+            <SectionTitle title="Coverage Bitmap" subtitle="Shared-Memory Execution Trace" icon={Layers} />
             <div className="flex gap-2">
               {['Raw Grid', 'Heatmap'].map((mode, i) => (
-                <button key={i} className={`text-xs px-3 py-1 rounded-md font-mono border ${i === 0 ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300' : 'bg-transparent border-white/10 text-slate-400 hover:bg-white/5'}`}>
+                <button key={i} className={`text-xs px-3 py-1.5 rounded-lg font-mono border transition-colors ${i === 0 ? 'bg-indigo-500/20 border-indigo-400/50 text-indigo-200 shadow-inner' : 'bg-slate-800/50 border-slate-600 text-slate-400 hover:bg-slate-700'}`}>
                   {mode}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="bg-[#050810] rounded-xl p-4 border border-black inset-shadow-sm">
+          <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-700/50 shadow-inner">
             <div className="grid grid-cols-[repeat(32,minmax(0,1fr))] gap-[2px]">
               <AnimatePresence>
                 {cells.map((cell) => (
@@ -615,13 +641,13 @@
                     layout
                     initial={{ opacity: 0.5 }}
                     animate={{ opacity: 1 }}
-                    className={`aspect-square rounded-[2px] transition-colors duration-300 group relative ${getCellColor(cell.hits, cell.type)}`}
+                    className={`aspect-square rounded-[3px] transition-colors duration-300 group relative ${getCellColor(cell.hits, cell.type)}`}
                   >
                     {/* Tooltip on hover */}
-                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900 text-white text-[10px] font-mono p-2 rounded border border-slate-700 pointer-events-none z-50 w-max shadow-xl">
+                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900/95 backdrop-blur-md text-slate-100 text-[10px] font-mono p-2.5 rounded-lg border border-slate-600 pointer-events-none z-50 w-max shadow-xl">
                       <div className="text-cyan-400 mb-1 border-b border-slate-700 pb-1">Bucket: 0x{cell.id.toString(16).padStart(3, '0')}</div>
                       <div>Hits: {cell.hits}</div>
-                      {cell.type === 'crash' && <div className="text-rose-400 mt-1 font-bold">CRASH VECTOR</div>}
+                      {cell.type === 'crash' && <div className="text-rose-400 mt-1 font-bold tracking-widest">CRASH VECTOR</div>}
                     </div>
                   </motion.div>
                 ))}
@@ -629,21 +655,21 @@
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-4 text-[10px] font-mono text-slate-400">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-[#111827] border border-white/5 rounded-sm"></div> Unreached</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-indigo-900/50 border border-indigo-500/20 rounded-sm"></div> Low (1-4)</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-cyan-500 border border-cyan-300 rounded-sm"></div> High (20-49)</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-white border border-white rounded-sm shadow-[0_0_5px_white]"></div> Saturated (50+)</div>
-              <div className="flex items-center gap-1"><div className="w-3 h-3 bg-rose-500 border border-rose-300 rounded-sm"></div> Crash</div>
+          <div className="flex items-center justify-between mt-5 text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 bg-slate-800/80 border border-slate-700/50 rounded-sm"></div> Unreached</div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 bg-indigo-600/60 border border-indigo-400/30 rounded-sm"></div> Low (1-4)</div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 bg-cyan-400 border border-cyan-200 rounded-sm"></div> High (20-49)</div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 bg-white border border-white rounded-sm shadow-[0_0_5px_white]"></div> Saturated (50+)</div>
+              <div className="flex items-center gap-1.5"><div className="w-3.5 h-3.5 bg-rose-500 border border-rose-300 rounded-sm"></div> Crash</div>
             </div>
-            <div>Map Size: 64KB (Compressed)</div>
+            <div>Map Size: 64KB</div>
           </div>
         </GlassCard>
       );
     };
 
-    const MUTATION_COLORS = { bit_flip: '#3b82f6', byte_flip: '#8b5cf6', byte_insert: '#ec4899', havoc: '#10b981' };
+    const MUTATION_COLORS = { bit_flip: '#60a5fa', byte_flip: '#a78bfa', byte_insert: '#f472b6', havoc: '#34d399' };
 
     const MutationStrategy = ({ report }) => {
       const mutationData = React.useMemo(() => {
@@ -664,22 +690,22 @@
           name,
           usage: counts[name],
           success: successes[name] || 0,
-          color: MUTATION_COLORS[name] || '#6366f1',
+          color: MUTATION_COLORS[name] || '#818cf8',
         }));
       }, [report]);
 
       return (
         <GlassCard className="p-6">
-          <SectionTitle title="Mutation Action Space" subtitle="PPO Agent Strategy Selection" icon={Crosshair} />
+          <SectionTitle title="Action Space" subtitle="Agent Strategy Selection" icon={Crosshair} />
 
           <div className="h-[250px] mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={mutationData} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#ffffff10" />
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#ffffff15" />
                 <XAxis type="number" hide />
-                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontFamily: 'monospace' }} width={90} />
-                <RechartsTooltip cursor={{ fill: '#ffffff05' }} content={<CustomTooltip />} />
-                <Bar dataKey="usage" stackId="a" fill="#1e293b" radius={[0, 0, 0, 0]} barSize={24} name="Total Selections" />
+                <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#cbd5e1', fontSize: 11, fontFamily: 'monospace' }} width={90} />
+                <RechartsTooltip cursor={{ fill: '#ffffff10' }} content={<CustomTooltip />} />
+                <Bar dataKey="usage" stackId="a" fill="#334155" radius={[0, 0, 0, 0]} barSize={24} name="Total Selections" />
                 <Bar dataKey="success" stackId="b" radius={[0, 4, 4, 0]} barSize={24} name="Rewarding Actions">
                   {mutationData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -691,12 +717,12 @@
 
           <div className="mt-4 grid grid-cols-2 gap-2">
             {mutationData.map(m => (
-              <div key={m.name} className="flex items-center justify-between p-2 rounded bg-white/5 border border-white/5 text-xs font-mono">
+              <div key={m.name} className="flex items-center justify-between p-2 rounded-lg bg-slate-800/40 border border-slate-700/50 text-xs font-mono">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
+                  <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: m.color }} />
                   <span className="text-slate-300">{m.name}</span>
                 </div>
-                <span className="text-white font-bold">{m.usage > 0 ? Math.round((m.success / m.usage) * 100) : 0}% SR</span>
+                <span className="text-slate-100 font-bold">{m.usage > 0 ? Math.round((m.success / m.usage) * 100) : 0}% SR</span>
               </div>
             ))}
           </div>
@@ -742,40 +768,40 @@
 
       return (
         <GlassCard className="p-6 lg:col-span-2">
-          <SectionTitle title="PPO Telemetry & Loss Metrics" subtitle={report ? `From: ${report.target_name}` : 'Model Observability'} icon={Activity} />
+          <SectionTitle title="Telemetry & Metrics" subtitle={report ? `From: ${report.target_name}` : 'Model Observability'} icon={Activity} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[300px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-[300px] mt-4">
             <div className="relative h-full flex flex-col">
-              <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Reward Signal vs Entropy</h3>
+              <h3 className="text-[11px] font-mono font-bold text-slate-400 mb-2 absolute top-0 left-0 z-10 uppercase tracking-widest">Reward Signal vs Entropy</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                <AreaChart data={chartData} margin={{ top: 30, right: 0, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorReward" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
-                  <XAxis dataKey="step" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="left" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="right" orientation="right" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
+                  <XAxis dataKey="step" tick={{ fill: '#94a3b8', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="left" tick={{ fill: '#94a3b8', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fill: '#94a3b8', fontSize: 10 }} tickLine={false} axisLine={false} />
                   <RechartsTooltip content={<CustomTooltip />} />
-                  <Area yAxisId="left" type="monotone" dataKey="reward" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorReward)" name="Cumulative Reward" />
-                  <Line yAxisId="right" type="monotone" dataKey="entropy" stroke="#f59e0b" strokeWidth={2} dot={false} name="Policy Entropy" />
+                  <Area yAxisId="left" type="monotone" dataKey="reward" stroke="#34d399" strokeWidth={2} fillOpacity={1} fill="url(#colorReward)" name="Cumulative Reward" />
+                  <Line yAxisId="right" type="monotone" dataKey="entropy" stroke="#fbbf24" strokeWidth={2} dot={false} name="Policy Entropy" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
 
             <div className="relative h-full flex flex-col">
-              <h3 className="text-xs font-mono text-slate-400 mb-2 absolute top-0 left-0 z-10">Actor-Critic Losses</h3>
+              <h3 className="text-[11px] font-mono font-bold text-slate-400 mb-2 absolute top-0 left-0 z-10 uppercase tracking-widest">Actor-Critic Losses</h3>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff0a" />
-                  <XAxis dataKey="step" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} />
-                  <YAxis tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 'auto']} />
+                <LineChart data={chartData} margin={{ top: 30, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
+                  <XAxis dataKey="step" tick={{ fill: '#94a3b8', fontSize: 10 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 'auto']} />
                   <RechartsTooltip content={<CustomTooltip />} />
-                  <Line type="monotone" dataKey="policyLoss" stroke="#3b82f6" strokeWidth={2} dot={false} name="Policy Loss" />
-                  <Line type="monotone" dataKey="valueLoss" stroke="#8b5cf6" strokeWidth={2} dot={false} strokeDasharray="5 5" name="Value Loss" />
+                  <Line type="monotone" dataKey="policyLoss" stroke="#60a5fa" strokeWidth={2} dot={false} name="Policy Loss" />
+                  <Line type="monotone" dataKey="valueLoss" stroke="#a78bfa" strokeWidth={2} dot={false} strokeDasharray="5 5" name="Value Loss" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -812,46 +838,46 @@
 
       return (
         <GlassCard className="p-6">
-          <SectionTitle title="Vulnerable Targets" subtitle="Campaign Progress" icon={Server} />
+          <SectionTitle title="Targets" subtitle="Campaign Progress" icon={Server} />
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 mt-4">
             {targets.map((target, i) => (
-              <div key={i} className="bg-[#0f172a]/50 border border-slate-800 rounded-xl p-4 relative overflow-hidden group hover:border-slate-600 transition-colors">
+              <div key={i} className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-xl p-5 relative overflow-hidden group hover:bg-slate-800/60 hover:border-slate-500 transition-colors shadow-inner">
                 {target.status === 'Exploited' && (
-                  <div className="absolute -right-6 top-4 rotate-45 bg-rose-500/20 text-rose-400 text-[10px] font-bold py-1 px-8 border-y border-rose-500/50 uppercase tracking-widest shadow-[0_0_10px_rgba(244,63,94,0.3)]">
+                  <div className="absolute -right-7 top-5 rotate-45 bg-rose-500/20 text-rose-300 text-[10px] font-bold py-1 px-8 border-y border-rose-500/50 uppercase tracking-widest shadow-[0_0_15px_rgba(244,63,94,0.3)] backdrop-blur-md">
                     Compromised
                   </div>
                 )}
 
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h4 className="font-mono text-sm text-white font-bold">{target.name}</h4>
-                    <span className="text-xs text-slate-500">{target.type}</span>
+                    <h4 className="font-mono text-sm text-slate-100 font-bold">{target.name}</h4>
+                    <span className="text-xs text-slate-400 font-medium">{target.type}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    <div className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-300 font-bold uppercase tracking-wider">
                       {target.diff}
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 mt-4 text-xs font-mono">
+                <div className="flex items-center gap-5 mt-4 text-xs font-mono">
                   <div className="flex-1">
-                    <div className="flex justify-between text-slate-400 mb-1">
-                      <span>Coverage Map</span>
+                    <div className="flex justify-between text-slate-400 mb-1.5 font-semibold">
+                      <span>Coverage</span>
                       <span className="text-cyan-400">{target.progress}%</span>
                     </div>
-                    <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                    <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden shadow-inner">
                       <motion.div
                         initial={{ width: 0 }} animate={{ width: `${target.progress}%` }} transition={{ duration: 1, delay: 0.5 }}
-                        className="h-full bg-gradient-to-r from-cyan-600 to-cyan-400"
+                        className="h-full bg-gradient-to-r from-cyan-500 to-cyan-300"
                       />
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center pl-4 border-l border-slate-800">
-                    <span className="text-slate-500 mb-1">Crashes</span>
-                    <span className={`font-bold ${target.crashes > 0 ? 'text-rose-400' : 'text-slate-600'}`}>
+                  <div className="flex flex-col items-center pl-5 border-l border-slate-700/50">
+                    <span className="text-slate-500 mb-1 uppercase tracking-widest text-[10px] font-bold">Crashes</span>
+                    <span className={`text-lg leading-none font-bold ${target.crashes > 0 ? 'text-rose-400 drop-shadow-[0_0_5px_rgba(244,63,94,0.5)]' : 'text-slate-500'}`}>
                       {target.crashes}
                     </span>
                   </div>
@@ -872,44 +898,44 @@
         time: report?.finished_at || 'n/a',
       }));
       return (
-        <GlassCard className="p-6 lg:col-span-2 relative overflow-hidden">
+        <GlassCard className="p-6 relative overflow-hidden">
           {/* Decorative background element */}
-          <div className="absolute -right-20 -bottom-20 opacity-5 pointer-events-none text-rose-500">
-            <Bug size={300} />
+          <div className="absolute -right-10 -bottom-10 opacity-10 pointer-events-none text-rose-500 blur-sm">
+            <Bug size={250} />
           </div>
 
           <div className="flex justify-between items-center mb-6 relative z-10">
             <SectionTitle title="Crash Vault" subtitle="Forensic Artifacts & Triage" icon={ShieldAlert} />
-            <button className="text-xs bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-mono border border-slate-600 transition-colors flex items-center gap-2">
+            <button className="text-[11px] bg-slate-800/80 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg font-mono font-bold uppercase tracking-wider border border-slate-600 transition-colors flex items-center gap-2 shadow-sm">
               <Lock size={14} /> Export Vault
             </button>
           </div>
 
           <div className="overflow-x-auto relative z-10">
             {crashes.length === 0 ? (
-              <div className="text-center py-12">
-                <ShieldAlert size={48} className="text-slate-700 mx-auto mb-4" />
-                <div className="text-slate-500 font-mono text-sm">No crashes detected yet</div>
-                <div className="text-slate-600 text-xs mt-2">Run a fuzzing campaign to discover vulnerabilities</div>
+              <div className="text-center py-16 bg-slate-900/40 rounded-xl border border-slate-800 border-dashed">
+                <ShieldAlert size={48} className="text-slate-600 mx-auto mb-4" />
+                <div className="text-slate-400 font-mono text-sm font-bold">No crashes detected yet</div>
+                <div className="text-slate-500 text-xs mt-2">Run a fuzzing campaign to discover vulnerabilities</div>
               </div>
             ) : (
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-800 text-xs text-slate-500 font-mono uppercase tracking-wider">
-                    <th className="pb-3 pl-2">Hash ID</th>
-                    <th className="pb-3">Signal</th>
-                    <th className="pb-3">Target Binary</th>
-                    <th className="pb-3">Trigger Mutation</th>
-                    <th className="pb-3">Time</th>
-                    <th className="pb-3">Action</th>
+                  <tr className="border-b border-slate-700/50 text-[11px] text-slate-400 font-mono font-bold uppercase tracking-wider bg-slate-900/40">
+                    <th className="py-3 pl-4 rounded-tl-lg">Hash ID</th>
+                    <th className="py-3">Signal</th>
+                    <th className="py-3">Target Binary</th>
+                    <th className="py-3">Trigger Mutation</th>
+                    <th className="py-3">Time</th>
+                    <th className="py-3 rounded-tr-lg">Action</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm font-mono">
                   {crashes.map((crash, i) => (
-                    <tr key={i} className="border-b border-slate-800/50 hover:bg-white/[0.02] transition-colors group">
-                      <td className="py-4 pl-2 font-bold text-slate-300 group-hover:text-cyan-400 transition-colors">{crash.id}</td>
+                    <tr key={i} className="border-b border-slate-800/30 hover:bg-slate-800/40 transition-colors group">
+                      <td className="py-4 pl-4 font-bold text-slate-300 group-hover:text-cyan-300 transition-colors">{crash.id}</td>
                       <td className="py-4">
-                        <span className="bg-rose-500/10 text-rose-400 px-2 py-1 rounded border border-rose-500/20 text-xs">
+                        <span className="bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded border border-rose-500/20 text-[11px] font-bold tracking-widest">
                           {crash.type}
                         </span>
                       </td>
@@ -917,7 +943,7 @@
                       <td className="py-4 text-slate-400">{crash.mutation}</td>
                       <td className="py-4 text-slate-500">{crash.time}</td>
                       <td className="py-4">
-                        <button className="text-cyan-500 hover:text-cyan-300 transition-colors flex items-center gap-1 text-xs">
+                        <button className="text-cyan-400 hover:text-cyan-200 transition-colors flex items-center gap-1 text-xs font-bold bg-cyan-500/10 px-3 py-1.5 rounded-md border border-cyan-500/20 hover:bg-cyan-500/20">
                           Inspect <ChevronRight size={14} />
                         </button>
                       </td>
@@ -954,9 +980,9 @@
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -30 }}
-          className={`mb-6 rounded-2xl border p-6 relative overflow-hidden ${isSuccess
-            ? 'bg-emerald-500/10 border-emerald-500/30'
-            : 'bg-rose-500/10 border-rose-500/30'
+          className={`mb-6 rounded-2xl border p-6 relative overflow-hidden backdrop-blur-xl shadow-2xl ${isSuccess
+            ? 'bg-emerald-900/40 border-emerald-500/40'
+            : 'bg-rose-900/40 border-rose-500/40'
             }`}
         >
           <button
@@ -965,28 +991,28 @@
           >
             ✕
           </button>
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 ${isSuccess ? 'border-emerald-400 bg-emerald-500/20' : 'border-rose-400 bg-rose-500/20'
+          <div className="flex items-center gap-5">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 shadow-lg ${isSuccess ? 'border-emerald-400 bg-emerald-500/20' : 'border-rose-400 bg-rose-500/20'
               }`}>
               {isSuccess
-                ? <Zap size={24} className="text-emerald-400" />
-                : <ShieldAlert size={24} className="text-rose-400" />
+                ? <Zap size={28} className="text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                : <ShieldAlert size={28} className="text-rose-300 drop-shadow-[0_0_8px_rgba(251,113,133,0.8)]" />
               }
             </div>
             <div>
-              <div className={`text-lg font-bold ${isSuccess ? 'text-emerald-300' : 'text-rose-300'}`}>
+              <div className={`text-lg font-bold ${isSuccess ? 'text-emerald-200' : 'text-rose-200'}`}>
                 Fuzzing Run {isSuccess ? 'Completed Successfully' : 'Failed'}
               </div>
-              <div className="text-sm text-slate-400 font-mono mt-1">
+              <div className="text-sm text-slate-300 font-mono mt-1">
                 Target: {run.target?.split('/').pop() || 'unknown'}
                 {run.completed_at && ` • Finished at ${run.completed_at}`}
                 {run.steps && ` • ${run.steps} steps`}
               </div>
               {report && (
-                <div className="text-xs text-slate-500 mt-2">
-                  Edges: {report.metrics?.total_edges || 0} •
-                  Crashes: {report.metrics?.total_crashes || 0} •
-                  Reward: {(report.metrics?.total_reward || 0).toFixed(1)}
+                <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-3 flex gap-4">
+                  <span>Edges: <span className="text-slate-200">{report.metrics?.total_edges || 0}</span></span>
+                  <span>Crashes: <span className="text-slate-200">{report.metrics?.total_crashes || 0}</span></span>
+                  <span>Reward: <span className="text-slate-200">{(report.metrics?.total_reward || 0).toFixed(1)}</span></span>
                 </div>
               )}
             </div>
@@ -1014,7 +1040,7 @@
 
         const interval = setInterval(() => {
           const newLog = mockEvents[Math.floor(Math.random() * mockEvents.length)]();
-          const time = new Date().toISOString().substring(11, 23); // HH:MM:SS.mmm
+          const time = new Date().toISOString().substring(11, 23);
 
           setLogs(prev => {
             const next = [...prev, { time, ...newLog }];
@@ -1034,9 +1060,9 @@
       const getColor = (type) => {
         switch (type) {
           case 'info': return 'text-slate-300';
-          case 'success': return 'text-indigo-400';
-          case 'warning': return 'text-cyan-400';
-          case 'error': return 'text-rose-500 font-bold';
+          case 'success': return 'text-indigo-300';
+          case 'warning': return 'text-cyan-300';
+          case 'error': return 'text-rose-400 font-bold';
           default: return 'text-slate-400';
         }
       };
@@ -1044,31 +1070,31 @@
       const getTagColor = (tag) => {
         switch (tag) {
           case 'SYSTEM': return 'bg-slate-700 text-white';
-          case 'AGENT': return 'bg-indigo-900/50 text-indigo-300 border border-indigo-500/30';
-          case 'FUZZ': return 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30';
-          case 'MEM': return 'bg-amber-900/50 text-amber-300 border border-amber-500/30';
-          case 'RUN': return 'bg-cyan-900/50 text-cyan-300 border border-cyan-500/30';
+          case 'AGENT': return 'bg-indigo-500/20 text-indigo-300 border border-indigo-400/30';
+          case 'FUZZ': return 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/30';
+          case 'MEM': return 'bg-amber-500/20 text-amber-300 border border-amber-400/30';
+          case 'RUN': return 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/30';
           default: return 'bg-slate-800 text-slate-400';
         }
       };
 
       return (
         <GlassCard className="p-0 flex flex-col h-[400px]">
-          <div className="bg-[#050810] px-4 py-3 border-b border-white/5 flex items-center justify-between">
+          <div className="bg-slate-900/80 px-4 py-3 border-b border-slate-700/50 flex items-center justify-between backdrop-blur-md">
             <div className="flex items-center gap-2">
               <Terminal size={16} className="text-slate-400" />
-              <span className="text-sm font-mono text-slate-300 tracking-wider">stdout / stderr</span>
+              <span className="text-sm font-mono font-bold text-slate-200 tracking-wider">stdout / stderr</span>
             </div>
             <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-rose-500/50 border border-rose-500"></div>
-              <div className="w-3 h-3 rounded-full bg-amber-500/50 border border-amber-500"></div>
-              <div className="w-3 h-3 rounded-full bg-emerald-500/50 border border-emerald-500"></div>
+              <div className="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-500 shadow-sm"></div>
+              <div className="w-3 h-3 rounded-full bg-amber-400/80 border border-amber-400 shadow-sm"></div>
+              <div className="w-3 h-3 rounded-full bg-emerald-400/80 border border-emerald-400 shadow-sm"></div>
             </div>
           </div>
 
           <div
             ref={scrollRef}
-            className="flex-1 p-4 bg-[#0a0a0f] overflow-y-auto font-mono text-xs leading-relaxed custom-scrollbar"
+            className="flex-1 p-4 bg-slate-950/60 overflow-y-auto font-mono text-xs leading-relaxed custom-scrollbar shadow-inner"
             style={{ scrollBehavior: 'smooth' }}
           >
             <AnimatePresence initial={false}>
@@ -1076,10 +1102,10 @@
                 <motion.div
                   key={i + log.time}
                   initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                  className="mb-1.5 flex gap-3 hover:bg-white/[0.02] px-2 py-0.5 rounded"
+                  className="mb-1.5 flex gap-3 hover:bg-white/[0.04] px-2 py-1 rounded transition-colors"
                 >
-                  <span className="text-slate-600 shrink-0">[{log.time}]</span>
-                  <span className={`px-1.5 rounded text-[10px] uppercase font-bold tracking-wider shrink-0 w-16 text-center ${getTagColor(log.tag)}`}>
+                  <span className="text-slate-500 shrink-0">[{log.time}]</span>
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider shrink-0 w-16 text-center ${getTagColor(log.tag)}`}>
                     {log.tag}
                   </span>
                   <span className={`break-words ${getColor(log.type)}`}>{log.msg}</span>
@@ -1091,44 +1117,136 @@
       );
     };
 
+    // --- NEW: Binary Logs Component ---
+    const BinLogs = () => {
+      const [binLogs, setBinLogs] = useState([]);
+      const scrollRef = useRef(null);
+
+      useEffect(() => {
+        const opcodes = ['MOV', 'CMP', 'JZ', 'LEA', 'CALL', 'XOR', 'PUSH', 'POP', 'RET', 'TEST', 'ADD', 'SUB'];
+        const registers = ['EAX', 'EBX', 'ECX', 'EDX', 'EBP', 'ESP', 'ESI', 'EDI'];
+
+        const interval = setInterval(() => {
+          const addr = '0x' + Math.floor(Math.random() * 0xFFFFFF + 0x400000).toString(16).toUpperCase().padStart(8, '0');
+          const op = opcodes[Math.floor(Math.random() * opcodes.length)];
+          const reg1 = registers[Math.floor(Math.random() * registers.length)];
+          const reg2 = Math.random() > 0.5 ? registers[Math.floor(Math.random() * registers.length)] : '0x' + Math.floor(Math.random() * 0xFF).toString(16).toUpperCase();
+
+          let instr = `${op} ${reg1}, ${reg2}`;
+          let byteCount = 3;
+          
+          if (op === 'PUSH' || op === 'POP' || op === 'CALL' || op === 'JZ') {
+             instr = `${op} ${reg1}`;
+             byteCount = 2;
+          }
+          if (op === 'RET') {
+            instr = 'RET';
+            byteCount = 1;
+          }
+
+          const hexDump = Array.from({length: byteCount}, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()).join(' ');
+
+          setBinLogs(prev => {
+            const next = [...prev, { addr, hexDump, instr }];
+            return next.length > 30 ? next.slice(next.length - 30) : next;
+          });
+        }, 500);
+
+        return () => clearInterval(interval);
+      }, []);
+
+      useEffect(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }, [binLogs]);
+
+      return (
+        <GlassCard className="p-0 flex flex-col h-[400px]">
+          <div className="bg-slate-900/80 px-4 py-3 border-b border-slate-700/50 flex items-center justify-between backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <Binary size={16} className="text-cyan-400" />
+              <span className="text-sm font-mono font-bold text-slate-200 tracking-wider">Live Binary Trace</span>
+            </div>
+            <div className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 uppercase">
+              Disassembly Engine
+            </div>
+          </div>
+
+          <div
+            ref={scrollRef}
+            className="flex-1 p-4 bg-slate-950/60 overflow-y-auto font-mono text-xs leading-relaxed custom-scrollbar shadow-inner"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            <div className="flex border-b border-slate-700/50 pb-2 mb-2 text-slate-500 font-bold uppercase tracking-widest text-[10px]">
+              <div className="w-24">Offset</div>
+              <div className="w-32">Bytes</div>
+              <div className="flex-1">Instruction</div>
+            </div>
+            <AnimatePresence initial={false}>
+              {binLogs.map((log, i) => {
+                const parts = log.instr.split(' ');
+                const op = parts[0];
+                const rest = parts.slice(1).join(' ');
+
+                return (
+                  <motion.div
+                    key={i + log.addr}
+                    initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
+                    className="flex hover:bg-white/[0.04] px-2 py-1 -mx-2 rounded transition-colors mb-1"
+                  >
+                    <div className="w-24 text-slate-500">{log.addr}</div>
+                    <div className="w-32 text-cyan-400/80">{log.hexDump}</div>
+                    <div className="flex-1 text-slate-300">
+                      <span className="text-emerald-400 font-bold w-12 inline-block">{op}</span> 
+                      <span className="text-indigo-300">{rest}</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </GlassCard>
+      );
+    };
+
     const ArchitectureMap = () => {
       return (
-        <GlassCard className="p-6">
-          <SectionTitle title="Project Architecture" subtitle="Repository Structure" icon={SearchCode} />
+        <GlassCard className="p-6 h-full flex flex-col">
+          <SectionTitle title="Architecture" subtitle="Repository Structure" icon={SearchCode} />
 
-          <div className="font-mono text-xs text-slate-400 mt-4 leading-relaxed bg-[#050810] p-4 rounded-xl border border-white/5">
-            <div className="text-cyan-400 font-bold mb-2">fuzzinator/</div>
+          <div className="font-mono text-xs text-slate-400 mt-2 flex-1 bg-slate-900/50 p-5 rounded-xl border border-slate-700/50 shadow-inner overflow-hidden">
+            <div className="text-cyan-400 font-bold mb-3 tracking-wider">fuzzinator/</div>
 
-            <div className="pl-4 border-l border-slate-800 ml-2 relative">
-              <div className="before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-3">
-                <span className="text-indigo-300 flex items-center gap-2"><Brain size={12} /> agent/</span>
-                <div className="pl-6 text-slate-500">train.py / train_lstm.py</div>
-                <div className="pl-6 text-slate-500">ppo_agent.py / ppo_agent_lstm.py</div>
-                <div className="pl-6 text-slate-500">run_report.py</div>
+            <div className="pl-4 border-l border-slate-700 ml-2 relative space-y-3">
+              <div className="relative">
+                <div className="absolute w-3 h-px bg-slate-700 -left-[17px] top-2"></div>
+                <span className="text-indigo-300 flex items-center gap-2 font-bold"><Brain size={12} /> agent/</span>
+                <div className="pl-6 text-slate-500 mt-1">train.py / train_lstm.py</div>
+                <div className="pl-6 text-slate-500 mt-1">ppo_agent.py</div>
               </div>
 
-              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-14">
-                <span className="text-emerald-300 flex items-center gap-2"><GitBranch size={12} /> mutator/</span>
-                <div className="pl-6 text-slate-500">mutator.py</div>
+              <div className="relative">
+                <div className="absolute w-3 h-px bg-slate-700 -left-[17px] top-2"></div>
+                <span className="text-emerald-300 flex items-center gap-2 font-bold"><GitBranch size={12} /> mutator/</span>
+                <div className="pl-6 text-slate-500 mt-1">mutator.py</div>
               </div>
 
-              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[104px]">
-                <span className="text-amber-300 flex items-center gap-2"><Server size={12} /> environment/</span>
-                <div className="pl-6 text-slate-500">fuzz_env.py / fuzz_env_lstm.py</div>
-                <div className="pl-6 text-slate-500">execution_harness.py</div>
-                <div className="pl-6 text-slate-500">coverage_reader.py</div>
+              <div className="relative">
+                <div className="absolute w-3 h-px bg-slate-700 -left-[17px] top-2"></div>
+                <span className="text-amber-300 flex items-center gap-2 font-bold"><Server size={12} /> env/</span>
+                <div className="pl-6 text-slate-500 mt-1">fuzz_env.py</div>
+                <div className="pl-6 text-slate-500 mt-1">harness.py</div>
               </div>
 
-              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[168px]">
-                <span className="text-rose-300 flex items-center gap-2"><ShieldAlert size={12} /> targets/</span>
-                <div className="pl-6 text-slate-500">drop .c files here through the dashboard</div>
-                <div className="pl-6 text-slate-500">compiled binaries are reused by PPO+LSTM</div>
+              <div className="relative">
+                <div className="absolute w-3 h-px bg-slate-700 -left-[17px] top-2"></div>
+                <span className="text-rose-300 flex items-center gap-2 font-bold"><ShieldAlert size={12} /> targets/</span>
+                <div className="pl-6 text-slate-500 mt-1">.c files & binaries</div>
               </div>
 
-              <div className="mt-2 before:content-[''] before:absolute before:w-3 before:h-px before:bg-slate-800 before:-left-px before:top-[232px]">
-                <span className="text-cyan-300 flex items-center gap-2"><Cpu size={12} /> backend/</span>
-                <div className="pl-6 text-slate-500">dashboard_server.py</div>
-                <div className="pl-6 text-slate-500">upload -> build -> run -> report APIs</div>
+              <div className="relative">
+                <div className="absolute w-3 h-px bg-slate-700 -left-[17px] top-2"></div>
+                <span className="text-cyan-300 flex items-center gap-2 font-bold"><Cpu size={12} /> backend/</span>
+                <div className="pl-6 text-slate-500 mt-1">server.py</div>
               </div>
             </div>
           </div>
@@ -1137,14 +1255,14 @@
     }
 
     const Footer = () => (
-      <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500">
+      <div className="mt-12 pt-6 border-t border-slate-700 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-slate-500 font-bold uppercase tracking-wider relative z-10">
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Nominal</span>
-          <span className="flex items-center gap-1"><Cpu size={14} className="text-slate-400" /> Dashboard API + instrumentation build + PPO+LSTM</span>
+          <span className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></div> System Nominal</span>
+          <span className="flex items-center gap-1.5"><Cpu size={14} className="text-slate-400" /> Dashboard API + Instrumentation</span>
         </div>
         <div className="flex items-center gap-6">
-          <span>Reports: <span className="text-cyan-400">data/reports/*.json</span></span>
-          <span className="text-slate-600">Fuzzinator Research v0.2.3</span>
+          <span>Reports: <span className="text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">data/reports/</span></span>
+          <span className="text-slate-400">Fuzzinator v0.2.3</span>
         </div>
       </div>
     );
@@ -1196,33 +1314,33 @@
           <SectionTitle title="Backend Connection" subtitle="Connect to your local Fuzzinator server" icon={Server} />
           <div className="flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1">
-              <label className="block text-xs text-slate-400 mb-2">Backend URL (e.g. ngrok)</label>
+              <label className="block text-xs text-slate-400 mb-2 font-bold uppercase tracking-widest">Backend URL (e.g. ngrok)</label>
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                className="w-full bg-[#050810] border border-white/10 rounded-lg px-3 py-2 text-sm text-white font-mono"
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 font-mono shadow-inner focus:outline-none focus:border-cyan-500/50"
                 placeholder="https://abc123.ngrok-free.app"
               />
             </div>
             <button
               onClick={testConnection}
               disabled={!url || testing}
-              className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 disabled:opacity-40 whitespace-nowrap"
+              className="px-5 py-2.5 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 font-semibold disabled:opacity-40 whitespace-nowrap hover:bg-cyan-500/30 transition-colors"
             >
               {testing ? 'Testing...' : 'Connect'}
             </button>
             {getApiBase() && (
               <button
                 onClick={disconnect}
-                className="px-4 py-2 rounded-lg bg-rose-500/20 border border-rose-400/30 text-rose-300 whitespace-nowrap"
+                className="px-5 py-2.5 rounded-lg bg-rose-500/20 border border-rose-400/30 text-rose-200 font-semibold whitespace-nowrap hover:bg-rose-500/30 transition-colors"
               >
                 Disconnect
               </button>
             )}
           </div>
-          <div className={`mt-3 text-xs font-mono ${statusColors[status]}`}>
+          <div className={`mt-3 text-[11px] font-mono font-bold uppercase tracking-widest ${statusColors[status]}`}>
             ● {statusLabels[status]}
-            {status === 'connected' && <span className="text-slate-500 ml-2">— {getApiBase()}</span>}
+            {status === 'connected' && <span className="text-slate-400 ml-2 normal-case tracking-normal">— {getApiBase()}</span>}
           </div>
         </GlassCard>
       );
@@ -1335,9 +1453,6 @@
 
       return (
         <div className="min-h-screen relative z-0">
-          {/* Global stylistic background noise/vignette */}
-          <div className="fixed inset-0 pointer-events-none z-50 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.8)_100%)] opacity-80 mix-blend-multiply" />
-
           <div className="max-w-[1600px] mx-auto p-4 md:p-8 relative z-10">
             {!isLocalhost && <BackendConfig onSave={() => window.location.reload()} />}
             <HeroSection liveStats={liveStats} />
@@ -1380,10 +1495,18 @@
               <MLInsights report={latestReport} />
               <TargetAnalysis availableReports={dashboardState.available_reports} />
 
+              {/* Logs & Architecture Row */}
               <div className="xl:col-span-2">
                 <LiveTerminal logsOverride={liveLogs} />
               </div>
-              <ArchitectureMap />
+              <div className="xl:col-span-1">
+                <ArchitectureMap />
+              </div>
+
+              {/* NEW: Binary Logs Section */}
+              <div className="xl:col-span-3">
+                <BinLogs />
+              </div>
 
               <div className="xl:col-span-3">
                 <CrashVault report={latestReport} />
