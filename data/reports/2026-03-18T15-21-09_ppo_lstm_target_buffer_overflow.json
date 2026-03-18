@@ -1,0 +1,270 @@
+{
+  "model": "PPO+LSTM",
+  "status": "completed",
+  "started_at": "2026-03-18T15:21:09",
+  "finished_at": "2026-03-18T15:21:34",
+  "requested_steps": 200,
+  "completed_steps": 200,
+  "completion_rule": "Run is done when completed_steps reaches requested_steps or the process is interrupted.",
+  "target_path": "/home/kali/Fuzzi/Fuzzinator/targets/target_buffer_overflow",
+  "seed_path": "/home/kali/Fuzzi/Fuzzinator/corpus/seed.bin",
+  "target_name": "target_buffer_overflow",
+  "config": {
+    "rollout_size": 256,
+    "learning_rate": 0.0003,
+    "random_seed": 1337,
+    "device": "cpu",
+    "timeout_ms": 500,
+    "max_input_size": 1024,
+    "checkpoint_interval": 500,
+    "lstm_hidden": 128,
+    "lstm_layers": 1
+  },
+  "metrics": {
+    "elapsed_seconds": 25.105,
+    "exec_speed": 7.967,
+    "total_reward": 2063.2,
+    "total_edges": 208,
+    "total_crashes": 0,
+    "ppo_updates": 1
+  },
+  "events": [
+    {
+      "step": 1,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 2,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 14,
+      "action": "byte_flip"
+    },
+    {
+      "step": 3,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 21,
+      "action": "byte_flip"
+    },
+    {
+      "step": 4,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 28,
+      "action": "byte_flip"
+    },
+    {
+      "step": 5,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 35,
+      "action": "byte_insert"
+    },
+    {
+      "step": 7,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 42,
+      "action": "byte_insert"
+    },
+    {
+      "step": 9,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 49,
+      "action": "byte_insert"
+    },
+    {
+      "step": 10,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 55,
+      "action": "byte_flip"
+    },
+    {
+      "step": 11,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 62,
+      "action": "havoc"
+    },
+    {
+      "step": 13,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 69,
+      "action": "havoc"
+    },
+    {
+      "step": 14,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 76,
+      "action": "bit_flip"
+    },
+    {
+      "step": 16,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 82,
+      "action": "byte_insert"
+    },
+    {
+      "step": 17,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 88,
+      "action": "bit_flip"
+    },
+    {
+      "step": 20,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 94,
+      "action": "byte_insert"
+    },
+    {
+      "step": 22,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 101,
+      "action": "havoc"
+    },
+    {
+      "step": 24,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 107,
+      "action": "byte_flip"
+    },
+    {
+      "step": 25,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 114,
+      "action": "byte_insert"
+    },
+    {
+      "step": 26,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 121,
+      "action": "bit_flip"
+    },
+    {
+      "step": 29,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 128,
+      "action": "byte_flip"
+    },
+    {
+      "step": 32,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 134,
+      "action": "bit_flip"
+    },
+    {
+      "step": 33,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 141,
+      "action": "bit_flip"
+    },
+    {
+      "step": 40,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 147,
+      "action": "byte_insert"
+    },
+    {
+      "step": 41,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 153,
+      "action": "havoc"
+    },
+    {
+      "step": 44,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 160,
+      "action": "havoc"
+    },
+    {
+      "step": 57,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 166,
+      "action": "byte_insert"
+    },
+    {
+      "step": 60,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 172,
+      "action": "byte_insert"
+    },
+    {
+      "step": 62,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 178,
+      "action": "byte_flip"
+    },
+    {
+      "step": 72,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 184,
+      "action": "bit_flip"
+    },
+    {
+      "step": 85,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 190,
+      "action": "byte_insert"
+    },
+    {
+      "step": 112,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 196,
+      "action": "byte_flip"
+    },
+    {
+      "step": 133,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 202,
+      "action": "byte_insert"
+    },
+    {
+      "step": 198,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 208,
+      "action": "havoc"
+    },
+    {
+      "step": 200,
+      "type": "ppo_update",
+      "update": 1,
+      "policy_loss": -0.0005,
+      "value_loss": 38428.6535,
+      "entropy": 1.3847
+    }
+  ],
+  "new_crash_files": [],
+  "final_checkpoint": "/home/kali/Fuzzi/Fuzzinator/data/checkpoints/ppo_lstm_final.pt",
+  "crash_dir": "/home/kali/Fuzzi/Fuzzinator/data/crashes",
+  "markdown_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T15-21-09_ppo_lstm_target_buffer_overflow.md",
+  "json_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T15-21-09_ppo_lstm_target_buffer_overflow.json"
+}

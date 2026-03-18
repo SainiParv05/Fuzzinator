@@ -256,6 +256,18 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
             self.respond_json(json.loads(report_path.read_text(encoding="utf-8")))
             return
 
+        if parsed.path == "/api/live_status":
+            live_path = PROJECT_ROOT / "data" / "live_status.json"
+            if live_path.exists():
+                try:
+                    payload = json.loads(live_path.read_text(encoding="utf-8"))
+                    self.respond_json(payload)
+                    return
+                except:
+                    pass
+            self.respond_json({"error": "No live status"}, status=HTTPStatus.NOT_FOUND)
+            return
+
         if parsed.path == "/":
             self.path = "/index.html"
         return super().do_GET()
@@ -295,6 +307,15 @@ class DashboardRequestHandler(SimpleHTTPRequestHandler):
                 return
 
             self.respond_json({"run": run_state}, status=HTTPStatus.ACCEPTED)
+            return
+
+        if parsed.path == "/api/stop_run":
+            with STATE.lock:
+                if STATE.process and STATE.process.poll() is None:
+                    STATE.process.terminate()
+                    self.respond_json({"message": "Stop signal sent"}, status=HTTPStatus.OK)
+                else:
+                    self.respond_json({"error": "No active run"}, status=HTTPStatus.BAD_REQUEST)
             return
 
         self.respond_json({"error": "Not found"}, status=HTTPStatus.NOT_FOUND)

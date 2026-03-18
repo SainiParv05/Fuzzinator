@@ -187,9 +187,14 @@ def train(args):
     status = "completed"
     events = []
     step = 0
+    steps_since_last_edge = 0
+    live_status_path = os.path.join(PROJECT_ROOT, "data", "live_status.json")
 
     try:
-        for step in range(1, steps + 1):
+        while True:
+            if steps > 0 and step >= steps:
+                break
+            step += 1
             current_input = env.get_current_input_array()
             current_history = env.action_history.copy()
 
@@ -227,14 +232,34 @@ def train(args):
             if step % 10 == 0 or info["crashed"] or info["new_edges"] > 0:
                 print(f"{step:>6} | {reward:>+8.1f} | {info['new_edges']:>4} | {info['total_edges']:>6} | "
                       f"{info['total_crashes']:>7} | {action_name:>10} | {crash_marker}")
-                if info["new_edges"] > 0:
-                    events.append({
-                        "step": step,
-                        "type": "coverage_gain",
-                        "new_edges": info["new_edges"],
-                        "total_edges": info["total_edges"],
-                        "action": action_name,
-                    })
+            if info["new_edges"] > 0:
+                steps_since_last_edge = 0
+                events.append({
+                    "step": step,
+                    "type": "coverage_gain",
+                    "new_edges": info["new_edges"],
+                    "total_edges": info["total_edges"],
+                    "action": action_name,
+                })
+            else:
+                steps_since_last_edge += 1
+                
+            if steps <= 0 and steps_since_last_edge > 5000:
+                print(f"[!] Auto-stopping: No new edges for 5000 steps.")
+                break
+
+            if step % 20 == 0:
+                try:
+                    with open(live_status_path, "w") as f:
+                        json.dump({
+                            "step": step,
+                            "reward": round(total_reward, 3),
+                            "edges": best_total_edges,
+                            "crashes": best_total_crashes,
+                            "bitmap": env.shared_coverage.tolist()[:512]
+                        }, f)
+                except Exception as e:
+                    pass
 
             if buffer.full or done:
                 if done:
