@@ -1234,12 +1234,16 @@
       const [error, setError] = useState('');
 
       useEffect(() => {
+        // On hosted domains, don't poll until a backend URL is configured
+        if (!isLocalhost && !getApiBase()) return;
+
         let active = true;
         const loadStatus = async () => {
           try {
             const status = await fetchJson(API.status(), { headers: {} });
             if (!active) return;
             setDashboardState(status);
+            setError('');
             if (status.latest_report?.path) {
               const report = await fetchJson(API.report(status.latest_report.path), { headers: {} });
               if (active) setLatestReport(report);
