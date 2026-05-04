@@ -163,8 +163,20 @@ def train(args):
         device=device,
     )
 
+    ckpt_files = glob.glob(os.path.join(checkpoint_dir, "*.pth"))
+    if ckpt_files:
+        latest_ckpt = max(ckpt_files, key=os.path.getmtime)
+        logger.info("Found existing checkpoint: %s. Loading...", latest_ckpt)
+        try:
+            agent.load(latest_ckpt)
+            logger.info("Checkpoint loaded successfully. Resuming training.")
+        except Exception as e:
+            logger.error("Failed to load checkpoint %s: %s", latest_ckpt, e)
+    else:
+        logger.info("No existing checkpoints found. Analyzing from scratch.")
+
     buffer = RolloutBufferLSTM(
-        buffer_size=rollout_size,
+        capacity=rollout_size,
         obs_size=OBS_SIZE,
         max_input_len=max_input_size,
     )
@@ -251,6 +263,12 @@ def train(args):
                     "total_edges": info["total_edges"],
                     "action": action_name,
                 })
+                # Persist the best input found to the seed file
+                try:
+                    with open(seed, "wb") as f:
+                        f.write(env.get_current_input_array().tobytes())
+                except Exception as e:
+                    pass
             else:
                 steps_since_last_edge += 1
                 
