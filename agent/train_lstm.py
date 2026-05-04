@@ -189,6 +189,7 @@ def train(args):
     step = 0
     steps_since_last_edge = 0
     live_status_path = os.path.join(PROJECT_ROOT, "data", "live_status.json")
+    recent_bin_logs = []
 
     try:
         while True:
@@ -218,6 +219,15 @@ def train(args):
             best_total_crashes = max(best_total_crashes, info.get("total_crashes", 0))
 
             action_name = STRATEGY_NAMES.get(action, "unknown")
+            
+            recent_bin_logs.append({
+                "offset": f"0x{step:06x}",
+                "bytes": " ".join([f"{b:02x}" for b in env.get_current_input_array().tobytes()[:4]]),
+                "instruction": f"mut.{action_name}"
+            })
+            if len(recent_bin_logs) > 10:
+                recent_bin_logs.pop(0)
+
             crash_marker = ""
             if info["crashed"]:
                 crash_marker = f"CRASH ({info['signal']})"
@@ -256,7 +266,8 @@ def train(args):
                             "reward": round(total_reward, 3),
                             "edges": best_total_edges,
                             "crashes": best_total_crashes,
-                            "bitmap": env.shared_coverage.tolist()[:512]
+                            "bitmap": env.shared_coverage.tolist()[:512],
+                            "bin_logs": recent_bin_logs
                         }, f)
                 except Exception as e:
                     pass

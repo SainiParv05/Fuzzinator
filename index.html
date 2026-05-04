@@ -543,15 +543,16 @@
       );
     };
 
-    const PipelineVisual = () => {
+    const PipelineVisual = ({ liveStats }) => {
+      const isRunning = liveStats?.steps > 0;
       const nodes = [
-        { id: 'corpus', label: 'Seed Corpus', icon: Database, desc: '42 Inputs', active: false },
-        { id: 'agent', label: 'PPO Agent', icon: Brain, desc: 'Policy NN', active: true },
-        { id: 'mutator', label: 'Mutator Engine', icon: GitBranch, desc: 'byte_insert', active: true },
-        { id: 'harness', label: 'Exec Harness', icon: Terminal, desc: 'Subprocess', active: false },
-        { id: 'bitmap', label: 'Coverage Mem', icon: Layers, desc: 'Shared Array', active: false },
-        { id: 'reward', label: 'Reward Eng', icon: Zap, desc: 'r_t = +10.0', active: true },
-        { id: 'vault', label: 'Crash Vault', icon: ShieldAlert, desc: 'Monitoring', active: false },
+        { id: 'corpus', label: 'Seed Corpus', icon: Database, desc: `${liveStats?.steps || 0} Inputs`, active: isRunning },
+        { id: 'agent', label: 'PPO Agent', icon: Brain, desc: 'Policy NN', active: isRunning },
+        { id: 'mutator', label: 'Mutator Engine', icon: GitBranch, desc: isRunning ? 'Active' : 'Idle', active: isRunning },
+        { id: 'harness', label: 'Exec Harness', icon: Terminal, desc: 'Subprocess', active: isRunning },
+        { id: 'bitmap', label: 'Coverage Mem', icon: Layers, desc: `${liveStats?.edges || 0} Edges`, active: isRunning && liveStats?.edges > 0 },
+        { id: 'reward', label: 'Reward Eng', icon: Zap, desc: `r_t = ${liveStats?.reward > 0 ? '+' : ''}${liveStats?.reward || 0}`, active: isRunning },
+        { id: 'vault', label: 'Crash Vault', icon: ShieldAlert, desc: `${liveStats?.crashes || 0} Crashes`, active: isRunning && liveStats?.crashes > 0 },
       ];
 
       return (
@@ -722,7 +723,7 @@
                   <div className="w-2.5 h-2.5 rounded-full shadow-sm" style={{ backgroundColor: m.color }} />
                   <span className="text-slate-300">{m.name}</span>
                 </div>
-                <span className="text-slate-100 font-bold">{m.usage > 0 ? Math.round((m.success / m.usage) * 100) : 0}% SR</span>
+                <span className="text-slate-100 font-bold">{m.success} Hits</span>
               </div>
             ))}
           </div>
@@ -1449,7 +1450,7 @@
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               <div className="xl:col-span-3">
-                <PipelineVisual />
+                <PipelineVisual liveStats={liveStats} />
               </div>
 
               <BitmapVisualizer liveBitmap={dashboardState.live_status?.bitmap} />
