@@ -6,6 +6,7 @@ Fuzzinator — PPO+LSTM training loop for adaptive fuzzing.
 from __future__ import annotations
 
 import argparse
+import glob
 import logging
 import os
 import sys
@@ -176,7 +177,7 @@ def train(args):
         logger.info("No existing checkpoints found. Analyzing from scratch.")
 
     buffer = RolloutBufferLSTM(
-        capacity=rollout_size,
+        buffer_size=rollout_size,
         obs_size=OBS_SIZE,
         max_input_len=max_input_size,
     )
