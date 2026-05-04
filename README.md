@@ -126,7 +126,7 @@ python agent/train.py
 python agent/train_lstm.py --target targets/target_buffer_overflow --steps 500
 ```
 
-### Dashboard GUI
+### Dashboard GUI (Local)
 
 ```bash
 # Start the dashboard server
@@ -134,6 +134,73 @@ python backend/dashboard_server.py
 ```
 
 Then open **`http://127.0.0.1:8000/index.html`** in your browser.
+
+---
+
+### 🌐 Backend + ngrok Setup (Remote / GitHub Pages)
+
+The live dashboard hosted on GitHub Pages cannot talk to `localhost`. You need to expose your local backend server publicly using **ngrok**.
+
+#### Step 1 — Start the backend server in the background
+
+```bash
+# From the project root
+nohup python backend/dashboard_server.py > /tmp/dashboard.log 2>&1 &
+echo "Backend running at http://127.0.0.1:8000"
+```
+
+> To check if it's running:
+> ```bash
+> ps aux | grep dashboard_server
+> ```
+
+#### Step 2 — Install ngrok (first time only)
+
+```bash
+# Download and install
+curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt update && sudo apt install ngrok
+
+# Authenticate (get your token from https://dashboard.ngrok.com)
+ngrok config add-authtoken <YOUR_NGROK_TOKEN>
+```
+
+#### Step 3 — Start the ngrok tunnel
+
+```bash
+nohup ngrok http 8000 --log=stdout > /tmp/ngrok.log 2>&1 &
+sleep 3
+
+# Get your public URL
+curl -s http://localhost:4040/api/tunnels | python3 -c \
+  "import sys,json; t=json.load(sys.stdin)['tunnels']; \
+   print([x['public_url'] for x in t if 'https' in x['public_url']][0])"
+```
+
+This prints something like:
+```
+https://59b7-103-182-161-2.ngrok-free.app
+```
+
+#### Step 4 — Point the frontend to your tunnel URL
+
+Open `index.html` and update the `API_BASE` constant near the top of the `<script>` block:
+
+```js
+const API_BASE = "https://YOUR-NGROK-URL-HERE.ngrok-free.app";
+```
+
+Save, commit, and push. Your GitHub Pages dashboard will now stream live data from your local fuzzer!
+
+#### Step 5 — Stop everything when done
+
+```bash
+pkill -f dashboard_server.py
+pkill -f ngrok
+```
+
+---
 
 The dashboard provides:
 - **Drag-and-drop** upload of `.c` target files
