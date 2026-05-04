@@ -637,24 +637,19 @@
 
           <div className="bg-slate-900/60 rounded-xl p-4 border border-slate-700/50 shadow-inner">
             <div className="grid grid-cols-[repeat(32,minmax(0,1fr))] gap-[2px]">
-              <AnimatePresence>
-                {cells.map((cell) => (
-                  <motion.div
-                    key={cell.id}
-                    layout
-                    initial={{ opacity: 0.5 }}
-                    animate={{ opacity: 1 }}
-                    className={`aspect-square rounded-[3px] transition-colors duration-300 group relative ${getCellColor(cell.hits, cell.type)}`}
-                  >
-                    {/* Tooltip on hover */}
-                    <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900/95 backdrop-blur-md text-slate-100 text-[10px] font-mono p-2.5 rounded-lg border border-slate-600 pointer-events-none z-50 w-max shadow-xl">
-                      <div className="text-cyan-400 mb-1 border-b border-slate-700 pb-1">Bucket: 0x{cell.id.toString(16).padStart(3, '0')}</div>
-                      <div>Hits: {cell.hits}</div>
-                      {cell.type === 'crash' && <div className="text-rose-400 mt-1 font-bold tracking-widest">CRASH VECTOR</div>}
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              {cells.map((cell) => (
+                <div
+                  key={cell.id}
+                  className={`aspect-square rounded-[3px] transition-colors duration-300 group relative ${getCellColor(cell.hits, cell.type)}`}
+                >
+                  {/* Tooltip on hover */}
+                  <div className="absolute opacity-0 group-hover:opacity-100 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900/95 backdrop-blur-md text-slate-100 text-[10px] font-mono p-2.5 rounded-lg border border-slate-600 pointer-events-none z-50 w-max shadow-xl">
+                    <div className="text-cyan-400 mb-1 border-b border-slate-700 pb-1">Bucket: 0x{cell.id.toString(16).padStart(3, '0')}</div>
+                    <div>Hits: {cell.hits}</div>
+                    {cell.type === 'crash' && <div className="text-rose-400 mt-1 font-bold tracking-widest">CRASH VECTOR</div>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -843,7 +838,7 @@
         <GlassCard className="p-6">
           <SectionTitle title="Targets" subtitle="Campaign Progress" icon={Server} />
 
-          <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-col gap-4 mt-4 max-h-96 overflow-y-auto custom-scrollbar pr-2">
             {targets.map((target, i) => (
               <div key={i} className="bg-slate-900/40 backdrop-blur-sm border border-slate-700/50 rounded-xl p-5 relative overflow-hidden group hover:bg-slate-800/60 hover:border-slate-500 transition-colors shadow-inner">
                 {target.status === 'Exploited' && (
@@ -914,7 +909,7 @@
             </button>
           </div>
 
-          <div className="overflow-x-auto relative z-10">
+          <div className="overflow-x-auto overflow-y-auto max-h-64 custom-scrollbar relative z-10">
             {crashes.length === 0 ? (
               <div className="text-center py-16 bg-slate-900/40 rounded-xl border border-slate-800 border-dashed">
                 <ShieldAlert size={48} className="text-slate-600 mx-auto mb-4" />

@@ -1,0 +1,1538 @@
+{
+  "model": "PPO+LSTM",
+  "status": "interrupted",
+  "started_at": "2026-03-18T18:34:46",
+  "finished_at": "2026-03-18T18:36:28",
+  "requested_steps": -1,
+  "completed_steps": 262,
+  "completion_rule": "Run is done when completed_steps reaches requested_steps or the process is interrupted.",
+  "target_path": "/home/kali/Fuzzi/Fuzzinator/targets/target_maze",
+  "seed_path": "/home/kali/Fuzzi/Fuzzinator/corpus/seed.bin",
+  "target_name": "target_maze",
+  "config": {
+    "rollout_size": 256,
+    "learning_rate": 0.0003,
+    "random_seed": 1337,
+    "device": "cpu",
+    "timeout_ms": 500,
+    "max_input_size": 1024,
+    "checkpoint_interval": 500,
+    "lstm_hidden": 128,
+    "lstm_layers": 1
+  },
+  "metrics": {
+    "elapsed_seconds": 102.323,
+    "exec_speed": 2.561,
+    "total_reward": 18340.0,
+    "total_edges": 7,
+    "total_crashes": 0,
+    "ppo_updates": 261
+  },
+  "events": [
+    {
+      "step": 1,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 1,
+      "type": "ppo_update",
+      "update": 1,
+      "policy_loss": -71.7005,
+      "value_loss": 4892.2356,
+      "entropy": 1.3848
+    },
+    {
+      "step": 2,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 2,
+      "type": "ppo_update",
+      "update": 2,
+      "policy_loss": -74.8789,
+      "value_loss": 4875.6194,
+      "entropy": 1.3813
+    },
+    {
+      "step": 3,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_insert"
+    },
+    {
+      "step": 3,
+      "type": "ppo_update",
+      "update": 3,
+      "policy_loss": -70.5405,
+      "value_loss": 4858.1577,
+      "entropy": 1.3748
+    },
+    {
+      "step": 4,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 4,
+      "type": "ppo_update",
+      "update": 4,
+      "policy_loss": -70.3513,
+      "value_loss": 4835.7552,
+      "entropy": 1.3738
+    },
+    {
+      "step": 5,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 5,
+      "type": "ppo_update",
+      "update": 5,
+      "policy_loss": -72.8123,
+      "value_loss": 4810.6033,
+      "entropy": 1.3601
+    },
+    {
+      "step": 6,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 6,
+      "type": "ppo_update",
+      "update": 6,
+      "policy_loss": -71.7803,
+      "value_loss": 4766.9473,
+      "entropy": 1.3406
+    },
+    {
+      "step": 7,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 7,
+      "type": "ppo_update",
+      "update": 7,
+      "policy_loss": -80.3089,
+      "value_loss": 4712.0924,
+      "entropy": 1.3018
+    },
+    {
+      "step": 8,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 8,
+      "type": "ppo_update",
+      "update": 8,
+      "policy_loss": -65.6187,
+      "value_loss": 4655.4332,
+      "entropy": 1.2481
+    },
+    {
+      "step": 9,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 9,
+      "type": "ppo_update",
+      "update": 9,
+      "policy_loss": -70.5872,
+      "value_loss": 4532.6704,
+      "entropy": 1.1817
+    },
+    {
+      "step": 10,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 10,
+      "type": "ppo_update",
+      "update": 10,
+      "policy_loss": -71.9473,
+      "value_loss": 4425.6707,
+      "entropy": 1.0923
+    },
+    {
+      "step": 11,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 11,
+      "type": "ppo_update",
+      "update": 11,
+      "policy_loss": -65.6575,
+      "value_loss": 4302.2874,
+      "entropy": 1.0509
+    },
+    {
+      "step": 12,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 12,
+      "type": "ppo_update",
+      "update": 12,
+      "policy_loss": -65.9786,
+      "value_loss": 4180.0886,
+      "entropy": 0.8962
+    },
+    {
+      "step": 13,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 13,
+      "type": "ppo_update",
+      "update": 13,
+      "policy_loss": -57.712,
+      "value_loss": 3978.0914,
+      "entropy": 0.8643
+    },
+    {
+      "step": 14,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 14,
+      "type": "ppo_update",
+      "update": 14,
+      "policy_loss": -62.4105,
+      "value_loss": 3695.2806,
+      "entropy": 0.7709
+    },
+    {
+      "step": 15,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 15,
+      "type": "ppo_update",
+      "update": 15,
+      "policy_loss": -60.2361,
+      "value_loss": 3584.9229,
+      "entropy": 0.7218
+    },
+    {
+      "step": 16,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 16,
+      "type": "ppo_update",
+      "update": 16,
+      "policy_loss": -58.8277,
+      "value_loss": 3342.624,
+      "entropy": 0.6301
+    },
+    {
+      "step": 17,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 17,
+      "type": "ppo_update",
+      "update": 17,
+      "policy_loss": -47.3736,
+      "value_loss": 3093.931,
+      "entropy": 0.666
+    },
+    {
+      "step": 18,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 18,
+      "type": "ppo_update",
+      "update": 18,
+      "policy_loss": -58.8178,
+      "value_loss": 2807.1282,
+      "entropy": 0.7001
+    },
+    {
+      "step": 19,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 19,
+      "type": "ppo_update",
+      "update": 19,
+      "policy_loss": -51.3807,
+      "value_loss": 2542.1208,
+      "entropy": 0.7671
+    },
+    {
+      "step": 20,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 20,
+      "type": "ppo_update",
+      "update": 20,
+      "policy_loss": -45.5797,
+      "value_loss": 2329.5176,
+      "entropy": 0.7679
+    },
+    {
+      "step": 21,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 21,
+      "type": "ppo_update",
+      "update": 21,
+      "policy_loss": -44.4417,
+      "value_loss": 1961.717,
+      "entropy": 0.856
+    },
+    {
+      "step": 22,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_insert"
+    },
+    {
+      "step": 22,
+      "type": "ppo_update",
+      "update": 22,
+      "policy_loss": -31.9585,
+      "value_loss": 1786.2817,
+      "entropy": 0.7818
+    },
+    {
+      "step": 23,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 23,
+      "type": "ppo_update",
+      "update": 23,
+      "policy_loss": -36.2005,
+      "value_loss": 1566.3837,
+      "entropy": 0.8603
+    },
+    {
+      "step": 24,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 24,
+      "type": "ppo_update",
+      "update": 24,
+      "policy_loss": -34.4982,
+      "value_loss": 1111.761,
+      "entropy": 0.9032
+    },
+    {
+      "step": 25,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 25,
+      "type": "ppo_update",
+      "update": 25,
+      "policy_loss": -33.7679,
+      "value_loss": 996.4151,
+      "entropy": 0.9024
+    },
+    {
+      "step": 26,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 26,
+      "type": "ppo_update",
+      "update": 26,
+      "policy_loss": -30.3339,
+      "value_loss": 707.748,
+      "entropy": 0.9058
+    },
+    {
+      "step": 27,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 27,
+      "type": "ppo_update",
+      "update": 27,
+      "policy_loss": -23.2453,
+      "value_loss": 640.6337,
+      "entropy": 0.9003
+    },
+    {
+      "step": 28,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 28,
+      "type": "ppo_update",
+      "update": 28,
+      "policy_loss": -21.9594,
+      "value_loss": 394.1209,
+      "entropy": 0.903
+    },
+    {
+      "step": 29,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 29,
+      "type": "ppo_update",
+      "update": 29,
+      "policy_loss": -18.626,
+      "value_loss": 117.4033,
+      "entropy": 0.8855
+    },
+    {
+      "step": 30,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 30,
+      "type": "ppo_update",
+      "update": 30,
+      "policy_loss": -10.3441,
+      "value_loss": 63.5791,
+      "entropy": 0.8565
+    },
+    {
+      "step": 31,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 31,
+      "type": "ppo_update",
+      "update": 31,
+      "policy_loss": -3.4326,
+      "value_loss": 20.1713,
+      "entropy": 0.8689
+    },
+    {
+      "step": 32,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 32,
+      "type": "ppo_update",
+      "update": 32,
+      "policy_loss": 0.9849,
+      "value_loss": 14.8597,
+      "entropy": 0.8693
+    },
+    {
+      "step": 33,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 33,
+      "type": "ppo_update",
+      "update": 33,
+      "policy_loss": 1.847,
+      "value_loss": 30.1841,
+      "entropy": 0.8517
+    },
+    {
+      "step": 34,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 34,
+      "type": "ppo_update",
+      "update": 34,
+      "policy_loss": -6.9117,
+      "value_loss": 40.1518,
+      "entropy": 0.8615
+    },
+    {
+      "step": 35,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 35,
+      "type": "ppo_update",
+      "update": 35,
+      "policy_loss": 7.3214,
+      "value_loss": 21.046,
+      "entropy": 0.8881
+    },
+    {
+      "step": 36,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 36,
+      "type": "ppo_update",
+      "update": 36,
+      "policy_loss": -2.4493,
+      "value_loss": 20.2595,
+      "entropy": 0.8847
+    },
+    {
+      "step": 37,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 37,
+      "type": "ppo_update",
+      "update": 37,
+      "policy_loss": 3.5878,
+      "value_loss": 25.3765,
+      "entropy": 0.8947
+    },
+    {
+      "step": 38,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 38,
+      "type": "ppo_update",
+      "update": 38,
+      "policy_loss": -7.3352,
+      "value_loss": 8.2747,
+      "entropy": 0.9392
+    },
+    {
+      "step": 39,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 39,
+      "type": "ppo_update",
+      "update": 39,
+      "policy_loss": -2.5538,
+      "value_loss": 6.8954,
+      "entropy": 0.8874
+    },
+    {
+      "step": 40,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 40,
+      "type": "ppo_update",
+      "update": 40,
+      "policy_loss": 1.631,
+      "value_loss": 25.792,
+      "entropy": 0.8029
+    },
+    {
+      "step": 41,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 41,
+      "type": "ppo_update",
+      "update": 41,
+      "policy_loss": -1.4639,
+      "value_loss": 3.1692,
+      "entropy": 0.8421
+    },
+    {
+      "step": 42,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 42,
+      "type": "ppo_update",
+      "update": 42,
+      "policy_loss": -7.8035,
+      "value_loss": 9.3442,
+      "entropy": 0.7851
+    },
+    {
+      "step": 43,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 43,
+      "type": "ppo_update",
+      "update": 43,
+      "policy_loss": -2.416,
+      "value_loss": 64.7265,
+      "entropy": 0.7234
+    },
+    {
+      "step": 44,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 44,
+      "type": "ppo_update",
+      "update": 44,
+      "policy_loss": 0.1496,
+      "value_loss": 17.0601,
+      "entropy": 0.6435
+    },
+    {
+      "step": 45,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_insert"
+    },
+    {
+      "step": 45,
+      "type": "ppo_update",
+      "update": 45,
+      "policy_loss": 2.7989,
+      "value_loss": 22.0826,
+      "entropy": 0.6442
+    },
+    {
+      "step": 46,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 46,
+      "type": "ppo_update",
+      "update": 46,
+      "policy_loss": 6.3744,
+      "value_loss": 7.2843,
+      "entropy": 0.5972
+    },
+    {
+      "step": 47,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 47,
+      "type": "ppo_update",
+      "update": 47,
+      "policy_loss": 0.6208,
+      "value_loss": 10.1633,
+      "entropy": 0.6056
+    },
+    {
+      "step": 48,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 48,
+      "type": "ppo_update",
+      "update": 48,
+      "policy_loss": -4.7264,
+      "value_loss": 9.0914,
+      "entropy": 0.6749
+    },
+    {
+      "step": 49,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 49,
+      "type": "ppo_update",
+      "update": 49,
+      "policy_loss": 0.7813,
+      "value_loss": 7.3905,
+      "entropy": 0.6029
+    },
+    {
+      "step": 50,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 50,
+      "type": "ppo_update",
+      "update": 50,
+      "policy_loss": -9.3576,
+      "value_loss": 56.3977,
+      "entropy": 0.6565
+    },
+    {
+      "step": 51,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 51,
+      "type": "ppo_update",
+      "update": 51,
+      "policy_loss": 3.6547,
+      "value_loss": 11.9758,
+      "entropy": 0.6884
+    },
+    {
+      "step": 52,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 52,
+      "type": "ppo_update",
+      "update": 52,
+      "policy_loss": -3.4428,
+      "value_loss": 6.1602,
+      "entropy": 0.6619
+    },
+    {
+      "step": 53,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 53,
+      "type": "ppo_update",
+      "update": 53,
+      "policy_loss": 1.6924,
+      "value_loss": 13.2042,
+      "entropy": 0.558
+    },
+    {
+      "step": 54,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 54,
+      "type": "ppo_update",
+      "update": 54,
+      "policy_loss": -1.372,
+      "value_loss": 14.7874,
+      "entropy": 0.5285
+    },
+    {
+      "step": 55,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 55,
+      "type": "ppo_update",
+      "update": 55,
+      "policy_loss": 0.9872,
+      "value_loss": 20.8357,
+      "entropy": 0.5468
+    },
+    {
+      "step": 56,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 56,
+      "type": "ppo_update",
+      "update": 56,
+      "policy_loss": 5.0841,
+      "value_loss": 10.2397,
+      "entropy": 0.6122
+    },
+    {
+      "step": 57,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 57,
+      "type": "ppo_update",
+      "update": 57,
+      "policy_loss": -5.8968,
+      "value_loss": 11.0115,
+      "entropy": 0.5626
+    },
+    {
+      "step": 58,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 58,
+      "type": "ppo_update",
+      "update": 58,
+      "policy_loss": -7.7581,
+      "value_loss": 17.5963,
+      "entropy": 0.5384
+    },
+    {
+      "step": 59,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 59,
+      "type": "ppo_update",
+      "update": 59,
+      "policy_loss": -2.1462,
+      "value_loss": 19.2949,
+      "entropy": 0.5356
+    },
+    {
+      "step": 60,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 60,
+      "type": "ppo_update",
+      "update": 60,
+      "policy_loss": 3.0351,
+      "value_loss": 2.7905,
+      "entropy": 0.5748
+    },
+    {
+      "step": 61,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 61,
+      "type": "ppo_update",
+      "update": 61,
+      "policy_loss": -8.6335,
+      "value_loss": 18.7606,
+      "entropy": 0.5906
+    },
+    {
+      "step": 62,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 62,
+      "type": "ppo_update",
+      "update": 62,
+      "policy_loss": -3.8345,
+      "value_loss": 23.5704,
+      "entropy": 0.605
+    },
+    {
+      "step": 63,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 63,
+      "type": "ppo_update",
+      "update": 63,
+      "policy_loss": -3.906,
+      "value_loss": 4.6423,
+      "entropy": 0.6394
+    },
+    {
+      "step": 64,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 64,
+      "type": "ppo_update",
+      "update": 64,
+      "policy_loss": 3.8268,
+      "value_loss": 5.0643,
+      "entropy": 0.5846
+    },
+    {
+      "step": 65,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 65,
+      "type": "ppo_update",
+      "update": 65,
+      "policy_loss": -1.599,
+      "value_loss": 16.4396,
+      "entropy": 0.608
+    },
+    {
+      "step": 66,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 66,
+      "type": "ppo_update",
+      "update": 66,
+      "policy_loss": 0.6714,
+      "value_loss": 23.6406,
+      "entropy": 0.6055
+    },
+    {
+      "step": 67,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 67,
+      "type": "ppo_update",
+      "update": 67,
+      "policy_loss": 4.2872,
+      "value_loss": 13.654,
+      "entropy": 0.5839
+    },
+    {
+      "step": 68,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 68,
+      "type": "ppo_update",
+      "update": 68,
+      "policy_loss": 2.3891,
+      "value_loss": 12.7213,
+      "entropy": 0.5879
+    },
+    {
+      "step": 69,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 69,
+      "type": "ppo_update",
+      "update": 69,
+      "policy_loss": 3.4071,
+      "value_loss": 15.0875,
+      "entropy": 0.5005
+    },
+    {
+      "step": 70,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 70,
+      "type": "ppo_update",
+      "update": 70,
+      "policy_loss": -3.6383,
+      "value_loss": 19.3879,
+      "entropy": 0.5565
+    },
+    {
+      "step": 71,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 71,
+      "type": "ppo_update",
+      "update": 71,
+      "policy_loss": -7.751,
+      "value_loss": 9.2841,
+      "entropy": 0.4562
+    },
+    {
+      "step": 72,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 72,
+      "type": "ppo_update",
+      "update": 72,
+      "policy_loss": -3.6657,
+      "value_loss": 5.7603,
+      "entropy": 0.4638
+    },
+    {
+      "step": 73,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 73,
+      "type": "ppo_update",
+      "update": 73,
+      "policy_loss": 5.3179,
+      "value_loss": 9.5713,
+      "entropy": 0.4725
+    },
+    {
+      "step": 74,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 74,
+      "type": "ppo_update",
+      "update": 74,
+      "policy_loss": -1.6987,
+      "value_loss": 38.4707,
+      "entropy": 0.4771
+    },
+    {
+      "step": 75,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 75,
+      "type": "ppo_update",
+      "update": 75,
+      "policy_loss": 6.2426,
+      "value_loss": 22.1232,
+      "entropy": 0.4968
+    },
+    {
+      "step": 76,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 76,
+      "type": "ppo_update",
+      "update": 76,
+      "policy_loss": 1.9908,
+      "value_loss": 40.7386,
+      "entropy": 0.4279
+    },
+    {
+      "step": 77,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 77,
+      "type": "ppo_update",
+      "update": 77,
+      "policy_loss": -0.0373,
+      "value_loss": 14.4602,
+      "entropy": 0.5266
+    },
+    {
+      "step": 78,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 78,
+      "type": "ppo_update",
+      "update": 78,
+      "policy_loss": -2.4005,
+      "value_loss": 10.5906,
+      "entropy": 0.5156
+    },
+    {
+      "step": 79,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 79,
+      "type": "ppo_update",
+      "update": 79,
+      "policy_loss": 4.2328,
+      "value_loss": 14.9317,
+      "entropy": 0.4768
+    },
+    {
+      "step": 80,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 80,
+      "type": "ppo_update",
+      "update": 80,
+      "policy_loss": -0.478,
+      "value_loss": 21.2203,
+      "entropy": 0.4662
+    },
+    {
+      "step": 81,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 81,
+      "type": "ppo_update",
+      "update": 81,
+      "policy_loss": -2.8397,
+      "value_loss": 20.9816,
+      "entropy": 0.434
+    },
+    {
+      "step": 82,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 82,
+      "type": "ppo_update",
+      "update": 82,
+      "policy_loss": 2.2865,
+      "value_loss": 27.9142,
+      "entropy": 0.4727
+    },
+    {
+      "step": 83,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 83,
+      "type": "ppo_update",
+      "update": 83,
+      "policy_loss": -4.6648,
+      "value_loss": 18.7365,
+      "entropy": 0.4388
+    },
+    {
+      "step": 84,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 84,
+      "type": "ppo_update",
+      "update": 84,
+      "policy_loss": 3.6163,
+      "value_loss": 14.3607,
+      "entropy": 0.448
+    },
+    {
+      "step": 85,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 85,
+      "type": "ppo_update",
+      "update": 85,
+      "policy_loss": -1.8392,
+      "value_loss": 15.6264,
+      "entropy": 0.4029
+    },
+    {
+      "step": 86,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 86,
+      "type": "ppo_update",
+      "update": 86,
+      "policy_loss": 3.1131,
+      "value_loss": 1.1029,
+      "entropy": 0.4846
+    },
+    {
+      "step": 87,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 87,
+      "type": "ppo_update",
+      "update": 87,
+      "policy_loss": 5.5734,
+      "value_loss": 11.6739,
+      "entropy": 0.4499
+    },
+    {
+      "step": 88,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 88,
+      "type": "ppo_update",
+      "update": 88,
+      "policy_loss": 2.3413,
+      "value_loss": 40.263,
+      "entropy": 0.4907
+    },
+    {
+      "step": 89,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 89,
+      "type": "ppo_update",
+      "update": 89,
+      "policy_loss": 5.4485,
+      "value_loss": 23.6402,
+      "entropy": 0.5254
+    },
+    {
+      "step": 90,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 90,
+      "type": "ppo_update",
+      "update": 90,
+      "policy_loss": 3.5502,
+      "value_loss": 1.4261,
+      "entropy": 0.5018
+    },
+    {
+      "step": 91,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 91,
+      "type": "ppo_update",
+      "update": 91,
+      "policy_loss": -5.9175,
+      "value_loss": 3.8235,
+      "entropy": 0.5888
+    },
+    {
+      "step": 92,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 92,
+      "type": "ppo_update",
+      "update": 92,
+      "policy_loss": -0.9848,
+      "value_loss": 12.6196,
+      "entropy": 0.6098
+    },
+    {
+      "step": 93,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 93,
+      "type": "ppo_update",
+      "update": 93,
+      "policy_loss": -2.4689,
+      "value_loss": 28.5563,
+      "entropy": 0.5952
+    },
+    {
+      "step": 94,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 94,
+      "type": "ppo_update",
+      "update": 94,
+      "policy_loss": -5.7266,
+      "value_loss": 15.0202,
+      "entropy": 0.6399
+    },
+    {
+      "step": 95,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 95,
+      "type": "ppo_update",
+      "update": 95,
+      "policy_loss": -6.8858,
+      "value_loss": 3.9872,
+      "entropy": 0.6027
+    },
+    {
+      "step": 96,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 96,
+      "type": "ppo_update",
+      "update": 96,
+      "policy_loss": -0.4424,
+      "value_loss": 18.5315,
+      "entropy": 0.5619
+    },
+    {
+      "step": 97,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 97,
+      "type": "ppo_update",
+      "update": 97,
+      "policy_loss": 10.6971,
+      "value_loss": 23.2909,
+      "entropy": 0.6295
+    },
+    {
+      "step": 98,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 98,
+      "type": "ppo_update",
+      "update": 98,
+      "policy_loss": -3.9657,
+      "value_loss": 32.7824,
+      "entropy": 0.5758
+    },
+    {
+      "step": 99,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "byte_flip"
+    },
+    {
+      "step": 99,
+      "type": "ppo_update",
+      "update": 99,
+      "policy_loss": 0.9954,
+      "value_loss": 7.2201,
+      "entropy": 0.6412
+    },
+    {
+      "step": 100,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 100,
+      "type": "ppo_update",
+      "update": 100,
+      "policy_loss": 8.8289,
+      "value_loss": 19.9245,
+      "entropy": 0.5853
+    }
+  ],
+  "new_crash_files": [],
+  "final_checkpoint": "/home/kali/Fuzzi/Fuzzinator/data/checkpoints/ppo_lstm_final.pt",
+  "crash_dir": "/home/kali/Fuzzi/Fuzzinator/data/crashes",
+  "markdown_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T18-34-46_ppo_lstm_target_maze.md",
+  "json_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-03-18T18-34-46_ppo_lstm_target_maze.json"
+}
