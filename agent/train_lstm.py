@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import json
 import logging
 import os
 import sys
@@ -28,6 +29,10 @@ from environment.fuzz_env_lstm import FuzzEnvLSTM
 from mutator.mutator import NUM_ACTIONS, STRATEGY_NAMES
 
 
+LIVE_BITMAP_BUCKETS = 512
+LIVE_TRACE_LIMIT = 25
+
+
 def validate_file_exists(filepath: str, description: str, logger: logging.Logger) -> bool:
     if not os.path.isfile(filepath):
         logger.error("%s not found: %s", description, filepath)
@@ -43,6 +48,31 @@ def validate_binary_executable(filepath: str, logger: logging.Logger) -> bool:
         logger.error("Binary is not executable: %s", filepath)
         return False
     return True
+
+
+def bitmap_buckets(bitmap, bucket_count: int = LIVE_BITMAP_BUCKETS) -> list[int]:
+    if len(bitmap) <= bucket_count:
+        return [int(value) for value in bitmap.tolist()]
+
+    bucket_size = max(len(bitmap) // bucket_count, 1)
+    buckets = []
+    for index in range(bucket_count):
+        start = index * bucket_size
+        end = len(bitmap) if index == bucket_count - 1 else min(start + bucket_size, len(bitmap))
+        section = bitmap[start:end]
+        buckets.append(int(section.max()) if len(section) else 0)
+    return buckets
+
+
+def write_live_status(path: str, payload: dict, logger: logging.Logger) -> None:
+    temp_path = f"{path}.tmp"
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f)
+        os.replace(temp_path, path)
+    except OSError as exc:
+        logger.warning("Failed to write live status: %s", exc)
 
 
 def parse_args():
@@ -140,12 +170,13 @@ def train(args):
         crash_reward=crash_reward,
         no_progress_penalty=timeout_penalty,
     )
+    env_max_steps = steps if steps > 0 else config.get("environment.max_steps", 10000)
 
     env = FuzzEnvLSTM(
         target_path=target,
         seed_path=seed,
         crash_dir=crash_dir,
-        max_steps=steps,
+        max_steps=env_max_steps,
         timeout=timeout_ms / 1000.0,
         max_input_len=max_input_size,
         reward_engine=reward_engine,
@@ -203,6 +234,7 @@ def train(args):
     steps_since_last_edge = 0
     live_status_path = os.path.join(PROJECT_ROOT, "data", "live_status.json")
     recent_bin_logs = []
+    last_bitmap = bitmap_buckets(env.coverage.global_coverage)
 
     try:
         while True:
@@ -215,6 +247,7 @@ def train(args):
             action, log_prob, value = agent.get_action(obs, current_input, current_history)
             next_obs, reward, terminated, truncated, info = env.step(action)
             done = terminated or truncated
+            elapsed_so_far = time.time() - start_time
 
             buffer.store(
                 obs=obs,
@@ -232,13 +265,20 @@ def train(args):
             best_total_crashes = max(best_total_crashes, info.get("total_crashes", 0))
 
             action_name = STRATEGY_NAMES.get(action, "unknown")
-            
+            mutated_bytes = bytes(info.get("mutated_input", b""))
+            hex_dump = " ".join(f"{byte:02x}" for byte in mutated_bytes[:8]) or "--"
+            last_bitmap = bitmap_buckets(env.coverage.global_coverage)
+
             recent_bin_logs.append({
-                "offset": f"0x{step:06x}",
-                "bytes": " ".join([f"{b:02x}" for b in env.get_current_input_array().tobytes()[:4]]),
-                "instruction": f"mut.{action_name}"
+                "addr": f"0x{step:06x}",
+                "hexDump": hex_dump,
+                "instr": f"mut.{action_name}",
+                "coverage": info["total_edges"],
+                "crashed": info["crashed"],
+                "signal": info["signal"],
+                "input_len": info["input_len"],
             })
-            if len(recent_bin_logs) > 10:
+            if len(recent_bin_logs) > LIVE_TRACE_LIMIT:
                 recent_bin_logs.pop(0)
 
             crash_marker = ""
@@ -251,6 +291,22 @@ def train(args):
                     "reward": round(reward, 3),
                     "total_crashes": info["total_crashes"],
                 })
+
+            write_live_status(
+                live_status_path,
+                {
+                    "step": step,
+                    "reward": round(total_reward, 3),
+                    "edges": best_total_edges,
+                    "crashes": best_total_crashes,
+                    "exec_sec": round(step / max(elapsed_so_far, 0.1), 3),
+                    "mutation": action_name,
+                    "status": "running",
+                    "bitmap": last_bitmap,
+                    "bin_logs": recent_bin_logs,
+                },
+                logger,
+            )
 
             if step % 10 == 0 or info["crashed"] or info["new_edges"] > 0:
                 print(f"{step:>6} | {reward:>+8.1f} | {info['new_edges']:>4} | {info['total_edges']:>6} | "
@@ -267,32 +323,14 @@ def train(args):
                 # Persist the best input found to the seed file
                 try:
                     with open(seed, "wb") as f:
-                        f.write(env.get_current_input_array().tobytes())
-                except Exception as e:
-                    pass
+                        f.write(mutated_bytes)
+                except OSError as exc:
+                    logger.warning("Failed to persist best input to seed file: %s", exc)
             else:
                 steps_since_last_edge += 1
                 
             if steps <= 0 and steps_since_last_edge > 5000:
                 print(f"[!] Auto-stopping: No new edges for 5000 steps.")
-                break
-
-            if step % 10 == 0 or info["crashed"]:
-                try:
-                    with open(live_status_path, "w") as f:
-                        json.dump({
-                            "step": step,
-                            "reward": round(total_reward, 3),
-                            "edges": best_total_edges,
-                            "crashes": best_total_crashes,
-                            "bitmap": env.shared_coverage.tolist()[:512],
-                            "bin_logs": recent_bin_logs
-                        }, f)
-                except Exception as e:
-                    pass
-
-            if info["crashed"]:
-                print(f"[!] Auto-stopping: Discovered a crash vector ({info['signal']}).")
                 break
 
             if buffer.full or done:
@@ -344,6 +382,21 @@ def train(args):
     elapsed = time.time() - start_time
     final_path = os.path.join(checkpoint_dir, "ppo_lstm_final.pt")
     agent.save(final_path)
+    write_live_status(
+        live_status_path,
+        {
+            "step": step,
+            "reward": round(total_reward, 3),
+            "edges": best_total_edges,
+            "crashes": best_total_crashes,
+            "exec_sec": round(step / max(elapsed, 0.1), 3),
+            "mutation": recent_bin_logs[-1]["instr"].replace("mut.", "") if recent_bin_logs else "N/A",
+            "status": status,
+            "bitmap": last_bitmap,
+            "bin_logs": recent_bin_logs,
+        },
+        logger,
+    )
 
     print()
     print("=" * 60)

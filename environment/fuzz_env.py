@@ -166,6 +166,7 @@ class FuzzEnv(gym.Env):
             "total_crashes": self.crash_vault.total_crashes,
             "timed_out": exec_result.timed_out,
             "input_len": len(mutated_input),
+            "mutated_input": bytes(mutated_input),
         }
 
         return obs, reward, terminated, truncated, info

@@ -1120,7 +1120,7 @@
               <span className="text-sm font-mono font-bold text-slate-200 tracking-wider">Live Binary Trace</span>
             </div>
             <div className="text-[10px] font-mono font-bold text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 uppercase">
-              Disassembly Engine
+              Fuzz Trace
             </div>
           </div>
 
@@ -1136,21 +1136,29 @@
             </div>
             <AnimatePresence initial={false}>
               {logs.map((log, i) => {
-                const parts = log.instr.split(' ');
+                const instr = log.instr || 'mut.unknown';
+                const parts = instr.split(' ');
                 const op = parts[0];
                 const rest = parts.slice(1).join(' ');
+                const crashed = Boolean(log.crashed);
+                const meta = [
+                  log.coverage !== undefined ? `cov=${log.coverage}` : null,
+                  log.input_len !== undefined ? `len=${log.input_len}` : null,
+                  crashed && log.signal ? log.signal : null,
+                ].filter(Boolean).join(' ');
 
                 return (
                   <motion.div
-                    key={i + log.addr}
+                    key={i + (log.addr || '')}
                     initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }}
-                    className="flex hover:bg-white/[0.04] px-2 py-1 -mx-2 rounded transition-colors mb-1"
+                    className={`flex hover:bg-white/[0.04] px-2 py-1 -mx-2 rounded transition-colors mb-1 ${crashed ? 'bg-rose-500/10 border border-rose-500/20' : ''}`}
                   >
-                    <div className="w-24 text-slate-500">{log.addr}</div>
-                    <div className="w-32 text-cyan-400/80">{log.hexDump}</div>
+                    <div className="w-24 text-slate-500">{log.addr || '--'}</div>
+                    <div className="w-32 text-cyan-400/80">{log.hexDump || '--'}</div>
                     <div className="flex-1 text-slate-300">
                       <span className="text-emerald-400 font-bold w-12 inline-block">{op}</span>
                       <span className="text-indigo-300">{rest}</span>
+                      {meta && <span className={crashed ? 'ml-3 text-rose-300' : 'ml-3 text-slate-500'}>{meta}</span>}
                     </div>
                   </motion.div>
                 );
@@ -1313,10 +1321,13 @@
         if (!isLocalhost && !getApiBase()) return;
 
         let active = true;
+        let timeoutId = null;
         const loadStatus = async () => {
+          let nextDelay = 2000;
           try {
             const status = await fetchJson(API.status(), { headers: { 'ngrok-skip-browser-warning': 'true' } });
             if (!active) return;
+            nextDelay = status.current_run?.status === 'running' ? 1000 : 2000;
             try {
               const live = await fetchJson(API.liveStatus(), { headers: { 'ngrok-skip-browser-warning': 'true' } });
               if (!live.error) {
@@ -1335,12 +1346,18 @@
             }
           } catch (err) {
             if (active) setError(err.message);
+          } finally {
+            if (active) {
+              timeoutId = setTimeout(loadStatus, nextDelay);
+            }
           }
         };
 
         loadStatus();
-        const interval = setInterval(loadStatus, 2000);
-        return () => { active = false; clearInterval(interval); };
+        return () => {
+          active = false;
+          if (timeoutId) clearTimeout(timeoutId);
+        };
       }, [targetBinary]);
 
       const uploadAndBuild = async () => {
@@ -1403,10 +1420,10 @@
         steps: isRunning && liveStatusObj.step ? liveStatusObj.step : latestReport?.completed_steps ?? 0,
         edges: isRunning && liveStatusObj.edges !== undefined ? liveStatusObj.edges : latestReport?.metrics?.total_edges ?? 0,
         crashes: isRunning && liveStatusObj.crashes !== undefined ? liveStatusObj.crashes : latestReport?.metrics?.total_crashes ?? 0,
-        execSec: latestReport?.metrics?.exec_speed ?? 0,
+        execSec: isRunning && liveStatusObj.exec_sec !== undefined ? liveStatusObj.exec_sec : latestReport?.metrics?.exec_speed ?? 0,
         reward: isRunning && liveStatusObj.reward !== undefined ? liveStatusObj.reward : latestReport?.metrics?.total_reward ?? 0,
         target: run.target ? run.target.split('/').pop() : latestReport?.target_name || 'N/A',
-        mutation: latestActionEvent?.action || 'N/A',
+        mutation: isRunning && liveStatusObj.mutation ? liveStatusObj.mutation : latestActionEvent?.action || 'N/A',
         modelStatus: latestReport?.model || 'PPO + LSTM',
         runStatus: run.status || latestReport?.status || 'idle',
       };
