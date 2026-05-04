@@ -10,7 +10,7 @@
 #   bash instrumentation/build_target.sh
 #   bash instrumentation/build_target.sh target_name
 
-set -e
+# Do NOT use set -e — clang warnings would falsely abort the build
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -49,7 +49,12 @@ for target in "${TARGETS[@]}"; do
 
     echo "[BUILD] $target"
     clang $CFLAGS "$SRC" "$SHM_SRC" -o "$OUT" -lrt
-    echo "  -> $OUT"
+    if [ $? -eq 0 ]; then
+        echo "  -> $OUT"
+    else
+        echo "[FAIL] Build failed for $target"
+        exit 1
+    fi
 done
 
 echo ""
