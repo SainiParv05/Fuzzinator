@@ -276,7 +276,7 @@ def train(args):
                 print(f"[!] Auto-stopping: No new edges for 5000 steps.")
                 break
 
-            if step % 20 == 0:
+            if step % 10 == 0 or info["crashed"]:
                 try:
                     with open(live_status_path, "w") as f:
                         json.dump({
@@ -289,6 +289,10 @@ def train(args):
                         }, f)
                 except Exception as e:
                     pass
+
+            if info["crashed"]:
+                print(f"[!] Auto-stopping: Discovered a crash vector ({info['signal']}).")
+                break
 
             if buffer.full or done:
                 if done:
