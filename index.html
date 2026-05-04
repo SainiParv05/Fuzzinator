@@ -128,50 +128,6 @@
       GitBranch, GitCommit, SearchCode, Beaker, Binary
     } = LucideIcons;
 
-    // --- MOCK DATA / FALLBACKS ---
-    const MOCK_STATS = {
-      steps: 4284,
-      edges: 84,
-      crashes: 3,
-      execSec: 58.2,
-      reward: 412.5,
-      target: 'target_maze',
-      mutation: 'byte_insert',
-      modelStatus: 'Optimizing Policy'
-    };
-
-    const CHART_DATA_ML = Array.from({ length: 50 }, (_, i) => ({
-      step: i * 100,
-      reward: Math.sin(i / 5) * 50 + i * 8 + Math.random() * 20,
-      policyLoss: Math.max(0, 2.5 - Math.log(i + 1) * 0.5 + Math.random() * 0.2),
-      valueLoss: Math.max(0, 5.0 - Math.log(i + 1) * 1.2 + Math.random() * 0.5),
-      entropy: Math.max(0.1, 1.5 - (i / 50) + Math.random() * 0.1),
-    }));
-
-    const MUTATION_STATS = [
-      { name: 'bit_flip', usage: 45, success: 12, color: '#3b82f6' },
-      { name: 'byte_flip', usage: 30, success: 18, color: '#8b5cf6' },
-      { name: 'byte_insert', usage: 15, success: 25, color: '#ec4899' },
-      { name: 'havoc', usage: 10, success: 45, color: '#10b981' },
-    ];
-
-    const TARGETS = [
-      { name: 'target_buffer_overflow', type: 'Memory Corruption', diff: 'Low', progress: 100, crashes: 12, status: 'Exploited' },
-      { name: 'target_format_string', type: 'Information Leak', diff: 'Medium', progress: 85, crashes: 2, status: 'Active' },
-      { name: 'target_maze', type: 'Complex Logic', diff: 'High', progress: 42, crashes: 0, status: 'Fuzzing' },
-    ];
-
-    const CRASH_VAULT = [
-      { id: '0x8f2a1', type: 'SIGSEGV', target: 'target_buffer_overflow', mutation: 'havoc', time: '10:42:11', desc: 'Invalid memory access at 0x00000000' },
-      { id: '0x3b9c4', type: 'ASAN_HEAP', target: 'target_format_string', mutation: 'byte_insert', time: '11:15:22', desc: 'Heap-buffer-overflow on address 0x6020...' },
-      { id: '0x1a7e9', type: 'TIMEOUT', target: 'target_maze', mutation: 'bit_flip', time: '11:18:05', desc: 'Execution exceeded 5000ms threshold' },
-    ];
-
-    const TERMINAL_LOGS_BASE = [
-      { time: '11:20:01.000', tag: 'SYSTEM', msg: 'Fuzzinator core initialized. Shared memory attached.', type: 'info' },
-      { time: '11:20:01.050', tag: 'AGENT', msg: 'PPO Policy loaded from checkpoints/latest.pt', type: 'info' },
-      { time: '11:20:02.100', tag: 'FUZZ', msg: 'Corpus loaded: 42 seeds. Starting fuzzing loop on target_maze...', type: 'info' },
-    ];
 
     // --- API BASE URL CONFIGURATION ---
     const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
@@ -720,7 +676,7 @@
 
     const MutationStrategy = ({ report }) => {
       const mutationData = React.useMemo(() => {
-        if (!report?.events?.length) return MUTATION_STATS;
+        if (!report?.events?.length) return [];
         const counts = {};
         const successes = {};
         report.events.forEach(e => {
@@ -732,7 +688,7 @@
           }
         });
         const names = Object.keys(counts);
-        if (names.length === 0) return MUTATION_STATS;
+        if (names.length === 0) return [];
         return names.map(name => ({
           name,
           usage: counts[name],
@@ -779,10 +735,10 @@
 
     const MLInsights = ({ report }) => {
       const chartData = React.useMemo(() => {
-        if (!report?.events?.length) return CHART_DATA_ML;
+        if (!report?.events?.length) return [];
         const ppoEvents = report.events.filter(e => e.type === 'ppo_update');
         const covEvents = report.events.filter(e => e.type === 'coverage_gain');
-        if (ppoEvents.length === 0 && covEvents.length === 0) return CHART_DATA_ML;
+        if (ppoEvents.length === 0 && covEvents.length === 0) return [];
 
         const dataMap = {};
         let cumulativeReward = 0;
@@ -801,7 +757,7 @@
         });
 
         const sorted = Object.values(dataMap).sort((a, b) => a.step - b.step);
-        if (sorted.length === 0) return CHART_DATA_ML;
+        if (sorted.length === 0) return [];
 
         let lastReward = 0, lastPL = 0, lastVL = 0, lastEnt = 0;
         return sorted.map(d => {
@@ -859,7 +815,7 @@
 
     const TargetAnalysis = ({ availableReports }) => {
       const targets = React.useMemo(() => {
-        if (!availableReports?.length) return TARGETS;
+        if (!availableReports?.length) return [];
         const targetMap = {};
         availableReports.forEach(r => {
           const name = r.target_name;
@@ -1074,35 +1030,8 @@
       );
     };
 
-    const LiveTerminal = ({ logsOverride }) => {
-      const [logs, setLogs] = useState(logsOverride?.length ? logsOverride : TERMINAL_LOGS_BASE);
+    const LiveTerminal = ({ logs = [] }) => {
       const scrollRef = useRef(null);
-
-      useEffect(() => {
-        if (logsOverride?.length) {
-          setLogs(logsOverride);
-          return;
-        }
-
-        const actions = ['bit_flip', 'byte_insert', 'havoc', 'byte_flip'];
-        const mockEvents = [
-          () => ({ tag: 'FUZZ', msg: `Action [${actions[Math.floor(Math.random() * actions.length)]}] executed. Reward: +${(Math.random() * 5).toFixed(2)}`, type: 'info' }),
-          () => ({ tag: 'AGENT', msg: `PPO update complete. Policy Loss: ${(Math.random()).toFixed(4)}`, type: 'success' }),
-          () => ({ tag: 'MEM', msg: 'New coverage edge discovered! Map density increased.', type: 'warning' }),
-        ];
-
-        const interval = setInterval(() => {
-          const newLog = mockEvents[Math.floor(Math.random() * mockEvents.length)]();
-          const time = new Date().toISOString().substring(11, 23);
-
-          setLogs(prev => {
-            const next = [...prev, { time, ...newLog }];
-            return next.length > 50 ? next.slice(next.length - 50) : next;
-          });
-        }, 2500);
-
-        return () => clearInterval(interval);
-      }, [logsOverride]);
 
       useEffect(() => {
         if (scrollRef.current) {
@@ -1171,46 +1100,12 @@
     };
 
     // --- NEW: Binary Logs Component ---
-    const BinLogs = () => {
-      const [binLogs, setBinLogs] = useState([]);
+    const BinLogs = ({ logs = [] }) => {
       const scrollRef = useRef(null);
 
       useEffect(() => {
-        const opcodes = ['MOV', 'CMP', 'JZ', 'LEA', 'CALL', 'XOR', 'PUSH', 'POP', 'RET', 'TEST', 'ADD', 'SUB'];
-        const registers = ['EAX', 'EBX', 'ECX', 'EDX', 'EBP', 'ESP', 'ESI', 'EDI'];
-
-        const interval = setInterval(() => {
-          const addr = '0x' + Math.floor(Math.random() * 0xFFFFFF + 0x400000).toString(16).toUpperCase().padStart(8, '0');
-          const op = opcodes[Math.floor(Math.random() * opcodes.length)];
-          const reg1 = registers[Math.floor(Math.random() * registers.length)];
-          const reg2 = Math.random() > 0.5 ? registers[Math.floor(Math.random() * registers.length)] : '0x' + Math.floor(Math.random() * 0xFF).toString(16).toUpperCase();
-
-          let instr = `${op} ${reg1}, ${reg2}`;
-          let byteCount = 3;
-
-          if (op === 'PUSH' || op === 'POP' || op === 'CALL' || op === 'JZ') {
-            instr = `${op} ${reg1}`;
-            byteCount = 2;
-          }
-          if (op === 'RET') {
-            instr = 'RET';
-            byteCount = 1;
-          }
-
-          const hexDump = Array.from({ length: byteCount }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()).join(' ');
-
-          setBinLogs(prev => {
-            const next = [...prev, { addr, hexDump, instr }];
-            return next.length > 30 ? next.slice(next.length - 30) : next;
-          });
-        }, 500);
-
-        return () => clearInterval(interval);
-      }, []);
-
-      useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-      }, [binLogs]);
+      }, [logs]);
 
       return (
         <GlassCard className="p-0 flex flex-col h-[400px]">
@@ -1235,7 +1130,7 @@
               <div className="flex-1">Instruction</div>
             </div>
             <AnimatePresence initial={false}>
-              {binLogs.map((log, i) => {
+              {logs.map((log, i) => {
                 const parts = log.instr.split(' ');
                 const op = parts[0];
                 const rest = parts.slice(1).join(' ');
@@ -1501,13 +1396,13 @@
       const isRunning = run.status === 'running';
       const liveStatusObj = dashboardState.live_status || {};
       const liveStats = {
-        steps: isRunning && liveStatusObj.step ? liveStatusObj.step : latestReport?.completed_steps ?? MOCK_STATS.steps,
-        edges: isRunning && liveStatusObj.edges !== undefined ? liveStatusObj.edges : latestReport?.metrics?.total_edges ?? MOCK_STATS.edges,
-        crashes: isRunning && liveStatusObj.crashes !== undefined ? liveStatusObj.crashes : latestReport?.metrics?.total_crashes ?? MOCK_STATS.crashes,
-        execSec: latestReport?.metrics?.exec_speed ?? MOCK_STATS.execSec,
-        reward: isRunning && liveStatusObj.reward !== undefined ? liveStatusObj.reward : latestReport?.metrics?.total_reward ?? MOCK_STATS.reward,
-        target: run.target ? run.target.split('/').pop() : latestReport?.target_name || MOCK_STATS.target,
-        mutation: latestActionEvent?.action || MOCK_STATS.mutation,
+        steps: isRunning && liveStatusObj.step ? liveStatusObj.step : latestReport?.completed_steps ?? 0,
+        edges: isRunning && liveStatusObj.edges !== undefined ? liveStatusObj.edges : latestReport?.metrics?.total_edges ?? 0,
+        crashes: isRunning && liveStatusObj.crashes !== undefined ? liveStatusObj.crashes : latestReport?.metrics?.total_crashes ?? 0,
+        execSec: latestReport?.metrics?.exec_speed ?? 0,
+        reward: isRunning && liveStatusObj.reward !== undefined ? liveStatusObj.reward : latestReport?.metrics?.total_reward ?? 0,
+        target: run.target ? run.target.split('/').pop() : latestReport?.target_name || 'N/A',
+        mutation: latestActionEvent?.action || 'N/A',
         modelStatus: latestReport?.model || 'PPO + LSTM',
         runStatus: run.status || latestReport?.status || 'idle',
       };
@@ -1519,7 +1414,7 @@
           msg,
           type: msg.includes('ERROR') ? 'error' : msg.includes('Checkpoint') ? 'success' : 'info',
         }))
-        : TERMINAL_LOGS_BASE;
+        : [];
 
       return (
         <div className="min-h-screen relative z-0">
@@ -1568,7 +1463,7 @@
 
               {/* Logs & Architecture Row */}
               <div className="xl:col-span-2">
-                <LiveTerminal logsOverride={liveLogs} />
+                <LiveTerminal logs={liveLogs} />
               </div>
               <div className="xl:col-span-1">
                 <ArchitectureMap />
@@ -1576,7 +1471,7 @@
 
               {/* NEW: Binary Logs Section */}
               <div className="xl:col-span-3">
-                <BinLogs />
+                <BinLogs logs={dashboardState.live_status?.bin_logs || []} />
               </div>
 
               <div className="xl:col-span-3">
