@@ -1222,7 +1222,7 @@
         const trimmed = url.replace(/\/+$/, '');
         setTesting(true);
         try {
-          await fetchJson(`${trimmed}/api/status`, { headers: {} });
+          await fetchJson(`${trimmed}/api/status`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
           localStorage.setItem('fuzzinator_api_base', trimmed);
           setStatus('connected');
           if (onSave) onSave(trimmed);
@@ -1308,10 +1308,10 @@
         let active = true;
         const loadStatus = async () => {
           try {
-            const status = await fetchJson(API.status(), { headers: {} });
+            const status = await fetchJson(API.status(), { headers: { 'ngrok-skip-browser-warning': 'true' } });
             if (!active) return;
             try {
-              const live = await fetchJson(API.liveStatus(), { headers: {} });
+              const live = await fetchJson(API.liveStatus(), { headers: { 'ngrok-skip-browser-warning': 'true' } });
               if (!live.error) {
                 status.live_status = live;
               }
