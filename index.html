@@ -338,9 +338,16 @@
     }) => {
       const [isDragOver, setIsDragOver] = useState(false);
 
-      const handleFiles = (files) => {
+      const handleFiles = async (files) => {
         const file = files?.[0];
-        if (file) setSelectedFile(file);
+        if (file) {
+          try {
+            const content = await file.text();
+            setSelectedFile({ name: file.name, content });
+          } catch (err) {
+            console.error("Could not read file", err);
+          }
+        }
       };
 
       const onDrop = (event) => {
@@ -1341,10 +1348,9 @@
         setBusy(true);
         setError('');
         try {
-          const content = await selectedFile.text();
           const result = await fetchJson(API.uploadAndBuild(), {
             method: 'POST',
-            body: JSON.stringify({ filename: selectedFile.name, content }),
+            body: JSON.stringify({ filename: selectedFile.name, content: selectedFile.content }),
           });
           setDashboardState(prev => ({ ...prev, last_build: result.build }));
           if (result.build?.binary_path) {
