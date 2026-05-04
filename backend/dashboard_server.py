@@ -145,14 +145,21 @@ def _read_process_output(process: subprocess.Popen[str]) -> None:
     latest = load_latest_report_summary()
 
     with STATE.lock:
-        STATE.current_run["status"] = "completed" if return_code == 0 else "failed"
+        # ASAN exits non-zero when it detects a crash — that is a SUCCESS for a fuzzer.
+        # Mark as completed if crashes were found in the report, regardless of exit code.
+        crashes_found = 0
+        if latest:
+            crashes_found = latest.get("metrics", {}).get("crashes", 0)
+        if return_code == 0 or crashes_found > 0:
+            STATE.current_run["status"] = "completed"
+        else:
+            STATE.current_run["status"] = "failed"
+            STATE.current_run["error"] = "Run process exited with a non-zero status."
         STATE.current_run["completed_at"] = datetime.now().isoformat(timespec="seconds")
         STATE.current_run["return_code"] = return_code
         if latest and latest.get("target_name") == Path(STATE.current_run["target"]).name:
             STATE.current_run["report_json"] = latest["path"]
             STATE.current_run["report_markdown"] = latest.get("markdown_report_path")
-        if return_code != 0:
-            STATE.current_run["error"] = "Run process exited with a non-zero status."
         STATE.process = None
 
 

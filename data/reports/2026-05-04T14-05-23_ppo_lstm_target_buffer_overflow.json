@@ -1,0 +1,1920 @@
+{
+  "model": "PPO+LSTM",
+  "status": "completed",
+  "started_at": "2026-05-04T14:05:23",
+  "finished_at": "2026-05-04T14:08:38",
+  "requested_steps": 1000,
+  "completed_steps": 1000,
+  "completion_rule": "Run is done when completed_steps reaches requested_steps or the process is interrupted.",
+  "target_path": "/home/kali/Fuzzi/Fuzzinator/targets/target_buffer_overflow",
+  "seed_path": "/home/kali/Fuzzi/Fuzzinator/corpus/seed.bin",
+  "target_name": "target_buffer_overflow",
+  "config": {
+    "rollout_size": 256,
+    "learning_rate": 0.0003,
+    "random_seed": 1337,
+    "device": "cpu",
+    "timeout_ms": 500,
+    "max_input_size": 1024,
+    "checkpoint_interval": 500,
+    "lstm_hidden": 128,
+    "lstm_layers": 1
+  },
+  "metrics": {
+    "elapsed_seconds": 194.824,
+    "exec_speed": 5.133,
+    "total_reward": 50786.2,
+    "total_edges": 268,
+    "total_crashes": 480,
+    "ppo_updates": 4
+  },
+  "events": [
+    {
+      "step": 1,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 7,
+      "action": "bit_flip"
+    },
+    {
+      "step": 2,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 14,
+      "action": "byte_flip"
+    },
+    {
+      "step": 3,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 21,
+      "action": "byte_flip"
+    },
+    {
+      "step": 4,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 28,
+      "action": "byte_flip"
+    },
+    {
+      "step": 5,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 35,
+      "action": "byte_insert"
+    },
+    {
+      "step": 6,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 42,
+      "action": "byte_insert"
+    },
+    {
+      "step": 8,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 49,
+      "action": "byte_insert"
+    },
+    {
+      "step": 9,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 55,
+      "action": "byte_insert"
+    },
+    {
+      "step": 10,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 61,
+      "action": "byte_flip"
+    },
+    {
+      "step": 11,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 67,
+      "action": "havoc"
+    },
+    {
+      "step": 12,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 74,
+      "action": "havoc"
+    },
+    {
+      "step": 13,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 81,
+      "action": "havoc"
+    },
+    {
+      "step": 14,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 88,
+      "action": "bit_flip"
+    },
+    {
+      "step": 15,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 95,
+      "action": "bit_flip"
+    },
+    {
+      "step": 16,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 102,
+      "action": "byte_insert"
+    },
+    {
+      "step": 17,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 108,
+      "action": "bit_flip"
+    },
+    {
+      "step": 18,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 115,
+      "action": "bit_flip"
+    },
+    {
+      "step": 19,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 121,
+      "action": "byte_flip"
+    },
+    {
+      "step": 20,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 128,
+      "action": "byte_insert"
+    },
+    {
+      "step": 24,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 134,
+      "action": "byte_flip"
+    },
+    {
+      "step": 25,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 140,
+      "action": "byte_insert"
+    },
+    {
+      "step": 27,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 147,
+      "action": "bit_flip"
+    },
+    {
+      "step": 28,
+      "type": "coverage_gain",
+      "new_edges": 7,
+      "total_edges": 154,
+      "action": "bit_flip"
+    },
+    {
+      "step": 30,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 160,
+      "action": "byte_flip"
+    },
+    {
+      "step": 31,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 166,
+      "action": "byte_insert"
+    },
+    {
+      "step": 32,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 172,
+      "action": "bit_flip"
+    },
+    {
+      "step": 39,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 178,
+      "action": "byte_insert"
+    },
+    {
+      "step": 44,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 184,
+      "action": "havoc"
+    },
+    {
+      "step": 51,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 190,
+      "action": "havoc"
+    },
+    {
+      "step": 52,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 196,
+      "action": "byte_flip"
+    },
+    {
+      "step": 67,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 198,
+      "action": "havoc"
+    },
+    {
+      "step": 68,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 1
+    },
+    {
+      "step": 69,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 200,
+      "action": "byte_flip"
+    },
+    {
+      "step": 70,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 202,
+      "action": "bit_flip"
+    },
+    {
+      "step": 71,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 204,
+      "action": "byte_flip"
+    },
+    {
+      "step": 72,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 206,
+      "action": "bit_flip"
+    },
+    {
+      "step": 73,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 208,
+      "action": "byte_flip"
+    },
+    {
+      "step": 74,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 2
+    },
+    {
+      "step": 75,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 3
+    },
+    {
+      "step": 76,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 210,
+      "action": "havoc"
+    },
+    {
+      "step": 78,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 212,
+      "action": "bit_flip"
+    },
+    {
+      "step": 79,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 214,
+      "action": "byte_flip"
+    },
+    {
+      "step": 80,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 216,
+      "action": "bit_flip"
+    },
+    {
+      "step": 81,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 218,
+      "action": "byte_flip"
+    },
+    {
+      "step": 83,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 220,
+      "action": "byte_flip"
+    },
+    {
+      "step": 85,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 4
+    },
+    {
+      "step": 86,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 5
+    },
+    {
+      "step": 87,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 226,
+      "action": "byte_flip"
+    },
+    {
+      "step": 88,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 6
+    },
+    {
+      "step": 89,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 7
+    },
+    {
+      "step": 91,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 228,
+      "action": "bit_flip"
+    },
+    {
+      "step": 93,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 230,
+      "action": "bit_flip"
+    },
+    {
+      "step": 94,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 8
+    },
+    {
+      "step": 97,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 232,
+      "action": "byte_flip"
+    },
+    {
+      "step": 98,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 234,
+      "action": "havoc"
+    },
+    {
+      "step": 99,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 236,
+      "action": "bit_flip"
+    },
+    {
+      "step": 101,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 9
+    },
+    {
+      "step": 103,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 10
+    },
+    {
+      "step": 104,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 11
+    },
+    {
+      "step": 105,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 12
+    },
+    {
+      "step": 107,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 238,
+      "action": "byte_flip"
+    },
+    {
+      "step": 108,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 240,
+      "action": "bit_flip"
+    },
+    {
+      "step": 110,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 13
+    },
+    {
+      "step": 113,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 14
+    },
+    {
+      "step": 114,
+      "type": "coverage_gain",
+      "new_edges": 6,
+      "total_edges": 246,
+      "action": "byte_flip"
+    },
+    {
+      "step": 117,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 248,
+      "action": "byte_flip"
+    },
+    {
+      "step": 118,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 15
+    },
+    {
+      "step": 119,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 250,
+      "action": "byte_flip"
+    },
+    {
+      "step": 121,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 16
+    },
+    {
+      "step": 122,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 17
+    },
+    {
+      "step": 124,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 18
+    },
+    {
+      "step": 126,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 19
+    },
+    {
+      "step": 127,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 20
+    },
+    {
+      "step": 128,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 21
+    },
+    {
+      "step": 129,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 252,
+      "action": "bit_flip"
+    },
+    {
+      "step": 133,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 22
+    },
+    {
+      "step": 135,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 23
+    },
+    {
+      "step": 136,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 24
+    },
+    {
+      "step": 137,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 25
+    },
+    {
+      "step": 139,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 254,
+      "action": "byte_flip"
+    },
+    {
+      "step": 140,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 26
+    },
+    {
+      "step": 141,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 27
+    },
+    {
+      "step": 142,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 28
+    },
+    {
+      "step": 143,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 29
+    },
+    {
+      "step": 149,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 256,
+      "action": "bit_flip"
+    },
+    {
+      "step": 154,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 30
+    },
+    {
+      "step": 155,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 31
+    },
+    {
+      "step": 157,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 32
+    },
+    {
+      "step": 159,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 33
+    },
+    {
+      "step": 160,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 34
+    },
+    {
+      "step": 161,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 35
+    },
+    {
+      "step": 163,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 36
+    },
+    {
+      "step": 165,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 258,
+      "action": "byte_flip"
+    },
+    {
+      "step": 167,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 37
+    },
+    {
+      "step": 170,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 38
+    },
+    {
+      "step": 171,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 39
+    },
+    {
+      "step": 172,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 40
+    },
+    {
+      "step": 175,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 41
+    },
+    {
+      "step": 176,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 260,
+      "action": "havoc"
+    },
+    {
+      "step": 178,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 42
+    },
+    {
+      "step": 180,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 43
+    },
+    {
+      "step": 182,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 44
+    },
+    {
+      "step": 183,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 262,
+      "action": "bit_flip"
+    },
+    {
+      "step": 185,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 45
+    },
+    {
+      "step": 187,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 46
+    },
+    {
+      "step": 189,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 264,
+      "action": "byte_flip"
+    },
+    {
+      "step": 192,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 47
+    },
+    {
+      "step": 193,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 48
+    },
+    {
+      "step": 196,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 49
+    },
+    {
+      "step": 197,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 266,
+      "action": "havoc"
+    },
+    {
+      "step": 198,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 50
+    },
+    {
+      "step": 204,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 51
+    },
+    {
+      "step": 205,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 52
+    },
+    {
+      "step": 211,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 53
+    },
+    {
+      "step": 212,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 54
+    },
+    {
+      "step": 213,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 55
+    },
+    {
+      "step": 217,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 56
+    },
+    {
+      "step": 220,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 57
+    },
+    {
+      "step": 221,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 58
+    },
+    {
+      "step": 223,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 59
+    },
+    {
+      "step": 224,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 60
+    },
+    {
+      "step": 226,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 61
+    },
+    {
+      "step": 229,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 62
+    },
+    {
+      "step": 232,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 63
+    },
+    {
+      "step": 235,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 64
+    },
+    {
+      "step": 236,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 65
+    },
+    {
+      "step": 242,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 66
+    },
+    {
+      "step": 245,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 67
+    },
+    {
+      "step": 246,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 68
+    },
+    {
+      "step": 248,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 69
+    },
+    {
+      "step": 251,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 70
+    },
+    {
+      "step": 254,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 71
+    },
+    {
+      "step": 255,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 72
+    },
+    {
+      "step": 256,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 73
+    },
+    {
+      "step": 256,
+      "type": "ppo_update",
+      "update": 1,
+      "policy_loss": -0.0066,
+      "value_loss": 390365.8066,
+      "entropy": 1.3822
+    },
+    {
+      "step": 257,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 74
+    },
+    {
+      "step": 263,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 75
+    },
+    {
+      "step": 265,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 76
+    },
+    {
+      "step": 267,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 77
+    },
+    {
+      "step": 269,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 78
+    },
+    {
+      "step": 270,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 79
+    },
+    {
+      "step": 271,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 80
+    },
+    {
+      "step": 272,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 81
+    },
+    {
+      "step": 273,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 82
+    },
+    {
+      "step": 275,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 83
+    },
+    {
+      "step": 276,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 84
+    },
+    {
+      "step": 277,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 85
+    },
+    {
+      "step": 280,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 86
+    },
+    {
+      "step": 281,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 87
+    },
+    {
+      "step": 283,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 88
+    },
+    {
+      "step": 285,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 89
+    },
+    {
+      "step": 286,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 90
+    },
+    {
+      "step": 290,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 91
+    },
+    {
+      "step": 291,
+      "type": "coverage_gain",
+      "new_edges": 2,
+      "total_edges": 268,
+      "action": "byte_flip"
+    },
+    {
+      "step": 293,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 92
+    },
+    {
+      "step": 296,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 93
+    },
+    {
+      "step": 300,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 94
+    },
+    {
+      "step": 303,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 95
+    },
+    {
+      "step": 304,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 96
+    },
+    {
+      "step": 310,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 97
+    },
+    {
+      "step": 314,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 98
+    },
+    {
+      "step": 318,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 99
+    },
+    {
+      "step": 321,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 100
+    },
+    {
+      "step": 322,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 101
+    },
+    {
+      "step": 325,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 102
+    },
+    {
+      "step": 326,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 103
+    },
+    {
+      "step": 329,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 104
+    },
+    {
+      "step": 332,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 105
+    },
+    {
+      "step": 333,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 106
+    },
+    {
+      "step": 336,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 107
+    },
+    {
+      "step": 338,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 108
+    },
+    {
+      "step": 341,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 109
+    },
+    {
+      "step": 344,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 110
+    },
+    {
+      "step": 345,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 111
+    },
+    {
+      "step": 349,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 112
+    },
+    {
+      "step": 350,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 113
+    },
+    {
+      "step": 351,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 114
+    },
+    {
+      "step": 355,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 115
+    },
+    {
+      "step": 356,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 116
+    },
+    {
+      "step": 360,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 117
+    },
+    {
+      "step": 362,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 118
+    },
+    {
+      "step": 370,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 119
+    },
+    {
+      "step": 371,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 120
+    },
+    {
+      "step": 372,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 121
+    },
+    {
+      "step": 377,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 122
+    },
+    {
+      "step": 378,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 123
+    },
+    {
+      "step": 380,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 124
+    },
+    {
+      "step": 381,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 125
+    },
+    {
+      "step": 382,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 126
+    },
+    {
+      "step": 384,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 127
+    },
+    {
+      "step": 385,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 128
+    },
+    {
+      "step": 394,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 129
+    },
+    {
+      "step": 395,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 130
+    },
+    {
+      "step": 396,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 131
+    },
+    {
+      "step": 400,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 132
+    },
+    {
+      "step": 403,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 133
+    },
+    {
+      "step": 404,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 134
+    },
+    {
+      "step": 406,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 135
+    },
+    {
+      "step": 408,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 136
+    },
+    {
+      "step": 409,
+      "type": "crash",
+      "signal": "SIGABRT",
+      "reward": 99.9,
+      "total_crashes": 137
+    }
+  ],
+  "new_crash_files": [
+    "crash_SIGABRT_006510f328da9924.bin",
+    "crash_SIGABRT_02362b5da33988a4.bin",
+    "crash_SIGABRT_02972085d2249ee8.bin",
+    "crash_SIGABRT_02f2e84b04329490.bin",
+    "crash_SIGABRT_0480430db52bab19.bin",
+    "crash_SIGABRT_082f0a6711077cbc.bin",
+    "crash_SIGABRT_085d8f1eba59d6cc.bin",
+    "crash_SIGABRT_08b82001be4268a5.bin",
+    "crash_SIGABRT_09158dcd34702219.bin",
+    "crash_SIGABRT_091f573f3f2251be.bin",
+    "crash_SIGABRT_097dcc49a1ff86c3.bin",
+    "crash_SIGABRT_0b1f8a56bef84a79.bin",
+    "crash_SIGABRT_0b32a73a933e6952.bin",
+    "crash_SIGABRT_0b458c327926d5e4.bin",
+    "crash_SIGABRT_0bafcdb8e95174af.bin",
+    "crash_SIGABRT_0c94f9229b5fd2d3.bin",
+    "crash_SIGABRT_0df9c0181eff6d8b.bin",
+    "crash_SIGABRT_0e526210d92d20a6.bin",
+    "crash_SIGABRT_0f0f3cabcd745100.bin",
+    "crash_SIGABRT_0f7c114f8adf49df.bin",
+    "crash_SIGABRT_0fd1eaab357ee057.bin",
+    "crash_SIGABRT_1006b44275ac0e99.bin",
+    "crash_SIGABRT_102f9af819b6a43f.bin",
+    "crash_SIGABRT_10e177313cc0c469.bin",
+    "crash_SIGABRT_10e978491b74012c.bin",
+    "crash_SIGABRT_11d5e29c738bd0f3.bin",
+    "crash_SIGABRT_11f54737a27def29.bin",
+    "crash_SIGABRT_13943132f2bdd7e3.bin",
+    "crash_SIGABRT_1394d5fb189f2cf7.bin",
+    "crash_SIGABRT_1394e88df17a3551.bin",
+    "crash_SIGABRT_141fa08c61cd482b.bin",
+    "crash_SIGABRT_145317e9a4840307.bin",
+    "crash_SIGABRT_14adc4c987ed9c1e.bin",
+    "crash_SIGABRT_14d1441136474fee.bin",
+    "crash_SIGABRT_16e3e496e0b18b03.bin",
+    "crash_SIGABRT_1722bcb22f35c501.bin",
+    "crash_SIGABRT_17601b42d366c37b.bin",
+    "crash_SIGABRT_185b3c31c82bbe07.bin",
+    "crash_SIGABRT_187d586c2df0e2e1.bin",
+    "crash_SIGABRT_18ee0f140362270d.bin",
+    "crash_SIGABRT_191006ec2ebce213.bin",
+    "crash_SIGABRT_195899b4f138dccb.bin",
+    "crash_SIGABRT_195c4783defff231.bin",
+    "crash_SIGABRT_19b11242f14fc31a.bin",
+    "crash_SIGABRT_1a9bec704d76e051.bin",
+    "crash_SIGABRT_1bac9ff7937db225.bin",
+    "crash_SIGABRT_1c0b1bc1463ce078.bin",
+    "crash_SIGABRT_1d067ab4e92d4bae.bin",
+    "crash_SIGABRT_1eb70e98a88e0d2f.bin",
+    "crash_SIGABRT_1ebac4fe957b862a.bin",
+    "crash_SIGABRT_1f10db90c3d83cfe.bin",
+    "crash_SIGABRT_2043d8b712e448f1.bin",
+    "crash_SIGABRT_208bcb3b12996efa.bin",
+    "crash_SIGABRT_20c710fa313eeb25.bin",
+    "crash_SIGABRT_20fa7b009ce786f0.bin",
+    "crash_SIGABRT_210dbe6431865569.bin",
+    "crash_SIGABRT_213afaa5371b1a8e.bin",
+    "crash_SIGABRT_2215df080b48778d.bin",
+    "crash_SIGABRT_225b978346ef5147.bin",
+    "crash_SIGABRT_22f2b6f335b8d83e.bin",
+    "crash_SIGABRT_2307855098528ab7.bin",
+    "crash_SIGABRT_239c547b9af6a3b6.bin",
+    "crash_SIGABRT_23a2ddacc2e4213b.bin",
+    "crash_SIGABRT_247260f34fff1fa1.bin",
+    "crash_SIGABRT_2482bea7201056f3.bin",
+    "crash_SIGABRT_24c071a0cb145fa2.bin",
+    "crash_SIGABRT_24fec654731c0b57.bin",
+    "crash_SIGABRT_256550122065f09d.bin",
+    "crash_SIGABRT_25667ed15934f6a2.bin",
+    "crash_SIGABRT_2630ef845f722a03.bin",
+    "crash_SIGABRT_26785702394efad2.bin",
+    "crash_SIGABRT_2842c58c843b7fd0.bin",
+    "crash_SIGABRT_2860ddaa231d9248.bin",
+    "crash_SIGABRT_29fa9608ef5de8d9.bin",
+    "crash_SIGABRT_2ae26184c9ce8c3e.bin",
+    "crash_SIGABRT_2bfc57245eba746e.bin",
+    "crash_SIGABRT_2c1a9edfe6d555b7.bin",
+    "crash_SIGABRT_2c28326176bf1af7.bin",
+    "crash_SIGABRT_2cf819f2cb9b3687.bin",
+    "crash_SIGABRT_2ead3501f5fe94eb.bin",
+    "crash_SIGABRT_2f26104baadc5d82.bin",
+    "crash_SIGABRT_2f2d24fed18d3469.bin",
+    "crash_SIGABRT_302ca2e6109be161.bin",
+    "crash_SIGABRT_30c05b773136ab3f.bin",
+    "crash_SIGABRT_30e3ae9be28f0305.bin",
+    "crash_SIGABRT_31287ab4bffcc403.bin",
+    "crash_SIGABRT_3167e4f4f34d2366.bin",
+    "crash_SIGABRT_31b43e9e8f0bcc89.bin",
+    "crash_SIGABRT_31c810e1edc73800.bin",
+    "crash_SIGABRT_321786941a6b7883.bin",
+    "crash_SIGABRT_32660afccb3ddc7f.bin",
+    "crash_SIGABRT_32a60ca2e40a41f8.bin",
+    "crash_SIGABRT_32fd3f1bc580c6e1.bin",
+    "crash_SIGABRT_3309f3e3e6920bbd.bin",
+    "crash_SIGABRT_3322a1cec2ffc49e.bin",
+    "crash_SIGABRT_332d4513184e9614.bin",
+    "crash_SIGABRT_33dd1ea6e713ec05.bin",
+    "crash_SIGABRT_34b78d687d2337d7.bin",
+    "crash_SIGABRT_34e2feb16fc8d3ab.bin",
+    "crash_SIGABRT_375a3d073d20b0b6.bin",
+    "crash_SIGABRT_385a29fe4342c150.bin",
+    "crash_SIGABRT_38edda1ac0829dd4.bin",
+    "crash_SIGABRT_396c6720beb74270.bin",
+    "crash_SIGABRT_39d6ee3dc3a947fe.bin",
+    "crash_SIGABRT_3a114b5cbc7d952a.bin",
+    "crash_SIGABRT_3a3970020a5f6037.bin",
+    "crash_SIGABRT_3a5cb96768cdb93f.bin",
+    "crash_SIGABRT_3bfd6650217dc585.bin",
+    "crash_SIGABRT_3c07beb7986ad6fa.bin",
+    "crash_SIGABRT_3c939322abf8ef29.bin",
+    "crash_SIGABRT_3d0e2c53d4916076.bin",
+    "crash_SIGABRT_3f5d0d215e4a4622.bin",
+    "crash_SIGABRT_3ffe2d44d362f9a8.bin",
+    "crash_SIGABRT_400e860c457defd1.bin",
+    "crash_SIGABRT_401fb0042f659dad.bin",
+    "crash_SIGABRT_40a56460815d12e8.bin",
+    "crash_SIGABRT_40a6629ca2fd40e4.bin",
+    "crash_SIGABRT_41442e4ad643c924.bin",
+    "crash_SIGABRT_41630bbd75fc3211.bin",
+    "crash_SIGABRT_41b38eb56c748196.bin",
+    "crash_SIGABRT_42309b159773b8f0.bin",
+    "crash_SIGABRT_4452383bb064f20f.bin",
+    "crash_SIGABRT_446d54cdc48acd2e.bin",
+    "crash_SIGABRT_450e45dfe37e1328.bin",
+    "crash_SIGABRT_454002bffc31c456.bin",
+    "crash_SIGABRT_4620bb53b84ba2c5.bin",
+    "crash_SIGABRT_470a142f587bb3c9.bin",
+    "crash_SIGABRT_486b0ab5eaec3506.bin",
+    "crash_SIGABRT_48ab8d0c877d239f.bin",
+    "crash_SIGABRT_499b628fc575c6c7.bin",
+    "crash_SIGABRT_49b4231c3f31039e.bin",
+    "crash_SIGABRT_49d439e942734881.bin",
+    "crash_SIGABRT_4abee02286977a76.bin",
+    "crash_SIGABRT_4ad411344e73aa5a.bin",
+    "crash_SIGABRT_4b99d701c00677d6.bin",
+    "crash_SIGABRT_4cda897c0de09e32.bin",
+    "crash_SIGABRT_4deebbace2e4c024.bin",
+    "crash_SIGABRT_4f6fe05f6a98d797.bin",
+    "crash_SIGABRT_4f8d867fe4d850f2.bin",
+    "crash_SIGABRT_4ff3516c50f6e192.bin",
+    "crash_SIGABRT_502e15d338f324fd.bin",
+    "crash_SIGABRT_50bb4ce80763cc0f.bin",
+    "crash_SIGABRT_51dd135f7a334fbe.bin",
+    "crash_SIGABRT_525d05045b408b69.bin",
+    "crash_SIGABRT_52b920c53f4eb656.bin",
+    "crash_SIGABRT_54670d16c6678ab2.bin",
+    "crash_SIGABRT_54e1c88218ca752b.bin",
+    "crash_SIGABRT_559e868ffce69b12.bin",
+    "crash_SIGABRT_55e719aea58e6627.bin",
+    "crash_SIGABRT_56830180ee3f057b.bin",
+    "crash_SIGABRT_5685413676e5faee.bin",
+    "crash_SIGABRT_570fe1fb97fade5e.bin",
+    "crash_SIGABRT_581186eeb0572317.bin",
+    "crash_SIGABRT_581d3488f5fdebe5.bin",
+    "crash_SIGABRT_58a2dfbcd7701faa.bin",
+    "crash_SIGABRT_5979e8d83afaa4cc.bin",
+    "crash_SIGABRT_59f5dad647e1716e.bin",
+    "crash_SIGABRT_5b3dd9672c76df68.bin",
+    "crash_SIGABRT_5bae224ac3d74aaf.bin",
+    "crash_SIGABRT_5c1c72769bdf05ca.bin",
+    "crash_SIGABRT_5c78f67ac6800b9a.bin",
+    "crash_SIGABRT_5d60f55b806590d4.bin",
+    "crash_SIGABRT_5d86633b3a00b024.bin",
+    "crash_SIGABRT_5e7de2aa940e5023.bin",
+    "crash_SIGABRT_5f166541506c49db.bin",
+    "crash_SIGABRT_5f316f5c7b4c889a.bin",
+    "crash_SIGABRT_5fb5c085f4de2f27.bin",
+    "crash_SIGABRT_6051b148096ade0c.bin",
+    "crash_SIGABRT_606cfc807a2d9681.bin",
+    "crash_SIGABRT_6081c6a7332ba7e7.bin",
+    "crash_SIGABRT_609119750ee5ce8c.bin",
+    "crash_SIGABRT_61ba8ddde1fa958c.bin",
+    "crash_SIGABRT_624bb28751696278.bin",
+    "crash_SIGABRT_625ea639fc3323e6.bin",
+    "crash_SIGABRT_6452e403344c7505.bin",
+    "crash_SIGABRT_646eb897733fc625.bin",
+    "crash_SIGABRT_64b4c61452451328.bin",
+    "crash_SIGABRT_650ef755214e81a9.bin",
+    "crash_SIGABRT_65ab24f9ab293bfa.bin",
+    "crash_SIGABRT_65fe1616e94d13b0.bin",
+    "crash_SIGABRT_663d55363d3b7795.bin",
+    "crash_SIGABRT_666aad5a9e886497.bin",
+    "crash_SIGABRT_66f98b2cc0d80c4c.bin",
+    "crash_SIGABRT_676c70f2b0296980.bin",
+    "crash_SIGABRT_679b4bf26ddb4046.bin",
+    "crash_SIGABRT_67b6ecb95a3d90df.bin",
+    "crash_SIGABRT_67d88e1d6b640df1.bin",
+    "crash_SIGABRT_68d4e6feaf42fb9a.bin",
+    "crash_SIGABRT_690d8b450146a828.bin",
+    "crash_SIGABRT_6962952d9fea1078.bin",
+    "crash_SIGABRT_6971f701b27e7a7a.bin",
+    "crash_SIGABRT_6ad0ec3b38523878.bin",
+    "crash_SIGABRT_6af1a9e33d36f6f9.bin",
+    "crash_SIGABRT_6b8f7e54248b939a.bin",
+    "crash_SIGABRT_6bee6d01139c03eb.bin",
+    "crash_SIGABRT_6c72f101ca75f728.bin",
+    "crash_SIGABRT_6c7a871da6922867.bin",
+    "crash_SIGABRT_6d1ae69c15955adf.bin",
+    "crash_SIGABRT_6d1e8300371180bd.bin",
+    "crash_SIGABRT_6db0c35cbdf294fa.bin",
+    "crash_SIGABRT_6e123d5b97638196.bin",
+    "crash_SIGABRT_6e25b6a21b55fceb.bin",
+    "crash_SIGABRT_6e5b0cd525ba0d38.bin",
+    "crash_SIGABRT_6e8501d7fd9da8ba.bin",
+    "crash_SIGABRT_6eaeffca463fee10.bin",
+    "crash_SIGABRT_6fc545ec4803a9df.bin",
+    "crash_SIGABRT_70435e7d44046adf.bin",
+    "crash_SIGABRT_70c91a19f3bb8808.bin",
+    "crash_SIGABRT_70ed9158d7974b04.bin",
+    "crash_SIGABRT_710d9e9f6f6dc316.bin",
+    "crash_SIGABRT_726ec25f88e1302a.bin",
+    "crash_SIGABRT_73b802db833fb940.bin",
+    "crash_SIGABRT_73c278f215860d11.bin",
+    "crash_SIGABRT_73fb4369587109fe.bin",
+    "crash_SIGABRT_744b58a80c82321f.bin",
+    "crash_SIGABRT_75ab3f11d904ee40.bin",
+    "crash_SIGABRT_7731ee56310548b3.bin",
+    "crash_SIGABRT_783ad03f29bf3b00.bin",
+    "crash_SIGABRT_7890b401c9bf1994.bin",
+    "crash_SIGABRT_78b732a465361221.bin",
+    "crash_SIGABRT_78d95b003ab91470.bin",
+    "crash_SIGABRT_78e13a043bd02414.bin",
+    "crash_SIGABRT_7a0f34644daeaae6.bin",
+    "crash_SIGABRT_7a48c165d7823cac.bin",
+    "crash_SIGABRT_7a8929341eea6be3.bin",
+    "crash_SIGABRT_7aa973d637d9e2f5.bin",
+    "crash_SIGABRT_7b0c3c8c977f980e.bin",
+    "crash_SIGABRT_7b2befdfa0846bdf.bin",
+    "crash_SIGABRT_7c42307d3a56c34b.bin",
+    "crash_SIGABRT_7c8f738ba260958b.bin",
+    "crash_SIGABRT_7d3c50bb32fc0667.bin",
+    "crash_SIGABRT_7d5aa3c9a724984d.bin",
+    "crash_SIGABRT_7d6854d8d73853da.bin",
+    "crash_SIGABRT_7d8e1d615eec6c86.bin",
+    "crash_SIGABRT_7d93cb2675975e5a.bin",
+    "crash_SIGABRT_7db1b50db2b899d4.bin",
+    "crash_SIGABRT_7dd3a1a7fb7f8d62.bin",
+    "crash_SIGABRT_7deb9afb45a851d5.bin",
+    "crash_SIGABRT_7df5e13774edf7d7.bin",
+    "crash_SIGABRT_7e8735efa8e39cde.bin",
+    "crash_SIGABRT_7f082ba5eb08d626.bin",
+    "crash_SIGABRT_7f1005a8d5756e63.bin",
+    "crash_SIGABRT_7fbbea6e663c674e.bin",
+    "crash_SIGABRT_80f3cdaeec9d4e23.bin",
+    "crash_SIGABRT_810feabcb2b2d29e.bin",
+    "crash_SIGABRT_81a8a40be6c5a810.bin",
+    "crash_SIGABRT_81adfee3f9410160.bin",
+    "crash_SIGABRT_821718dccb56d031.bin",
+    "crash_SIGABRT_8223b4d1067d7b29.bin",
+    "crash_SIGABRT_82dae7ad79694146.bin",
+    "crash_SIGABRT_8388b602a8a14f7f.bin",
+    "crash_SIGABRT_83b8ec534daba03b.bin",
+    "crash_SIGABRT_83c6dfa045a3d011.bin",
+    "crash_SIGABRT_84cddb6b91bc9420.bin",
+    "crash_SIGABRT_850daad958716f35.bin",
+    "crash_SIGABRT_85d85f91d57dc051.bin",
+    "crash_SIGABRT_8687273a1cf64973.bin",
+    "crash_SIGABRT_86e7b934138a6be6.bin",
+    "crash_SIGABRT_86f10d75fbffc04b.bin",
+    "crash_SIGABRT_872b2637392c5269.bin",
+    "crash_SIGABRT_8749733000489745.bin",
+    "crash_SIGABRT_88323afeae17f28c.bin",
+    "crash_SIGABRT_885cb6a1e9d20081.bin",
+    "crash_SIGABRT_8889cdcdbb86b6ff.bin",
+    "crash_SIGABRT_88c9a2efd6f8b453.bin",
+    "crash_SIGABRT_891aa6152bcdb088.bin",
+    "crash_SIGABRT_89c2403e3cd9d0b2.bin",
+    "crash_SIGABRT_89f06d87c02da703.bin",
+    "crash_SIGABRT_8a17f36ef18aa0a7.bin",
+    "crash_SIGABRT_8a2fdeb023e10c7c.bin",
+    "crash_SIGABRT_8a7b9d196dd07265.bin",
+    "crash_SIGABRT_8a9ac5cf4b99b1c4.bin",
+    "crash_SIGABRT_8aac0e4333603bd2.bin",
+    "crash_SIGABRT_8ab55aba875bb0fd.bin",
+    "crash_SIGABRT_8ae423b423163bc1.bin",
+    "crash_SIGABRT_8b3c27d9d91393a6.bin",
+    "crash_SIGABRT_8b849989e88c13c8.bin",
+    "crash_SIGABRT_8b972b363fca82ac.bin",
+    "crash_SIGABRT_8bfc3a0c9e14219d.bin",
+    "crash_SIGABRT_8c880ed06408bcf1.bin",
+    "crash_SIGABRT_8cba8b23455c6932.bin",
+    "crash_SIGABRT_8d68869ee9389791.bin",
+    "crash_SIGABRT_8de5808a671a9251.bin",
+    "crash_SIGABRT_8ee3fec3bd984a2d.bin",
+    "crash_SIGABRT_8f5d407a98b26e44.bin",
+    "crash_SIGABRT_8f75c62588a8aaf3.bin",
+    "crash_SIGABRT_913beef80f320539.bin",
+    "crash_SIGABRT_913f7f9101ed3d0a.bin",
+    "crash_SIGABRT_91b164299cdad17c.bin",
+    "crash_SIGABRT_91d0c9541ea7fd4f.bin",
+    "crash_SIGABRT_9280c07ca5b03a40.bin",
+    "crash_SIGABRT_92f3f50138ccf700.bin",
+    "crash_SIGABRT_930f3847d74d82c1.bin",
+    "crash_SIGABRT_95c798bc39231e76.bin",
+    "crash_SIGABRT_961ebccdec73b269.bin",
+    "crash_SIGABRT_965ab3cc6227223f.bin",
+    "crash_SIGABRT_96c5e390a3d12bd9.bin",
+    "crash_SIGABRT_97fff79bcb208f77.bin",
+    "crash_SIGABRT_999b2e42d325614e.bin",
+    "crash_SIGABRT_9a60d7407db8a364.bin",
+    "crash_SIGABRT_9b9472dbf0301804.bin",
+    "crash_SIGABRT_9ca9d350838d827a.bin",
+    "crash_SIGABRT_9e6055b27c228f30.bin",
+    "crash_SIGABRT_9e8f3bee5b05eaa5.bin",
+    "crash_SIGABRT_9f00c84d3c7ff933.bin",
+    "crash_SIGABRT_9f90f8157fc67bd4.bin",
+    "crash_SIGABRT_9fb02da2ec9fb7cf.bin",
+    "crash_SIGABRT_a025090cf9774ea9.bin",
+    "crash_SIGABRT_a076630d32987c61.bin",
+    "crash_SIGABRT_a0fd91ff919935e2.bin",
+    "crash_SIGABRT_a1155ea7817050a5.bin",
+    "crash_SIGABRT_a19460676d8ae73b.bin",
+    "crash_SIGABRT_a2395ca0afac372e.bin",
+    "crash_SIGABRT_a24223d459033d17.bin",
+    "crash_SIGABRT_a270adaa407e785d.bin",
+    "crash_SIGABRT_a2764b04fcc43aab.bin",
+    "crash_SIGABRT_a283ba23b6d8616f.bin",
+    "crash_SIGABRT_a2e338125fd1284e.bin",
+    "crash_SIGABRT_a474213843c0f6ad.bin",
+    "crash_SIGABRT_a536f256e4a287ab.bin",
+    "crash_SIGABRT_a5682a2b77864255.bin",
+    "crash_SIGABRT_a5a2094eb95e2f02.bin",
+    "crash_SIGABRT_a5e38b9199d924a0.bin",
+    "crash_SIGABRT_a66c6238e994fd72.bin",
+    "crash_SIGABRT_a745377109999eae.bin",
+    "crash_SIGABRT_a8080b0e1379aa68.bin",
+    "crash_SIGABRT_a823754251bea4de.bin",
+    "crash_SIGABRT_a8e77a82db0f4976.bin",
+    "crash_SIGABRT_a93fcffdd7f8efe3.bin",
+    "crash_SIGABRT_a9d9076735d74e07.bin",
+    "crash_SIGABRT_acb10290e4b1ee26.bin",
+    "crash_SIGABRT_acdcaffac3637f49.bin",
+    "crash_SIGABRT_ad69d63576c8ac7e.bin",
+    "crash_SIGABRT_ad8e2cb825712258.bin",
+    "crash_SIGABRT_adb31a004fd32da0.bin",
+    "crash_SIGABRT_ae137219b87ac017.bin",
+    "crash_SIGABRT_ae365c6c9cab68d5.bin",
+    "crash_SIGABRT_ae4af29089568f14.bin",
+    "crash_SIGABRT_af3d6a8e4a324913.bin",
+    "crash_SIGABRT_b1583f22c0922d93.bin",
+    "crash_SIGABRT_b18e2d2709340834.bin",
+    "crash_SIGABRT_b1e937743d32dde5.bin",
+    "crash_SIGABRT_b1f23d82302b54bb.bin",
+    "crash_SIGABRT_b380ffd91a25cb97.bin",
+    "crash_SIGABRT_b41fa51c3a02304f.bin",
+    "crash_SIGABRT_b47f544cba6dbc70.bin",
+    "crash_SIGABRT_b4a39e0ac2a3602f.bin",
+    "crash_SIGABRT_b5b384e0b116287e.bin",
+    "crash_SIGABRT_b5dab7bfb2241496.bin",
+    "crash_SIGABRT_b6dbd8b67eab1dca.bin",
+    "crash_SIGABRT_b75a83371e7cccd2.bin",
+    "crash_SIGABRT_b76498eb7cde2399.bin",
+    "crash_SIGABRT_b7984313d06de9fe.bin",
+    "crash_SIGABRT_b7a999b25e9d0672.bin",
+    "crash_SIGABRT_b8a7c36a9a3e6ca4.bin",
+    "crash_SIGABRT_b93f2da98a13eccb.bin",
+    "crash_SIGABRT_b99a5ecda3a88f5e.bin",
+    "crash_SIGABRT_b9e254a0d1f9bd05.bin",
+    "crash_SIGABRT_bacec6a30e11e894.bin",
+    "crash_SIGABRT_bb2142505c6ecaaa.bin",
+    "crash_SIGABRT_bb2f642797daa41e.bin",
+    "crash_SIGABRT_bbaef8b51745eb33.bin",
+    "crash_SIGABRT_bc16ee1e3328fb15.bin",
+    "crash_SIGABRT_bc41938339d668f9.bin",
+    "crash_SIGABRT_bc6d9c4a34cce467.bin",
+    "crash_SIGABRT_bd0ffce51f58ce07.bin",
+    "crash_SIGABRT_bdb8fcfca092b8c8.bin",
+    "crash_SIGABRT_bdc6a095ed0baca4.bin",
+    "crash_SIGABRT_bdcc0ad91a1c5cea.bin",
+    "crash_SIGABRT_be7ec4b46685b2d5.bin",
+    "crash_SIGABRT_bf149d865640d52d.bin",
+    "crash_SIGABRT_c03b5650f00673d2.bin",
+    "crash_SIGABRT_c0c880675f32b7ab.bin",
+    "crash_SIGABRT_c29daf75e4eeb7b9.bin",
+    "crash_SIGABRT_c2d6f8bfeb176f2c.bin",
+    "crash_SIGABRT_c33b1d78ada5d8e2.bin",
+    "crash_SIGABRT_c4e67e1e4167f1a1.bin",
+    "crash_SIGABRT_c4efc67561d4dcfc.bin",
+    "crash_SIGABRT_c528461d0e38fe0e.bin",
+    "crash_SIGABRT_c63c05e1bebdef4e.bin",
+    "crash_SIGABRT_c6a0dd92fbdb1def.bin",
+    "crash_SIGABRT_c73c0be0666ab7e6.bin",
+    "crash_SIGABRT_c7d2069df07ea72b.bin",
+    "crash_SIGABRT_c7e06149b59b723d.bin",
+    "crash_SIGABRT_c89cc6cdce37dfa2.bin",
+    "crash_SIGABRT_c8ae68908b6f298c.bin",
+    "crash_SIGABRT_c9279973f867a0f7.bin",
+    "crash_SIGABRT_c9fc7d103779e5c6.bin",
+    "crash_SIGABRT_ca00005c34d68c75.bin",
+    "crash_SIGABRT_ca39738ecc176aa4.bin",
+    "crash_SIGABRT_cc753f26e7450dbd.bin",
+    "crash_SIGABRT_cc9c63313fc9b5ff.bin",
+    "crash_SIGABRT_cca76afac64261f0.bin",
+    "crash_SIGABRT_ccd85169c2401523.bin",
+    "crash_SIGABRT_cd331e2b62013506.bin",
+    "crash_SIGABRT_cd86b15e925e9979.bin",
+    "crash_SIGABRT_cdf9e78357331c3c.bin",
+    "crash_SIGABRT_ce1ae8acf13b13b2.bin",
+    "crash_SIGABRT_ce2c476a4948b0e7.bin",
+    "crash_SIGABRT_ce61ebcb9ebeb082.bin",
+    "crash_SIGABRT_ce6948c359a3aaed.bin",
+    "crash_SIGABRT_cead759550d991b0.bin",
+    "crash_SIGABRT_cf8e90fec09a9ef4.bin",
+    "crash_SIGABRT_d01c853e62051d4e.bin",
+    "crash_SIGABRT_d047920f36af5b0d.bin",
+    "crash_SIGABRT_d108cd92420b4f93.bin",
+    "crash_SIGABRT_d1fb9951c0997017.bin",
+    "crash_SIGABRT_d305257b517093cc.bin",
+    "crash_SIGABRT_d39059f066fd3a08.bin",
+    "crash_SIGABRT_d50257a044323fb9.bin",
+    "crash_SIGABRT_d52554c488a582aa.bin",
+    "crash_SIGABRT_d5c51b0160fdc898.bin",
+    "crash_SIGABRT_d693215025d89013.bin",
+    "crash_SIGABRT_d7e43d02041b16fa.bin",
+    "crash_SIGABRT_d872cb3ec9bccb39.bin",
+    "crash_SIGABRT_d8c1329339bd165a.bin",
+    "crash_SIGABRT_d909d6fd51034ded.bin",
+    "crash_SIGABRT_d962feddbbd40072.bin",
+    "crash_SIGABRT_d965d46e0e6fa2ec.bin",
+    "crash_SIGABRT_d9a5dd66c3c25831.bin",
+    "crash_SIGABRT_d9b89e9cd10e97ea.bin",
+    "crash_SIGABRT_d9de5f850de49fe5.bin",
+    "crash_SIGABRT_da3ce288f393f94a.bin",
+    "crash_SIGABRT_da70aa403a978e8d.bin",
+    "crash_SIGABRT_da78788b97c2a277.bin",
+    "crash_SIGABRT_dad85993ad7eeb1b.bin",
+    "crash_SIGABRT_dbb36704d63ce899.bin",
+    "crash_SIGABRT_dc0efabcd39c85ba.bin",
+    "crash_SIGABRT_dc2368b81b3b9735.bin",
+    "crash_SIGABRT_dde964fc3cc24072.bin",
+    "crash_SIGABRT_de5253d241421e52.bin",
+    "crash_SIGABRT_de6d268484557ec8.bin",
+    "crash_SIGABRT_deb045b87d535870.bin",
+    "crash_SIGABRT_e09b7f7a38ec887e.bin",
+    "crash_SIGABRT_e13e9a9142f7e882.bin",
+    "crash_SIGABRT_e15fc7caf1a4a4bb.bin",
+    "crash_SIGABRT_e1cc1af952961336.bin",
+    "crash_SIGABRT_e1ebcbcd38c4af04.bin",
+    "crash_SIGABRT_e33affaf3ffcd440.bin",
+    "crash_SIGABRT_e391c5a703c0da36.bin",
+    "crash_SIGABRT_e3d440ca8996d477.bin",
+    "crash_SIGABRT_e442b18133f5c14a.bin",
+    "crash_SIGABRT_e4d80a58b967e005.bin",
+    "crash_SIGABRT_e61601844f976f2f.bin",
+    "crash_SIGABRT_e7903d72f9c613b4.bin",
+    "crash_SIGABRT_e7bcfa1ffe2a129a.bin",
+    "crash_SIGABRT_e8ecb6878ede0ba5.bin",
+    "crash_SIGABRT_e97a498c442012a6.bin",
+    "crash_SIGABRT_ead8790d0ebf739a.bin",
+    "crash_SIGABRT_eb93c85f054ce7ba.bin",
+    "crash_SIGABRT_ec4686c7f3b2131f.bin",
+    "crash_SIGABRT_ec9b579a650da327.bin",
+    "crash_SIGABRT_edcf0ef4ed505dfa.bin",
+    "crash_SIGABRT_ede252a0c5d9c817.bin",
+    "crash_SIGABRT_ee05e64378ba98e9.bin",
+    "crash_SIGABRT_eeaa14f19d488182.bin",
+    "crash_SIGABRT_ef0e672de079c67d.bin",
+    "crash_SIGABRT_ef4a930671b2c1a6.bin",
+    "crash_SIGABRT_ef69cb4ec89fe3bf.bin",
+    "crash_SIGABRT_f025da90ee77eb7e.bin",
+    "crash_SIGABRT_f1fb60c147bcfd9c.bin",
+    "crash_SIGABRT_f21d66d1203d3b5e.bin",
+    "crash_SIGABRT_f337dd6404562a47.bin",
+    "crash_SIGABRT_f38f9d455356a4b0.bin",
+    "crash_SIGABRT_f3f806c8a27ce44d.bin",
+    "crash_SIGABRT_f401e6c68979f25b.bin",
+    "crash_SIGABRT_f40f31f1837db072.bin",
+    "crash_SIGABRT_f41e9ae746285516.bin",
+    "crash_SIGABRT_f5b75a2247fd46d5.bin",
+    "crash_SIGABRT_f8622c2f2cb3ef17.bin",
+    "crash_SIGABRT_f88f38caa24bc3cf.bin",
+    "crash_SIGABRT_f8abcb645ced99b0.bin",
+    "crash_SIGABRT_f90d22645203cb48.bin",
+    "crash_SIGABRT_f919bd545568ac5b.bin",
+    "crash_SIGABRT_fc173b5444c5c2f9.bin",
+    "crash_SIGABRT_fcb04bc6e44b7455.bin",
+    "crash_SIGABRT_fd057115da779891.bin",
+    "crash_SIGABRT_ff7b21227ffd3058.bin",
+    "crash_SIGABRT_ff86d6cc2a4de8b1.bin",
+    "crash_SIGABRT_ffabb75c40ecccd4.bin"
+  ],
+  "final_checkpoint": "/home/kali/Fuzzi/Fuzzinator/data/checkpoints/ppo_lstm_final.pt",
+  "crash_dir": "/home/kali/Fuzzi/Fuzzinator/data/crashes",
+  "markdown_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-05-04T14-05-23_ppo_lstm_target_buffer_overflow.md",
+  "json_report_path": "/home/kali/Fuzzi/Fuzzinator/data/reports/2026-05-04T14-05-23_ppo_lstm_target_buffer_overflow.json"
+}
