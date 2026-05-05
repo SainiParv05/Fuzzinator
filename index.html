@@ -1316,6 +1316,11 @@
       const [busy, setBusy] = useState(false);
       const [error, setError] = useState('');
 
+      const formatBuildError = (build) => {
+        const details = [build?.stderr, build?.stdout].filter(Boolean).join('\n').trim();
+        return details ? `Build failed:\n${details}` : 'Build failed. Check the uploaded C file and compiler output.';
+      };
+
       useEffect(() => {
         // On hosted domains, don't poll until a backend URL is configured
         if (!isLocalhost && !getApiBase()) return;
@@ -1370,6 +1375,10 @@
             body: JSON.stringify({ filename: selectedFile.name, content: selectedFile.content }),
           });
           setDashboardState(prev => ({ ...prev, last_build: result.build }));
+          if (result.build?.status !== 'completed') {
+            setError(formatBuildError(result.build));
+            return null;
+          }
           if (result.build?.binary_path) {
             setTargetBinary(result.build.binary_path.split('/').pop());
           }
@@ -1453,12 +1462,9 @@
               onCompileAndRun={async () => {
                 const result = await uploadAndBuild();
                 const builtName = result?.build?.binary_path?.split('/').pop();
-                const selectedName = selectedFile?.name?.replace(/\.c$/i, '').replace(/[^a-zA-Z0-9_]/g, '_');
-                const nextTarget = builtName || selectedName;
-                if (nextTarget) {
-                  setTargetBinary(nextTarget);
-                  await runLstm(nextTarget);
-                }
+                if (!builtName) return;
+                setTargetBinary(builtName);
+                await runLstm(builtName);
               }}
               onRun={runLstm}
               onStop={stopRun}
