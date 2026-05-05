@@ -28,7 +28,7 @@ echo " Fuzzinator — Building Targets"
 echo "======================================="
 echo ""
 
-CFLAGS="-fsanitize-coverage=trace-pc -fsanitize=address -g -O0 -fno-omit-frame-pointer"
+CFLAGS="-fsanitize-coverage=trace-pc -fsanitize=address -g -O0 -fno-omit-frame-pointer -Wno-implicit-function-declaration"
 SHM_SRC="$INSTR_DIR/shm_init.c"
 
 # Build each target, or a single requested target
