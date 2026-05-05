@@ -133,7 +133,7 @@ python agent/train_lstm.py --target targets/target_buffer_overflow --steps 500
 python backend/dashboard_server.py
 ```
 
-Then open **`http://127.0.0.1:8000/index.html`** in your browser.
+Then open **`http://127.0.0.1:8000/index.html`** in your browser, or you can go to https://fuzzinator.parvsaini.me/
 
 ---
 
